@@ -16,7 +16,7 @@ namespace LANSearch.Modules.Admin
             };
             Post["/Configuration"] = x =>
             {
-                var config = Ctx.Config.GetConfigDictionary().Where(setting => !AppConfig.ConfigBlacklist.Contains(setting.Key)).ToDictionary(y=>y.Key,y=>y.Value);
+                var config = Ctx.Config.GetConfigDictionary().Where(setting => !AppConfig.ConfigBlacklist.Contains(setting.Key)).ToDictionary(y => y.Key, y => y.Value);
                 foreach (var item in config.Keys.ToList())
                 {
                     if (config[item] is bool)

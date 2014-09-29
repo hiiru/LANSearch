@@ -113,7 +113,7 @@ namespace LANSearch
             ListenHost = "+";
             ListenPort = 8080;
 
-            SetupIps=new List<string>
+            SetupIps = new List<string>
             {
                 "127.0.0.1",
                 "::1"
@@ -124,7 +124,6 @@ namespace LANSearch
             RedisDbApp = 0;
             RedisDbHangfire = 1;
             RedisPassword = null;
-
         }
 
         public static string ListenHost { get; private set; }

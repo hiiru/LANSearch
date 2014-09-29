@@ -1,11 +1,10 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using LANSearch.Data.Redis;
+﻿using LANSearch.Data.Redis;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace LANSearch
 {
@@ -49,7 +48,7 @@ namespace LANSearch
             if (changed)
                 SaveConfigToRedis();
         }
-        
+
         ~AppConfig()
         {
             SaveConfigToRedis();
@@ -93,7 +92,7 @@ namespace LANSearch
                 }
                 else if (pi.PropertyType == typeof(byte[]))
                 {
-                    dict[pi.Name] = value == null?null:Convert.ToBase64String((byte[])value);
+                    dict[pi.Name] = value == null ? null : Convert.ToBase64String((byte[])value);
                 }
                 else
                     dict[pi.Name] = value;
@@ -143,11 +142,16 @@ namespace LANSearch
         };
 
         public bool AppSetupDone { get; set; }
+
         public string AppSecurityAesPass { get; set; }
+
         public byte[] AppSecurityAesSalt { get; set; }
+
         public string AppSecurityHmacPass { get; set; }
+
         public byte[] AppSecurityHmacSalt { get; set; }
-        #endregion
+
+        #endregion Setup Variables (Blacklisted from configuration page)
 
         public bool AppMaintenance { get; set; }
 
@@ -158,7 +162,6 @@ namespace LANSearch
         public bool AppAnnouncement { get; set; }
 
         public string AppAnnouncementMessage { get; set; }
-
 
         public bool SearchDisabled { get; set; }
 

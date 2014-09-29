@@ -71,7 +71,7 @@ namespace LANSearch.Data.User
             }
         }
 
-        public UserRegisterState Register(string username, string email, string password, string password2, Request request, out Guid guid, bool admin = false, string[] claims=null)
+        public UserRegisterState Register(string username, string email, string password, string password2, Request request, out Guid guid, bool admin = false, string[] claims = null)
         {
             guid = Guid.Empty;
             var state = ValidateRegister(username, email, password, password2);
