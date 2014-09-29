@@ -5,10 +5,10 @@ namespace LANSearch
 {
     public static class InitConfig
     {
-        public static void Init(string[] args)
+        public static int Init(string[] args)
         {
             InitDefault();
-            if (args.Length <= 0) return;
+            if (args.Length <= 0) return 0;
             bool invalid = false;
             foreach (var arg in args)
             {
@@ -87,8 +87,9 @@ namespace LANSearch
             if (invalid)
             {
                 PrintHelp();
-                Environment.Exit(1);
+                return 1;
             }
+            return 0;
         }
 
         private static void PrintHelp()

@@ -125,7 +125,8 @@ namespace LANSearch
 
         private void InitDefaults()
         {
-            SearchDisabled = true;
+            SearchServerUrl = "http://localhost:18983/solr";
+            SearchDisabled = false;
             SearchAllowHideServer = true;
             CrawlerOfflineLimit = 5;
         }
@@ -163,6 +164,7 @@ namespace LANSearch
 
         public string AppAnnouncementMessage { get; set; }
 
+        public string SearchServerUrl { get; set; }
         public bool SearchDisabled { get; set; }
 
         public bool SearchAllowHideServer { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
+using Common.Logging;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
@@ -9,12 +9,16 @@ namespace LANSearch.Data.Redis
 {
     public class RedisManager
     {
+        protected ILog Logger;
         public RedisManager()
         {
+            Logger = LogManager.GetCurrentClassLogger();
+            Logger.Debug("Initializing RedisManager");
             Pool = new PooledRedisClientManager(InitConfig.RedisDbApp, string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort));
 
             //var server = new List<string> {string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort)};
             //Pool = new PooledRedisClientManager(server, server, new RedisClientManagerConfig{AutoStart=true, DefaultDb = InitConfig.RedisDbApp, MaxWritePoolSize = 100, MaxReadPoolSize = 100});
+            Logger.Debug("Pool Created.");
 
             ThreadPool.QueueUserWorkItem(x =>
             {
@@ -25,7 +29,7 @@ namespace LANSearch.Data.Redis
                     subscription.SubscribeToChannels("server","user","feedback");
                 }
             });
-
+            Logger.Debug("Subscribe Thread started, RedisManager is initialized.");
         }
 
         public delegate void RedisChangeMessage(string channel, string message);
@@ -35,6 +39,7 @@ namespace LANSearch.Data.Redis
         {
             if (OnMessage != null)
                 OnMessage(channel, message);
+            Logger.TraceFormat("OnSubscriptionMessage, channel:{0} message:{1}",channel,message);
         }
 
         public PooledRedisClientManager Pool { get; protected set; }

@@ -1,4 +1,6 @@
-﻿using LANSearch.Data.User;
+﻿using System;
+using Common.Logging;
+using LANSearch.Data.User;
 using LANSearch.Models;
 using Nancy;
 using Nancy.ErrorHandling;
@@ -32,6 +34,7 @@ namespace LANSearch
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
+            LogException(context);
             if (InitConfig.SetupIps.Contains(context.Request.UserHostAddress) || context.CurrentUser.HasClaim(UserRoles.ADMIN))
             {
                 return;
@@ -57,6 +60,17 @@ namespace LANSearch
             var response = viewRenderer.RenderView(context, "Views/Error.cshtml", model);
             response.StatusCode = statusCode;
             context.Response = response;
+        }
+
+        private void LogException(NancyContext context)
+        {
+            object errorObject;
+            if (!context.Items.TryGetValue(NancyEngine.ERROR_EXCEPTION, out errorObject))
+                return;
+            var error = errorObject as Exception;
+            var logger = LogManager.GetCurrentClassLogger();
+            if (error != null)
+                logger.ErrorFormat("Unhandled Exception: ", error);
         }
     }
 }
