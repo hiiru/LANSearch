@@ -32,7 +32,7 @@ namespace LANSearch
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
-            if (context.Request.UserHostAddress == "127.0.0.1" || context.CurrentUser.HasClaim(UserRoles.ADMIN))
+            if (InitConfig.SetupIps.Contains(context.Request.UserHostAddress) || context.CurrentUser.HasClaim(UserRoles.ADMIN))
             {
                 return;
             }

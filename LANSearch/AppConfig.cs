@@ -85,17 +85,18 @@ namespace LANSearch
             var dict = new Dictionary<string, object>();
             foreach (var pi in _propertyInfos)
             {
+                var value = pi.GetValue(this);
                 if (pi.PropertyType == typeof(List<string>))
                 {
-                    var value = pi.GetValue(this) as List<string>;
-                    dict[pi.Name] = value == null ? "" : string.Join(",", value);
+                    var list = value as List<string>;
+                    dict[pi.Name] = list == null ? "" : string.Join(",", list);
                 }
                 else if (pi.PropertyType == typeof(byte[]))
                 {
-                    dict[pi.Name] = Convert.ToBase64String((byte[])pi.GetValue(this));
+                    dict[pi.Name] = value == null?null:Convert.ToBase64String((byte[])value);
                 }
                 else
-                    dict[pi.Name] = pi.GetValue(this);
+                    dict[pi.Name] = value;
             }
             return dict;
         }
@@ -130,6 +131,24 @@ namespace LANSearch
             CrawlerOfflineLimit = 5;
         }
 
+        #region Setup Variables (Blacklisted from configuration page)
+
+        public static List<string> ConfigBlacklist = new List<string>
+        {
+            "AppSetupDone",
+            "AppSecurityAesPass",
+            "AppSecurityAesSalt",
+            "AppSecurityHmacPass",
+            "AppSecurityHmacSalt",
+        };
+
+        public bool AppSetupDone { get; set; }
+        public string AppSecurityAesPass { get; set; }
+        public byte[] AppSecurityAesSalt { get; set; }
+        public string AppSecurityHmacPass { get; set; }
+        public byte[] AppSecurityHmacSalt { get; set; }
+        #endregion
+
         public bool AppMaintenance { get; set; }
 
         public string AppMaintenanceMessage { get; set; }
@@ -140,10 +159,6 @@ namespace LANSearch
 
         public string AppAnnouncementMessage { get; set; }
 
-        public string AppSecurityAesPass { get; set; }
-        public byte[] AppSecurityAesSalt { get; set; }
-        public string AppSecurityHmacPass { get; set; }
-        public byte[] AppSecurityHmacSalt { get; set; }
 
         public bool SearchDisabled { get; set; }
 

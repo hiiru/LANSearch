@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using LANSearch.Models;
+using Nancy;
 
 namespace LANSearch.Modules
 {
@@ -9,9 +10,21 @@ namespace LANSearch.Modules
             Get["/Maintenance"] = x =>
             {
                 var config = AppContext.GetContext().Config;
-                if (!config.AppMaintenance)
+                var model = new MaintenanceModel();
+                if (!config.AppSetupDone)
+                {
+                    model.Message = "The LANSearch Application Setup isn't completed yet by an Administrator. Please try again later.";
+                    model.Setup = InitConfig.SetupIps.Contains(Request.UserHostAddress);
+                }
+                else if (config.AppMaintenance)
+                {
+                    model.Message = config.AppMaintenanceMessage;
+                }
+                else
+                {
                     return Response.AsRedirect("~/");
-                return View["Views/Maintenance.cshtml", config.AppMaintenanceMessage];
+                }
+                return View["Views/Maintenance.cshtml", model];
             };
         }
     }

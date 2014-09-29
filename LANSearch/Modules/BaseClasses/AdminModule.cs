@@ -1,8 +1,7 @@
 ﻿using LANSearch.Data.User;
-using LANSearch.Modules.BaseClasses;
 using Nancy.Security;
 
-namespace LANSearch.Modules.Admin
+namespace LANSearch.Modules.BaseClasses
 {
     public class AdminModule : AppModule
     {

@@ -1,5 +1,6 @@
 ﻿using LANSearch.Data;
 using LANSearch.Models.Admin;
+using LANSearch.Modules.BaseClasses;
 using Nancy;
 
 namespace LANSearch.Modules.Admin

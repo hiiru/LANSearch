@@ -71,7 +71,7 @@ namespace LANSearch.Data.User
             }
         }
 
-        public UserRegisterState Register(string username, string email, string password, string password2, Request request, out Guid guid, bool admin = false)
+        public UserRegisterState Register(string username, string email, string password, string password2, Request request, out Guid guid, bool admin = false, string[] claims=null)
         {
             guid = Guid.Empty;
             var state = ValidateRegister(username, email, password, password2);
@@ -99,11 +99,24 @@ namespace LANSearch.Data.User
                     };
                 user.ClaimClear();
 
-                //TODO: Email validation
-                //user.EmailValidationKey
-                //user.ClaimAdd(UserRoles.UNVERIFIED);
+                if (claims != null)
+                {
+                    foreach (var claim in claims)
+                    {
+                        user.ClaimAdd(claim);
+                    }
+                }
+                else
+                {
+                    user.ClaimAdd(UserRoles.MEMBER);
+                }
 
-                user.ClaimAdd(UserRoles.MEMBER);
+                if (user.ClaimHas(UserRoles.UNVERIFIED))
+                {
+                    //TODO: Email validation
+                    //user.EmailValidationKey
+                }
+
                 RedisManager.UserSave(user);
 
                 guid = RedisManager.UserSessionStart(user);

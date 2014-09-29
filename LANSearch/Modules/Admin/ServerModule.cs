@@ -1,6 +1,7 @@
 ﻿using LANSearch.Data;
 using LANSearch.Data.Server;
 using LANSearch.Models.Admin.Server;
+using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Responses;
 using System;

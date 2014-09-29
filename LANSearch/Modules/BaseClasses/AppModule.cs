@@ -21,7 +21,7 @@ namespace LANSearch.Modules.BaseClasses
                     if (Ctx.Config.AppBlockedIps != null && Ctx.Config.AppBlockedIps.Contains(Request.UserHostAddress))
                         return 403;
 
-                    if (Ctx.Config.AppMaintenance)
+                    if (Ctx.Config.AppMaintenance || !Ctx.Config.AppSetupDone)
                         return Response.AsRedirect("~/Maintenance");
                 }
                 if (Ctx.Config.AppAnnouncement)

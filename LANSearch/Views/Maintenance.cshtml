@@ -1,4 +1,5 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.MaintenanceModel> 
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Maintenance";
     ViewBag.App_Maintenance = true;
@@ -6,6 +7,12 @@
 <div class="col-xs-12">
     <div class="panel panel-primary">
         <div class="panel-heading"><h1 class="panel-title maintenance"><span class="glyphicon glyphicon-info-sign"></span> Mainenance Mode</h1></div>
-        <div class="panel-body">@Model</div>
+        <div class="panel-body">@Model.Message</div>
+        @if (Model.Setup)
+        {
+            <div class="panel-footer">
+                <strong>Administrator detected:</strong> Please Setup the app <a href="@Url.Content("~/Admin/Setup")">here</a>.
+            </div>
+        }
     </div>
 </div>

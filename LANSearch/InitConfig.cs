@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LANSearch
 {
@@ -31,6 +32,14 @@ namespace LANSearch
                             break;
                         }
                         ListenPort = value;
+                        break;
+
+                    case "setup.ips":
+                        var ipSplited = splited[1].Split(',');
+                        foreach (var ip in ipSplited)
+                        {
+                            SetupIps.Add(ip);
+                        }
                         break;
 
                     case "redis.host":
@@ -91,6 +100,7 @@ namespace LANSearch
             Console.WriteLine("Arguments:");
             Console.WriteLine("-host={ip}\t\tWebserver Listen IP.");
             Console.WriteLine("-port={port}\t\tWebserver Listen Port.");
+            Console.WriteLine("-setup.ips={ips}\tAllowed Setup Ips (csv).");
             Console.WriteLine("-redis.host={ip}\tRedis server IP.");
             Console.WriteLine("-redis.port={port}\tRedis server Port.");
             Console.WriteLine("-redis.password={ip}\tRedis server password.");
@@ -103,16 +113,25 @@ namespace LANSearch
             ListenHost = "+";
             ListenPort = 8080;
 
+            SetupIps=new List<string>
+            {
+                "127.0.0.1",
+                "::1"
+            };
+
             RedisServer = "127.0.0.1";
             RedisPort = 6379;
             RedisDbApp = 0;
             RedisDbHangfire = 1;
             RedisPassword = null;
+
         }
 
         public static string ListenHost { get; private set; }
 
         public static int ListenPort { get; private set; }
+
+        public static List<string> SetupIps { get; private set; }
 
         public static string RedisServer { get; private set; }
 

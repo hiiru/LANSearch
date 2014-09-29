@@ -151,6 +151,7 @@
     <Compile Include="Models\Admin\FeedbackModel.cs" />
     <Compile Include="Models\Admin\Server\ServerDetailModel.cs" />
     <Compile Include="Models\Admin\Server\ServerListModel.cs" />
+    <Compile Include="Models\Admin\SetupModel.cs" />
     <Compile Include="Models\Admin\User\UserDetailModel.cs" />
     <Compile Include="Models\Admin\User\UserListModel.cs" />
     <Compile Include="Models\BaseModels\BaseListModel.cs" />
@@ -158,11 +159,13 @@
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\InfoModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MaintenanceModel.cs" />
     <Compile Include="Models\Search\SearchFile.cs" />
     <Compile Include="Models\Search\SearchFilter.cs" />
     <Compile Include="Models\Search\SearchModel.cs" />
     <Compile Include="Modules\Admin\ConfigurationModule.cs" />
     <Compile Include="Modules\Admin\ServerModule.cs" />
+    <Compile Include="Modules\Admin\SetupModule.cs" />
     <Compile Include="Modules\Admin\UserModule.cs" />
     <Compile Include="Modules\BaseClasses\AdminModule.cs" />
     <Compile Include="Modules\Admin\FeedbackModule.cs" />
@@ -207,6 +210,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Admin\Server\ServerList.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Admin\Setup.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Admin\User\UserDetail.cshtml">

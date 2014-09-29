@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using LANSearch.Modules.BaseClasses;
+using Nancy;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,12 +11,12 @@ namespace LANSearch.Modules.Admin
         {
             Get["/Configuration"] = x =>
             {
-                var config = Ctx.Config.GetConfigDictionary();
+                var config = Ctx.Config.GetConfigDictionary().Where(setting => !AppConfig.ConfigBlacklist.Contains(setting.Key));
                 return View["Views/Admin/Configuration.cshtml", config.OrderBy(kv => kv.Key)];
             };
             Post["/Configuration"] = x =>
             {
-                var config = Ctx.Config.GetConfigDictionary();
+                var config = Ctx.Config.GetConfigDictionary().Where(setting => !AppConfig.ConfigBlacklist.Contains(setting.Key)).ToDictionary(y=>y.Key,y=>y.Value);
                 foreach (var item in config.Keys.ToList())
                 {
                     if (config[item] is bool)
