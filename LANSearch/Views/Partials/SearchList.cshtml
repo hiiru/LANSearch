@@ -1,0 +1,18 @@
+﻿<div class="col-xs-12 @(Model.HasFilter ? "col-sm-8 col-md-9" : "")  content">
+    @if (Model.HasResults)
+    {
+        @foreach (var item in Model.Results)
+        {
+            @Html.Partial("Partials/SearchItem", item)
+        }
+        @if (Model.HasPaging)
+        {
+            <ul class="pagination">
+                @foreach (var page in Model.GetPages())
+                {
+                    <li @(string.IsNullOrWhiteSpace(page.CssClass) ? "" : "class=" + page.CssClass)><a href="@page.Url">@page.Label</a></li>
+                }
+            </ul>
+        }
+    }
+</div>

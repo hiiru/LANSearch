@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LANSearch, FTP search engine for created Netgame">
+    <meta name="author" content="Track">
+    <title>LANSearch .:. Error</title>
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/bootstrap-theme.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/lansearch.css")" rel="stylesheet">
+</head>
+<body class="error">
+    <div class="container">
+        <div class="panel panel-@Model.ErrorType">
+            <div class="panel-heading"><h3 class="panel-title">@Model.StatusCode - @Model.ErrorTitle</h3></div>
+            <div class="panel-body">@Html.Raw(Model.ErrorMessage)</div>
+            <div class="panel-footer">Visit the <a href="/">home page</a> to continue.</div>
+        </div>
+    </div>
+    <script src="@Url.Content("~/Scripts/jquery-1.9.0.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/lansearch.js")"></script>
+</body>
+</html>

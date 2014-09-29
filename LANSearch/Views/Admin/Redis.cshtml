@@ -1,0 +1,26 @@
+﻿@using System.Collections.Generic
+@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Admin .:. Jobs";
+}
+<div class="col-xs-12 content">
+    <h2>Redis</h2>
+    <div class="alert alert-danger" role="alert">Warning: Deleting items might break the application</div>
+    <hr />
+    <div class="col-xs-12">
+            @foreach (KeyValuePair<string, string> item in Model)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>@item.Key</strong>
+                        <div class="pull-right">
+                            <form method="POST">
+                                <button name="delete" value="@item.Key" type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel-body">@item.Value</div>
+                </div>
+            }
+    </div>
+</div>

@@ -1,0 +1,14 @@
+﻿<div class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas hidden-print" id="sidebar" role="navigation">
+    @foreach (var filter in Model.Filters)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">@filter.Title</h3></div>
+            <div class="list-group">
+                @foreach (var item in filter.Items)
+                {
+                    <a class="list-group-item@(item.IsActive ? " active" : "")" href="@item.Url">@item.Title<span class="badge">@item.Count</span></a>
+                }
+            </div>
+        </div>
+    }
+</div>

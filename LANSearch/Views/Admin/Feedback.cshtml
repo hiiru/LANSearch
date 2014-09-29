@@ -1,0 +1,46 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Admin .:. Feedback";
+}
+<div class="col-xs-12 content">
+    @foreach (var item in Model.Feedbacks)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @if (!item.Read)
+                {
+                    <span class="label label-primary">NEW</span>
+                }
+                <strong>Feedback from </strong>@item.Name
+                <div class="pull-right">
+                    <form method="POST">
+                        <button name="delete" value="@item.Id" type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                    </form>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-5 col-xs-8"><strong>Submitted: </strong>@item.Created.ToString()</div>
+                    <div class="col-md-1 col-xs-4 pull-right"><strong>ID: </strong>@item.Id</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6"><strong>Email: </strong>@item.Email</div>
+                    <div class="col-sm-6"><strong>Location: </strong>@item.Location</div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-xs-12">@item.Text</div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.HasPaging)
+    {
+        <ul class="pagination">
+            @foreach (var page in Model.GetPages())
+            {
+                <li @(string.IsNullOrWhiteSpace(page.CssClass) ? "" : "class=" + page.CssClass)><a href="@page.Url">@page.Label</a></li>
+            }
+        </ul>
+    }
+</div>

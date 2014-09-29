@@ -1,0 +1,29 @@
+﻿@using LANSearch
+@if (RenderContext.Context.CurrentUser == null)
+{
+    <ul class="nav navbar-nav pull-right hidden-xs">
+        <li class="dropdown">
+            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Login <strong class="caret"></strong></a>
+            <div class="dropdown-menu">
+                <form class="form login" method="post" action="@Url.Content("~/Login")@RenderContext.Context.Request.Url.ToReturnUrl()">
+                    <div class="form-group">
+                        <label class="control-label" for="user">Username</label>
+                        <input name="user" type="text" class="form-control" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="pass">Password</label>
+                        <input name="pass" type="password" class="form-control" maxlength="20">
+                    </div>
+                    <button type="submit" class="btn btn-default">Login</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav hidden-lg hidden-md hidden-sm">
+        <li><a href="@Url.Content("~/Login")@RenderContext.Context.Request.Url.ToReturnUrl()">Login</a></li>
+    </ul>
+}
+else
+{
+    <p class="navbar-text pull-right xs-left">Logged in as @RenderContext.Context.CurrentUser.UserName | <a href="@Url.Content("~/Logout")">Logout</a></p>
+}

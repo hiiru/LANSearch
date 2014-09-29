@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Login";
+}
+<div class="row">
+    @if (Model.IsLoggedIn)
+    {
+        <div class="col-sm-12 content">
+            You're currently logged in as  @Model.LoginUsername
+            <form method="GET" action="@Url.Content("~/Logout")">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-5 content">
+            <h2>Login</h2>
+            <p>
+                <form class="form login" method="post">
+                    <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorUsername) ? " has-error" : "")">
+                        <label class="control-label" for="user">Username</label>
+                        <input name="user" type="text" class="form-control" maxlength="20" value="@Model.LoginUsername">
+                        @if (!string.IsNullOrWhiteSpace(Model.LoginErrorUsername))
+                        {
+                <p class="text-danger">@Model.LoginErrorUsername</p>
+                        }
+                    </div>
+
+                    <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorPassword) ? " has-error" : "")">
+                        <label class="control-label" for="pass">Password</label>
+                        <input name="pass" type="password" class="form-control" maxlength="50">
+                        @if (!string.IsNullOrWhiteSpace(Model.LoginErrorPassword))
+                        {
+                            <p class="text-danger">@Model.LoginErrorPassword</p>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    </p>
+                </div>
+                <div class="col-sm-7 content">
+                    <h2>Registration</h2>
+                    <p>
+                        <form class="form feedback" method="POST" action="@Url.Content("~/Login/Register")@(!string.IsNullOrWhiteSpace(Model.ReturnUrl) ? "?returnUrl=" + Model.ReturnUrl : "")">
+                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorUser)?" has-error":"")">
+                                <label class="control-label" for="regUser">Username</label>
+                                <input name="regUser" type="text" class="form-control" maxlength="20" value="@Model.RegisterUser">
+                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorUser))
+                                {
+                                    <p class="text-danger">@Model.RegisterErrorUser</p>
+                                }
+                            </div>
+                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail) ? " has-error" : "")">
+                                <label class="control-label" for="regEmail">E-Mail</label>
+                                @*<div class="alert alert-info" role="alert">You will get an email on this address.</div>*@
+                                <input name="regEmail" type="text" class="form-control" maxlength="50" value="@Model.RegisterEmail">
+                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail))
+                                {
+                                    <p class="text-danger">@Model.RegisterErrorEmail</p>
+                                }
+                            </div>
+                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
+                                <label class="control-label" for="regPass1">Password</label>
+                                <input name="regPass1" type="password" class="form-control" maxlength="20">
+                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
+                                {
+                                    <p class="text-danger">@Model.RegisterErrorPassword</p>
+                                }
+                            </div>
+                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
+                                <label class="control-label" for="regPass2">Re-enter Password</label>
+                                <input name="regPass2" type="password" class="form-control" maxlength="20">
+                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
+                                {
+                                    <p class="text-danger">@Model.RegisterErrorPassword</p>
+                                }
+                            </div>
+                            <button type="submit" class="btn btn-default">Register</button>
+                        </form>
+                    </p>
+</div>
+}
+</div>

@@ -1,0 +1,36 @@
+﻿<div role="navigation" class="navbar navbar-default navbar-inverse navbar-static-top hidden-print">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@Url.Content("~/Search")">LANSearch</a>
+            @if (ViewBag.NavBar_ShowFilter)
+            {
+                <div class="col-xs-2 hidden-lg hidden-md hidden-sm navbar-brand">
+                    <button type="button" class="btn btn-xs" data-toggle="offcanvas">Show Filter</button>
+                </div>
+            }
+        </div>
+        <div class="collapse navbar-collapse">
+            @if (ViewBag.App_Maintenance)
+            {
+                <ul class="nav navbar-nav">
+                    @Html.Partial("Master/NavBarAdmin")
+                </ul>
+            }
+            else
+            {
+                <ul class="nav navbar-nav">
+                    <li><a href="@Url.Content("~/Search")">Search</a></li>
+                    <li><a href="@Url.Content("~/Info")">Info</a></li>
+                    @Html.Partial("Master/NavBarMember")
+                    @Html.Partial("Master/NavBarAdmin")
+                </ul>
+                @Html.Partial("Master/NavBarLogin")
+            }
+        </div>
+    </div>
+</div>

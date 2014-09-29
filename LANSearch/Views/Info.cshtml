@@ -1,0 +1,143 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Info & Feedback";
+}
+<div class="row">
+    <div class="col-sm-8 content">
+        <h2>Info</h2>
+        <p>LANSearch is a search engine for files on LAN Servers (currently only FTP is supported).</p>
+
+        <h4>Why a search engine?</h4>
+        <p>I was always tired of wasting time with searching through all the servers for a certain thing :)</p>
+        <p>The search engine should help everyone to find things faster, less time searching means more time for friends.</p>
+
+        TODO: Notifications, or remove reference here
+        <h4>Why is there a Login/Registration?</h4>
+        <p>A user-account allows you to configure search notifications and add own servers to the search.</p>
+
+        <h4>What is a search notification?</h4>
+        <p>A search notification is an automated search which informs you about new search results.</p>
+        <p>e.g. if you want "rare game 1337" but the search returns 0 results, then setup a notification, as soon as a result for "rare game 1337" is found, you'll be notified by E-Mail.</p>
+    </div>
+    <div class="col-sm-4 content">
+        <h2>Feedback</h2>
+        @if (Model.IsSuccess)
+        {
+            <div class="alert alert-success" role="alert">Your Feedback is recoded, Thanks :)</div>
+        }
+        else
+        {
+            <p>
+                Do you have any questions, suggestions or other feedback?<br />
+                Feel Free to submit them with this form.
+                <div class="alert alert-info" role="alert">Please submit only feedback in German or English.</div>
+            </p>
+
+            <form class="form feedback" method="POST" action="@Url.Content("~/Info")">
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.ErrorName)?" has-error":"")">
+                    <label class="control-label" for="name">Name</label>
+                    <input name="name" type="text" class="form-control" maxlength="50" value="@Model.Name">
+                    @if (!string.IsNullOrWhiteSpace(Model.ErrorName))
+                    {
+                        <p class="text-danger">@Model.ErrorName</p>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.ErrorEmail) ? " has-error" : "")">
+                    <label class="control-label" for="email">E-Mail (Optional)</label>
+                    <input name="email" type="text" class="form-control" maxlength="50" value="@Model.Email">
+                    @if (!string.IsNullOrWhiteSpace(Model.ErrorEmail))
+                    {
+                        <p class="text-danger">@Model.ErrorEmail</p>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.ErrorLocation) ? " has-error" : "")">
+                    <label class="control-label" for="location">Location (Optional, e.g. Seat number)</label>
+                    <input name="location" type="text" class="form-control" maxlength="50" value="@Model.Location">
+                    @if (!string.IsNullOrWhiteSpace(Model.ErrorLocation))
+                    {
+                        <p class="text-danger">@Model.ErrorLocation</p>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.ErrorText) ? " has-error" : "")">
+                    <label class="control-label" for="text">Text</label>
+                    <textarea name="text" class="form-control" maxlength="1000" rows="5">@Model.Text</textarea>
+                    @if (!string.IsNullOrWhiteSpace(Model.ErrorText))
+                    {
+                        <p class="text-danger">@Model.ErrorText</p>
+                    }
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        }
+    </div>
+</div>
+<div class="row">
+    <h3>Questions & Answers</h3>
+</div>
+<div class="row">
+    <div class="col-sm-4 content">
+        <h4>What Technology is used?</h4>
+        <p>The Project uses <a href="http://lucene.apache.org/solr/">Apache Solr</a> as searchserver and <a href="http://redis.io/">Redis</a> as data storage.</p>
+        <p>The Code is written in C# and uses <a href="http://owin.org/">OWIN</a> self-hosted webserver, it should be mono compatible (untested).</p>
+        <p>
+            Further used libraries/frameworks:
+            <ul>
+                <li><a href="http://getbootstrap.com/">Bootstrap 3</a> for the frontend.</li>
+                <li><a href="http://nancyfx.org/">NancyFx</a> lightweight MVC Framework</li>
+                <li><a href="http://hangfire.io/">Hangfire</a> for background Jobs</li>
+            </ul>
+        </p>
+        <p>
+            This Project is open-source under the <a href="http://choosealicense.com/licenses/bsd-2-clause/">simplified BSD</a> license,
+            the code can be found <a href="https://github.com/hiiru/LANSearch">here (github)</a>.
+        </p>
+    </div>
+    <div class="col-sm-4 content">
+        <h4>When was it created?</h4>
+        <p>
+            I got the idea for a search engine for LANs years ago, however because I'm lazy, i didn't created one until 2013.
+            At the Netgame 2013 there was a very simple proof of concept which only offered search (single page) and required me to manually index the servers (well start a separate piece of software to do so).
+            That proof of concept back then was created in 2 days and only stored search data in solr.
+        </p>
+        <p>
+            Now for the NetGame 2014, I decided to recreate the search engine and improve it.
+            Also it was a nice small Project to try out Nancy, Hangfire and Redis :)
+            The total time spent in this Project is about 2 Weeks.
+        </p>
+    </div>
+    <div class="col-sm-4 content">
+        <h4>Warum ist alles englisch?</h4>
+        <p>
+            Weil ich zu faul bin alles zu übersetzen ^^
+        </p>
+        <p>
+            Sowie weil es einfacher ist nur einsprachiger code zu schreiben am anfang (= Neue dinge sind schneller gebaut).
+            Ausserdem da ich den sourcecode veröffentlichen will, ist es global gesehen hilfreicher alles in englisch zu haben.
+        </p>
+        <p>
+            Falls du dies auf Deutsch haben möchtest, hinterlasse ein Feedback mit dem Formular auf dieser Seite :)
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4 content">
+        <h4>Can I use LANSearch for my LAN?</h4>
+        <p>Feel free to use the source or contact me if you have further questions.</p>
+    </div>
+    <div class="col-sm-4 content">
+        <h4>How is my Password stored?</h4>
+        <p>
+            The password is stored as an salted PBKDF2 hash.<br />
+            More details can be found <a href="https://crackstation.net/hashing-security.htm">here</a> (incl. used source code).
+        </p>
+        <p>TLDR; It's stored more securely than in most online applications, sadly...</p>
+    </div>
+</div>
+@*<div class="row">
+        <div class="col-sm-4 content">
+        </div>
+        <div class="col-sm-4 content">
+        </div>
+        <div class="col-sm-4 content">
+        </div>
+    </div>*@

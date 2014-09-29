@@ -1,0 +1,46 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Admin .:. User .:. List";
+}
+<div class="col-xs-12 content">
+    <a href="@Url.Content("~/Admin/User/Create")">Create new User</a>
+</div>
+<div class="col-xs-12 content">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-1">Id</th>
+                <th>Username</th>
+                <th>E-Mail</th>
+                <th class="col-md-1">Disabled</th>
+                <th class="col-md-3">Claims</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td><a href="@Url.Content(string.Format("~/Admin/User/Detail/{0}", user.Id))">@user.Id</a></td>
+                    <td><a href="@Url.Content(string.Format("~/Admin/User/Detail/{0}", user.Id))">@user.UserName</a></td>
+                    <td>@user.Email</td>
+                    <td><a href="@Url.Content(string.Format("~/Admin/User/{0}/{1}", user.Disabled?"Enable":"Disable",  user.Id))">@user.Disabled</a></td>
+                    <td>
+                        @foreach (var claim in user.Claims)
+                        {
+                            @(claim + ", ")
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.HasPaging)
+    {
+        <ul class="pagination">
+            @foreach (var page in Model.GetPages())
+            {
+                <li @(string.IsNullOrWhiteSpace(page.CssClass) ? "" : "class=" + page.CssClass)><a href="@page.Url">@page.Label</a></li>
+            }
+        </ul>
+    }
+</div>

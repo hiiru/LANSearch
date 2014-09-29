@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Search";
+    ViewBag.NavBar_ShowFilter = Model.HasFilter;
+}
+@if (Model.HasError)
+{
+    <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+}
+else
+{
+    @Html.Partial("Partials/SearchBar", Model)
+    <div class="container-fluid spacer-10">
+        <div class="row row-offcanvas row-offcanvas-left">
+            @if (Model.HasFilter)
+            {
+                @Html.Partial("Partials/SearchFilter", Model)
+            }
+            @Html.Partial("Partials/SearchList", Model)
+        </div>
+    </div>
+}

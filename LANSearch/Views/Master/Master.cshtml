@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LANSearch, FTP search engine for created Netgame">
+    <meta name="author" content="Track">
+    <title>LANSearch .:. @ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/bootstrap-theme.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/lansearch.css")" rel="stylesheet">
+</head>
+<body>
+    @Html.Partial("Master/NavBar")
+    @if (ViewBag.App_Announcement)
+    {
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1"><div class="alert alert-info" role="alert">@ViewBag.App_Announcement</div></div>
+        </div>
+    }
+    <div class="container">
+        @RenderBody()
+    </div>
+    @if (!ViewBag.App_Maintenance)
+    {
+        <footer>
+            <hr />
+            <div class="container">
+                The LANSearch was created by Track, visit the <a href="@Url.Content("~/Info")">Info Page</a> for more Details.<br />
+                ENJOY the NetGame 2014!
+            </div>
+        </footer>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.9.0.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/lansearch.js")"></script>
+</body>
+</html>

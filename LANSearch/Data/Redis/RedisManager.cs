@@ -1,0 +1,335 @@
+﻿using ServiceStack.Redis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LANSearch.Data.Redis
+{
+    public class RedisManager
+    {
+        public RedisManager()
+        {
+            Pool = new PooledRedisClientManager(InitConfig.RedisDbApp, string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort));
+        }
+
+        public PooledRedisClientManager Pool { get; protected set; }
+
+        protected int GetId(string key)
+        {
+            using (var client = Pool.GetClient())
+            {
+                return (int)client.Increment(key, 1);
+            }
+        }
+
+        #region Feedback
+
+        protected const string RedisFeedbackKeyId = "urn:feedback:id";
+
+        public void FeedbackSave(Feedback.Feedback obj)
+        {
+            if (obj == null) return;
+            if (obj.Id == 0)
+            {
+                obj.Id = GetId(RedisFeedbackKeyId);
+            }
+            using (var client = Pool.GetClient())
+            {
+                var feedbackClient = client.As<Feedback.Feedback>();
+                using (var transaction = feedbackClient.CreateTransaction())
+                {
+                    transaction.QueueCommand(x => x.DeleteById(obj.Id));
+                    transaction.QueueCommand(x => x.Store(obj));
+                    transaction.Commit();
+                }
+            }
+        }
+
+        public IList<Feedback.Feedback> FeedbackGetAll()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var feedbackClient = client.As<Feedback.Feedback>();
+                return feedbackClient.GetAll();
+            }
+        }
+
+        public Feedback.Feedback FeedbackGet(int id)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var feedbackClient = client.As<Feedback.Feedback>();
+
+                return feedbackClient.GetById(id);
+            }
+        }
+
+        #endregion Feedback
+
+        #region User
+
+        protected const string RedisUserKeyId = "urn:user:id";
+        protected const string RedisUserKeyHash = "urn:user:nameHash";
+        protected const string RedisUserKeySession = "urn:user:sess_{0}";
+
+        protected const string RedisUserKeyLock = "urn:user:lock_{0}";
+
+        public void UserSave(User.User obj)
+        {
+            if (obj == null) return;
+            if (obj.Id == 0)
+            {
+                obj.Id = GetId(RedisUserKeyId);
+            }
+            using (var client = Pool.GetClient())
+            {
+                var userClient = client.As<User.User>();
+                var oldUser = userClient.GetById(obj.Id);
+                using (var transaction = userClient.CreateTransaction())
+                {
+                    transaction.QueueCommand(x => x.DeleteById(obj.Id));
+                    transaction.QueueCommand(x => x.Store(obj));
+                    transaction.Commit();
+                }
+                if (oldUser != null && oldUser.UserName == obj.UserName)
+                    return;
+
+                var clientNames = client.Hashes[RedisUserKeyHash];
+                if (oldUser != null)
+                    clientNames.Remove(oldUser.UserName);
+                clientNames.Add(obj.UserName, obj.Id.ToString());
+            }
+        }
+
+        public IList<User.User> UserGetAll()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var userClient = client.As<User.User>();
+                return userClient.GetAll();
+            }
+        }
+
+        public User.User UserGet(int id)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var userClient = client.As<User.User>();
+                return userClient.GetById(id);
+            }
+        }
+
+        public User.User UserGet(string name)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var clientNames = client.Hashes[RedisUserKeyHash];
+                string strId;
+                if (!clientNames.TryGetValue(name, out strId))
+                    return null;
+                int id;
+                if (!int.TryParse(strId, out id))
+                    return null;
+                var userClient = client.As<User.User>();
+                return userClient.GetById(id);
+            }
+        }
+
+        public bool UserIsNameUsed(string name)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var clientNames = client.Hashes[RedisUserKeyHash];
+                return clientNames.ContainsKey(name);
+            }
+        }
+
+        public IDisposable UserGetLock(string name)
+        {
+            using (var client = Pool.GetClient())
+            {
+                return client.AcquireLock(string.Format(RedisUserKeyLock, name));
+            }
+        }
+
+        public Guid UserSessionStart(User.User user)
+        {
+            if (user == null)
+                throw new ArgumentException("user");
+            var guid = Guid.NewGuid();
+            var key = string.Format(RedisUserKeySession, guid.ToString("N"));
+            using (var client = Pool.GetClient())
+            {
+                client.SetEntry(key, user.Id.ToString(), TimeSpan.FromHours(2));
+            }
+            return guid;
+        }
+
+        public User.User UserSessionResolve(Guid guid)
+        {
+            if (guid == Guid.Empty) return null;
+            var key = string.Format(RedisUserKeySession, guid.ToString("N"));
+            using (var client = Pool.GetClient())
+            {
+                var entry = client.Get<string>(key);
+                if (!string.IsNullOrWhiteSpace(entry))
+                {
+                    int id;
+                    if (!int.TryParse(entry, out id))
+                        return null;
+
+                    client.ExpireEntryIn(key, TimeSpan.FromHours(1));
+                    var userClient = client.As<User.User>();
+                    return userClient.GetById(id);
+                }
+            }
+            return null;
+        }
+
+        public void UserRepairNameHash()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var clientNames = client.Hashes[RedisUserKeyHash];
+                if (clientNames.Count == 0)
+                {
+                    var userClient = client.As<User.User>();
+                    var users = userClient.GetAll();
+                    foreach (var user in users)
+                    {
+                        clientNames.Add(user.UserName, user.Id.ToString());
+                    }
+                }
+            }
+        }
+
+        #endregion User
+
+        #region Server
+
+        protected const string RedisKeyId = "urn:server:id";
+        protected const string RedisKeyHidden = "urn:server:Hidden";
+
+        public void ServerSave(Server.Server obj)
+        {
+            if (obj == null) return;
+            if (obj.Id == 0)
+            {
+                obj.Id = GetId(RedisKeyId);
+            }
+            using (var client = Pool.GetClient())
+            {
+                var serverClient = client.As<Server.Server>();
+                using (var transaction = serverClient.CreateTransaction())
+                {
+                    transaction.QueueCommand(x => x.DeleteById(obj.Id));
+                    transaction.QueueCommand(x => x.Store(obj));
+                    transaction.Commit();
+                }
+                var intClient = client.As<int>();
+                var hiddenList = intClient.Lists[RedisKeyHidden];
+                var isHidden = hiddenList.Contains(obj.Id);
+                if (obj.Hidden && !isHidden)
+                    hiddenList.Add(obj.Id);
+                else if (!obj.Hidden && isHidden)
+                    hiddenList.Remove(obj.Id);
+            }
+        }
+
+        public IList<Server.Server> ServerGetAll()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var serverClient = client.As<Server.Server>();
+                return serverClient.GetAll();
+            }
+        }
+
+        public Server.Server ServerGet(int id)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var serverClient = client.As<Server.Server>();
+                return serverClient.GetById(id);
+            }
+        }
+
+        public List<int> ServerGetHidden()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var intClient = client.As<int>();
+                return intClient.Lists[RedisKeyHidden].ToList();
+            }
+        }
+
+        #endregion Server
+
+        #region Configuration Management
+
+        protected const string RedisConfigKey = "urn:config:dict";
+
+        public Dictionary<string, object> ConfigGet()
+        {
+            try
+            {
+                using (var client = Pool.GetClient())
+                    return client.Get<Dictionary<string, object>>(RedisConfigKey);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public void ConfigStore(Dictionary<string, object> config)
+        {
+            try
+            {
+                using (var client = Pool.GetClient())
+                    client.Set(RedisConfigKey, config);
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        #endregion Configuration Management
+
+        #region Ftp Crawler
+
+        protected const string RedisCrawlerInUse = "urn:job_crawler:lock_{0}";
+
+        public bool FtpCrawlerServerIsLocked(int id)
+        {
+            var key = string.Format(RedisCrawlerInUse, id);
+            using (var client = Pool.GetClient())
+            {
+                if (client.ContainsKey(key))
+                    return true;
+                client.SetEntry(key, "true", TimeSpan.FromMinutes(10));
+            }
+            return false;
+        }
+
+        public void FtpCrawlerServerUnlock(int id)
+        {
+            var key = string.Format(RedisCrawlerInUse, id);
+            using (var client = Pool.GetClient())
+            {
+                client.RemoveEntry(key);
+            }
+        }
+
+        #endregion Ftp Crawler
+
+        public List<string> SearchKeys(string s)
+        {
+            using (var client = Pool.GetClient())
+            {
+                return client.SearchKeys(s);
+            }
+        }
+    }
+}

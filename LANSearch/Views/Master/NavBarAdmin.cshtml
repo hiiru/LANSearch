@@ -1,0 +1,18 @@
+﻿@using LANSearch.Data.User
+@using Nancy.Security
+@if (RenderContext.Context.CurrentUser != null && RenderContext.Context.CurrentUser.HasClaim(UserRoles.ADMIN))
+{
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Content("~/Admin/Feedback")">Feedback</a></li>
+            <li><a href="@Url.Content("~/Admin/User")">Users</a></li>
+            <li><a href="@Url.Content("~/Admin/Server")">Servers</a></li>
+            <li class="divider"></li>
+            <li><a href="@Url.Content("~/Admin/Hangfire")">Hangfire Dashboard</a></li>
+            <li><a href="@Url.Content("~/Admin/Jobs")">Recurring Jobs</a></li>
+            <li><a href="@Url.Content("~/Admin/Redis")">Redis</a></li>
+            <li><a href="@Url.Content("~/Admin/Configuration")">Configuration</a></li>
+        </ul>
+    </li>
+}

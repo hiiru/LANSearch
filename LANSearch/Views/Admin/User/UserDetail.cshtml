@@ -1,0 +1,99 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Admin .:. User .:. Detail";
+}
+<div class="col-xs-12 content">
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert">@Html.Raw(Model.Error)</div>
+    }
+    <div class="row">
+        <form class="form" method="post">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label class=" control-label" for="user">Username</label>
+                    <input name="user" type="text" class="form-control" maxlength="20" value="@Model.User.UserName">
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="control-label" for="email">Email</label>
+                    <input name="email" type="text" class="form-control" maxlength="20" value="@Model.User.Email">
+                </div>
+            </div>
+            @if (!Model.IsCreation)
+            {
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="control-label" for="pass">Set new Password</label>
+                        <input name="pass" type="password" class="form-control" maxlength="50" placeholder="Keep empty for no change">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="control-label" for="emailkey">Email Activation Code</label>
+                        <input name="emailkey" type="text" class="form-control" maxlength="20" value="@Model.User.EmailValidationKey">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <div class="checkbox">
+                            <label><input name="disabled" type="checkbox" @(Model.User.Disabled ? " checked=\"checked\"" : "")> Disabled</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6"><strong>Registered: </strong>@Model.User.Registed</div>
+                    <div class="col-md-6"><strong>LastLogin: </strong>@Model.User.LastLogin</div>
+                </div>
+            }
+            else
+            {
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="control-label" for="pass">Password</label>
+                        <input name="pass" type="password" class="form-control" maxlength="50">
+                    </div>
+                </div>
+            }
+            <button type="submit" class="btn btn-default">Save Changes</button>
+        </form>
+    </div>
+</div>
+<br />
+@if (!Model.IsCreation)
+{
+    <div class="container">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Claims (@Model.User.Claims.Count)</div>
+                <ul class="list-group">
+                    @foreach (var claim in Model.User.Claims)
+                    {
+                        <li class="list-group-item">@claim</li>
+                    }
+                </ul>
+                <div class="panel-footer">
+                    <form class="form-inline" role="form" method="POST" action="@Url.Content(string.Format("~/Admin/User/Detail/{0}/Claims", @Model.User.Id))">
+                        <div class="form-group">
+                            <select name="claim" class="form-control">
+                                <option value="unverified">Unverified</option>
+                                <option value="member">Member</option>
+                                <option value="serverowner">Server Owner</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-default" name="add" value="true">Add</button>
+                        <button type="submit" class="btn btn-default" name="remove" value="true">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">Login Log</div>
+                <ul class="list-group">
+                    @foreach (var logEntry in Model.User.GetReversedLoginLog())
+                    {
+                        <li class="list-group-item">@logEntry</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
