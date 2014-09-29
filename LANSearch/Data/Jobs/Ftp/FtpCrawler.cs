@@ -1,4 +1,5 @@
-﻿using Mizore.CommunicationHandler.RequestHandler;
+﻿using Common.Logging;
+using Mizore.CommunicationHandler.RequestHandler;
 using Mizore.CommunicationHandler.ResponseHandler;
 using System;
 using System.Collections.Concurrent;
@@ -15,6 +16,7 @@ namespace LANSearch.Data.Jobs.Ftp
 {
     public class FtpCrawler
     {
+        protected ILog Logger = LogManager.GetCurrentClassLogger();
         protected AppContext Ctx { get { return AppContext.GetContext(); } }
 
         public FtpStatus CheckServer(Server.Server server)
@@ -65,22 +67,42 @@ namespace LANSearch.Data.Jobs.Ftp
         public void CrawlServers()
         {
             if (!Ctx.SolrServer.IsOnline)
+            {
+                Logger.Info("CrawlServers stopped because solr is offline.");
                 return;
+            }
             var servers = Ctx.ServerManager.GetAll().Where(x => !x.NoScans).ToList();
             if (!servers.Any())
+            {
+                Logger.Info("CrawlServers stopped because no server is set.");
                 return;
+            }
             Task.WaitAll(servers.Select(CrawlServer).ToArray());
         }
 
         public void CrawlServer(int id)
         {
             if (!Ctx.SolrServer.IsOnline)
+            {
+                Logger.InfoFormat("CrawlServer for id {0} stopped because solr is offline.",id);
                 return;
+            }
             var server = Ctx.ServerManager.Get(id);
-            if (server == null || server.NoScans)
+            if (server == null)
+            {
+                Logger.InfoFormat("CrawlServer for id {0} stopped because id is invalid (server object is null).", id);
                 return;
+            }
+            if (server.NoScans)
+            {
+                Logger.InfoFormat("CrawlServer for id {0} stopped because NoScans is set.", id);
+                return;
+            }
             if (Ctx.RedisManager.FtpCrawlerServerIsLocked(id))
+            {
+                Logger.WarnFormat("Prevented crawling for server {0} because Redis lock is still engaged", id);
                 return;
+            }
             var task = CrawlServer(server);
             task.Wait();
             Ctx.RedisManager.FtpCrawlerServerUnlock(id);
@@ -90,12 +112,14 @@ namespace LANSearch.Data.Jobs.Ftp
         {
             return Task.Factory.StartNew(() =>
             {
-                Console.WriteLine("Starting crawling for server " + server.Id);
+                Logger.InfoFormat("Started FTP Crawling for server {0}.", server.Id);
                 var queue = new BlockingCollection<FtpListItem>(1000);
                 Task.Run(() => CrawlFtpServer(server, queue));
+                int count = 0;
                 var files = new List<File>();
                 foreach (var item in queue.GetConsumingEnumerable())
                 {
+                    count++;
                     var file = new File
                     {
                         ServerId = server.Id,
@@ -116,19 +140,27 @@ namespace LANSearch.Data.Jobs.Ftp
                 {
                     DoSolrIndex(files);
                 }
+                Logger.InfoFormat("DONE: Server {0} is crawled, indexed {1} files.", server.Id, count);
             });
         }
 
         private void DoSolrIndex(IEnumerable<File> list)
         {
-            var updateRequest = new UpdateRequest(Ctx.SolrServer.GetUriBuilder());
-            foreach (var file in list)
+            try
             {
-                var doc = Ctx.SolrMapper.GetDocument(file);
-                updateRequest.Add(doc);
+                var updateRequest = new UpdateRequest(Ctx.SolrServer.GetUriBuilder());
+                foreach (var file in list)
+                {
+                    var doc = Ctx.SolrMapper.GetDocument(file);
+                    updateRequest.Add(doc);
+                }
+                //This has to throw an error if there is a problem, do not use TryRequest here.
+                Ctx.SolrServer.Request<UpdateResponse>(updateRequest);
             }
-            //This has to throw an error if there is a problem, do not use TryRequest here.
-            Ctx.SolrServer.Request<UpdateResponse>(updateRequest);
+            catch (Exception e)
+            {
+                Logger.Error("Exception occurred while updating solr", e);
+            }
         }
 
         private void CrawlFtpServer(Server.Server server, BlockingCollection<FtpListItem> queue)
@@ -162,6 +194,10 @@ namespace LANSearch.Data.Jobs.Ftp
             try
             {
                 GetList(ftp, "/", queue, visited, root);
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorFormat("Exception while crawling server {0}", e, server.Id);
             }
             finally
             {

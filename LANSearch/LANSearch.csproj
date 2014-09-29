@@ -157,7 +157,6 @@
     <Compile Include="InitConfig.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpCrawler.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />
-    <Compile Include="Data\Jobs\Sandbox.cs" />
     <Compile Include="LoggerMiddleware.cs" />
     <Compile Include="Models\Admin\FeedbackModel.cs" />
     <Compile Include="Models\Admin\Server\ServerDetailModel.cs" />
@@ -188,7 +187,6 @@
     <Compile Include="Modules\Member\NotificationModule.cs" />
     <Compile Include="Modules\Member\ProfileModule.cs" />
     <Compile Include="Modules\Member\ServerModule.cs" />
-    <Compile Include="Modules\SandboxModule.cs" />
     <Compile Include="Modules\SearchModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
