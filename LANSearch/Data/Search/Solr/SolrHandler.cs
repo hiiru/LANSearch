@@ -106,7 +106,7 @@ namespace LANSearch.Data.Search.Solr
                         var text = entries.GetKey(j);
                         var title = solrFilter.GetFilterText(text);
                         if (title == null) continue;
-                        var isActive = solrFilter.Value == text;
+                        var isActive = solrFilter.IsSelected(text);
                         current.Items.Add(new SearchFilter.SearchFilterItem
                         {
                             Title = title,
@@ -130,7 +130,7 @@ namespace LANSearch.Data.Search.Solr
                         var title = solrFilter.GetFilterText(key);
                         if (title == null) continue;
                         var url = UrlBuilder.Clone();
-                        var isActive = solrFilter.Value == key;
+                        var isActive = solrFilter.IsSelected(key);
                         size.Items.Add(new SearchFilter.SearchFilterItem
                         {
                             Title = title,

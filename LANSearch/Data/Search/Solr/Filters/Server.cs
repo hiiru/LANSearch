@@ -17,6 +17,11 @@ namespace LANSearch.Data.Search.Solr.Filters
         {
             return solrValue;
         }
+        public bool IsSelected(string value)
+        {
+            if (ActiveValue == null) return false;
+            return value == ActiveValue;
+        }
 
         public string GetFilterText(string value)
         {
@@ -41,15 +46,14 @@ namespace LANSearch.Data.Search.Solr.Filters
             qp.Add("f.server.facet.mincount", "1");
         }
 
+        protected string ActiveValue;
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return;
             int serverId;
             if (!int.TryParse(value, out serverId) || serverId < 1) return;
-            Value = value;
+            ActiveValue = value;
             qp.Add(CommonParams.FQ, string.Format("{0}:{1}", "{!tag=server}server", serverId));
         }
-
-        public string Value { get; private set; }
     }
 }

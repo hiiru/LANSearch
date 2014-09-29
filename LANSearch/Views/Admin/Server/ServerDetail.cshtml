@@ -8,9 +8,10 @@
         <div class="row">
             <div class="col-md-1">ID: @Model.Server.Id</div>
             <div class="col-md-5"><a href="@Model.Server.Url">@Model.Server.Url</a></div>
-            <div class="col-md-2"><button type="submit" class="btn btn-info">Rescan</button></div>
-            <div class="col-md-2"><button type="submit" class="btn btn-default">Rescan</button></div>
-            <div class="col-md-2"><button type="submit" class="btn btn-danger">Remove from Search</button></div>
+            <form method="POST" action="@Url.Content(string.Format("~/Admin/Server/Detail/{0}/Action",Model.Server.Id))">
+            <div class="col-md-1"><button type="submit" name="rescan" value="true" class="btn btn-info">Rescan</button></div>
+            <div class="col-md-1"><button type="submit" name="remove" value="true" class="btn btn-danger">Remove from Solr</button></div>
+            </form>
         </div>
         <hr />
         <div class="row">

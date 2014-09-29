@@ -12,10 +12,10 @@ namespace LANSearch.Data.Search.Solr.Filters
 
         string GetFilterText(string value);
 
+        bool IsSelected(string value);
+
         void UpdateFacetQuery(INamedList<string> qp);
 
         void UpdateFilterQuery(INamedList<string> qp, string qsValue);
-
-        string Value { get; }
     }
 }

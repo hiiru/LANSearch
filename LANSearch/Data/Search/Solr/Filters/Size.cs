@@ -1,5 +1,7 @@
-﻿using Mizore.CommunicationHandler.Data.Params;
+﻿using System;
+using Mizore.CommunicationHandler.Data.Params;
 using Mizore.ContentSerializer.Data;
+using ServiceStack.Common.Extensions;
 
 namespace LANSearch.Data.Search.Solr.Filters
 {
@@ -16,7 +18,7 @@ namespace LANSearch.Data.Search.Solr.Filters
         public string GetQSValue(string solrValue)
         {
             if (string.IsNullOrWhiteSpace(solrValue) || solrValue.Length < 16) return null;
-            var range = solrValue.Substring(16, solrValue.Length - 17);
+            var range = solrValue.Substring(16, solrValue.Length - 17).Replace(" TO ","-");
 
             return range;
         }
@@ -42,6 +44,12 @@ namespace LANSearch.Data.Search.Solr.Filters
             }
         }
 
+        public bool IsSelected(string value)
+        {
+            if (value == null || ActiveValue==null) return false;
+            return ActiveValue == GetQSValue(value);
+        }
+
         public void UpdateFacetQuery(INamedList<string> qp)
         {
             qp.Add(FacetParams.FACET_QUERY, "{!ex=size}size:[0+TO+1048576]");
@@ -50,11 +58,17 @@ namespace LANSearch.Data.Search.Solr.Filters
             qp.Add(FacetParams.FACET_QUERY, "{!ex=size}size:[1048576000+TO+*]");
         }
 
+        protected string ActiveValue;
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
-            return;
+            if (string.IsNullOrWhiteSpace(value)) return;
+            var splited=value.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
+            if (splited.Length != 2) return;
+            int start, end;
+            if (!int.TryParse(splited[0], out start)) return;
+            if (!int.TryParse(splited[1], out end) && splited[1] != "*") return;
+            ActiveValue = value;
+            qp.Add(CommonParams.FQ, string.Format("{0}:[{1} TO {2}]", "{!tag=size}size", start, end == 0 ? "*" : end.ToString()));
         }
-
-        public string Value { get; private set; }
     }
 }

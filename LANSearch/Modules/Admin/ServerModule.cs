@@ -1,4 +1,5 @@
-﻿using LANSearch.Data;
+﻿using Hangfire;
+using LANSearch.Data;
 using LANSearch.Data.Server;
 using LANSearch.Models.Admin.Server;
 using LANSearch.Modules.BaseClasses;
@@ -71,6 +72,28 @@ namespace LANSearch.Modules.Admin
                 return View["Admin/Server/ServerDetail.cshtml", model];
             };
 
+            Post["/server/detail/{serverId:int}/action"] = x =>
+            {
+                int serverId;
+                if (!int.TryParse(x.serverId, out serverId))
+                    return Response.AsRedirect("~/Admin/Server");
+                var server = Ctx.ServerManager.Get(serverId);
+                if (server == null)
+                    return Response.AsRedirect("~/Admin/Server");
+
+                if (Request.Form.remove)
+                {
+                    //TODO
+                }
+                else if (Request.Form.rescan)
+                {
+                    BackgroundJob.Enqueue(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId));
+                }
+
+                //Workaround because Response.AsRedirect doesn't accept dynamic arguments
+                var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Admin/Server/Detail/", x.serverId);
+                return new RedirectResponse(path, RedirectResponse.RedirectType.SeeOther);
+            };
             Get["/server/create"] = x =>
             {
                 var model = new ServerDetailModel { IsCreation = true, Server = new Server() };

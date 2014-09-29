@@ -23,6 +23,11 @@ namespace LANSearch.Data.Search.Solr.Filters
             return value;
         }
 
+        public bool IsSelected(string value)
+        {
+            if (ActiveValue == null) return false;
+            return value == ActiveValue;
+        }
         public void UpdateFacetQuery(INamedList<string> qp)
         {
             if (qp == null) throw new ArgumentException("qp");
@@ -33,13 +38,13 @@ namespace LANSearch.Data.Search.Solr.Filters
             qp.Add("f.fileExt.facet.mincount", "2");
         }
 
+        protected string ActiveValue;
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
             if (value.Contains(" ")) return;
-            Value = value;
+            ActiveValue = value;
             qp.Add(CommonParams.FQ, string.Format("{0}:{1}", "{!tag=fileExt}fileExt", value));
         }
 
-        public string Value { get; private set; }
     }
 }
