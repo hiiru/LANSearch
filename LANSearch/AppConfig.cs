@@ -171,5 +171,7 @@ namespace LANSearch
         /// Crawler will set server offline after these tries.
         /// </summary>
         public int CrawlerOfflineLimit { get; set; }
+
+        public string NancyDiagnosticsPassword { get; set; }
     }
 }

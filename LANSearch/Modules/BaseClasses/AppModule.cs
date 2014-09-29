@@ -27,6 +27,7 @@ namespace LANSearch.Modules.BaseClasses
                 if (Ctx.Config.AppAnnouncement)
                     ViewBag.App_Announcement = Ctx.Config.AppAnnouncementMessage;
 
+                ViewBag.App_NancyDiagnostics = !string.IsNullOrWhiteSpace(Ctx.Config.NancyDiagnosticsPassword);
                 return null;
             };
         }
