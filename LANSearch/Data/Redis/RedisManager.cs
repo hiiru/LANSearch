@@ -1,4 +1,6 @@
-﻿using ServiceStack.Redis;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,29 @@ namespace LANSearch.Data.Redis
         public RedisManager()
         {
             Pool = new PooledRedisClientManager(InitConfig.RedisDbApp, string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort));
+
+            //var server = new List<string> {string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort)};
+            //Pool = new PooledRedisClientManager(server, server, new RedisClientManagerConfig{AutoStart=true, DefaultDb = InitConfig.RedisDbApp, MaxWritePoolSize = 100, MaxReadPoolSize = 100});
+
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                using (var client = new RedisClient(string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort)))
+                {
+                    var subscription = client.CreateSubscription();
+                    subscription.OnMessage+=OnSubscriptionMessage;
+                    subscription.SubscribeToChannels("server","user","feedback");
+                }
+            });
+
+        }
+
+        public delegate void RedisChangeMessage(string channel, string message);
+        public event RedisChangeMessage OnMessage;
+
+        private void OnSubscriptionMessage(string channel, string message)
+        {
+            if (OnMessage != null)
+                OnMessage(channel, message);
         }
 
         public PooledRedisClientManager Pool { get; protected set; }
@@ -19,6 +44,14 @@ namespace LANSearch.Data.Redis
             using (var client = Pool.GetClient())
             {
                 return (int)client.Increment(key, 1);
+            }
+        }
+
+        public IRedisSubscription GetSubscription()
+        {
+            using (var client = Pool.GetClient())
+            {
+                return client.CreateSubscription();
             }
         }
 
@@ -233,6 +266,9 @@ namespace LANSearch.Data.Redis
                     hiddenList.Add(obj.Id);
                 else if (!obj.Hidden && isHidden)
                     hiddenList.Remove(obj.Id);
+
+
+                client.PublishMessage("server", obj.Id.ToString());
             }
         }
 
@@ -262,7 +298,7 @@ namespace LANSearch.Data.Redis
                 return intClient.Lists[RedisKeyHidden].ToList();
             }
         }
-
+        
         #endregion Server
 
         #region Configuration Management
