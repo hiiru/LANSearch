@@ -157,6 +157,7 @@
     <Compile Include="Data\ValidationHelper.cs" />
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Hubs\CustomAuthorizeAttribute.cs" />
     <Compile Include="Hubs\TestHub.cs" />
     <Compile Include="InitConfig.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpCrawler.cs" />

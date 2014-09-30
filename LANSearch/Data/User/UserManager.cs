@@ -1,5 +1,6 @@
 ﻿using LANSearch.Data.Redis;
 using Nancy;
+using Nancy.Authentication.Forms;
 using ServiceStack.Common;
 using System;
 using System.Collections.Generic;
@@ -248,6 +249,31 @@ namespace LANSearch.Data.User
 
             if (changed)
                 RedisManager.UserSave(user);
+        }
+
+        public User GetUserByOwinEnvironment(IDictionary<string, object> owinEnvironment)
+        {
+            if (owinEnvironment == null) return null;
+            var requestHeaders = ((IDictionary<string, string[]>)owinEnvironment["owin.RequestHeaders"]);
+            if (!requestHeaders.ContainsKey("Cookie"))
+                return null;
+
+            var authCookieValue = requestHeaders["Cookie"]
+                .Select(cookie => cookie.Split(';')[0])
+                .Select(cookie =>
+                {
+                    var x = cookie.Split('=');
+                    if (x.Length == 2 && x[0] == FormsAuthentication.FormsAuthenticationCookieName)
+                        return x[1];
+                    return null;
+                }).FirstOrDefault(cookie => cookie != null);
+            if (string.IsNullOrWhiteSpace(authCookieValue)) return null;
+
+            var key = FormsAuthentication.DecryptAndValidateAuthenticationCookie(authCookieValue, AuthenticationConfiguration.GetContext().FormsAuthenticationConfiguration);
+            Guid guid;
+            if (!Guid.TryParse(key, out guid))
+                return null;
+            return GetByGuid(guid);
         }
     }
 }

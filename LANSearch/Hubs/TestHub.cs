@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using LANSearch.Data.User;
+using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
 {
+    [CustomAuthorize(Roles = UserRoles.ADMIN)]
     public class TestHub : Hub
     {
         private static IHubContext _signalRHub;
