@@ -60,9 +60,12 @@ namespace LANSearch.Data.User
         /// </summary>
         public List<string> LoginLog { get; set; }
 
-        public IEnumerable<string> GetReversedLoginLog()
+        public IEnumerable<string> GetReversedLoginLog(int? entries=null)
         {
-            return LoginLog.AsEnumerable().Reverse();
+            var log = LoginLog.AsEnumerable().Reverse();
+            if (entries.HasValue && entries.Value > 0)
+                log = log.Take(entries.Value);
+            return log;
         }
 
         public DateTime Registed { get; set; }

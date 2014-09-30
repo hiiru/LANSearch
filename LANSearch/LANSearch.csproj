@@ -175,6 +175,7 @@
     <Compile Include="Models\InfoModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\MaintenanceModel.cs" />
+    <Compile Include="Models\Member\ProfileModel.cs" />
     <Compile Include="Models\Search\SearchFile.cs" />
     <Compile Include="Models\Search\SearchFilter.cs" />
     <Compile Include="Models\Search\SearchModel.cs" />
@@ -217,6 +218,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Admin\LogViewer.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Profile.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Server.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="zTesting\Test.cshtml">
@@ -341,9 +348,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Member\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -60,7 +60,7 @@ namespace LANSearch.Data.User
                 {
                     return 4;
                 }
-                if (!PasswordHash.ValidatePassword(password, user.Password))
+                if (!ValidatePassword(user,password))
                 {
                     return 5;
                 }
@@ -169,6 +169,12 @@ namespace LANSearch.Data.User
             return state;
         }
 
+        public bool ValidatePassword(User user, string password)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(password)) return false;
+            return PasswordHash.ValidatePassword(password, user.Password);
+        }
+
         public User GetByGuid(Guid identifier)
         {
             return RedisManager.UserSessionResolve(identifier);
@@ -274,6 +280,18 @@ namespace LANSearch.Data.User
             if (!Guid.TryParse(key, out guid))
                 return null;
             return GetByGuid(guid);
+        }
+
+        public void UpdateEmail(User user, string email)
+        {
+            user.Email = email;
+            RedisManager.UserSave(user);
+        }
+
+        public void ChangePassword(User user, string newpass)
+        {
+            user.Password = PasswordHash.CreateHash(newpass);
+            RedisManager.UserSave(user);
         }
     }
 }
