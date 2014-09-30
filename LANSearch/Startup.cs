@@ -17,11 +17,6 @@ namespace LANSearch
             app.Use<LoggerMiddleware>(app);
             logger.Debug("LoggerMiddleware added.");
             
-            app.UseStaticFiles("/Content");
-            app.UseStaticFiles("/Scripts");
-            app.UseStaticFiles("/Fonts");
-            logger.Debug("UseStaticFiles Done.");
-
             app.MapSignalR("/test", new HubConfiguration());
             logger.Debug("MapSignalR Done.");
 

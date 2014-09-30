@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
+using Nancy.Conventions;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
 
@@ -33,6 +34,13 @@ namespace LANSearch
                     Path = "/Admin/Diagnostics",
                 };
             }
+        }
+
+        protected override void ConfigureConventions(NancyConventions nancyConventions)
+        {
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/Scripts", "Scripts"));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/Fonts", "Fonts"));
+            base.ConfigureConventions(nancyConventions);
         }
     }
 }
