@@ -2,6 +2,7 @@
 using Hangfire;
 using Hangfire.Redis;
 using LANSearch.Data.User;
+using Microsoft.AspNet.SignalR;
 using Owin;
 
 namespace LANSearch
@@ -20,6 +21,9 @@ namespace LANSearch
             app.UseStaticFiles("/Scripts");
             app.UseStaticFiles("/Fonts");
             logger.Debug("UseStaticFiles Done.");
+
+            app.MapSignalR("/test", new HubConfiguration());
+            logger.Debug("MapSignalR Done.");
 
             app.UseNancy(options =>
             {
