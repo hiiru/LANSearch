@@ -21,7 +21,8 @@ namespace LANSearch
         {
             var formsAuthenticationConfiguration = AuthenticationConfiguration.GetContext().FormsAuthenticationConfiguration;
             formsAuthenticationConfiguration.UserMapper = container.Resolve<IUserMapper>();
-            FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration);
+            FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration); 
+            StaticConfiguration.DisableErrorTraces = false;
         }
 
         protected override DiagnosticsConfiguration DiagnosticsConfiguration

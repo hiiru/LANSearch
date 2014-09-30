@@ -13,11 +13,12 @@
             <li><a href="@Url.Content("~/Admin/Jobs")">Recurring Jobs</a></li>
             <li><a href="@Url.Content("~/Admin/Redis")">Redis</a></li>
             <li><a href="@Url.Content("~/Admin/Configuration")">Configuration</a></li>
+            <li class="divider"></li>
             @if (ViewBag.App_NancyDiagnostics)
             {
-                <li class="divider"></li>
                 <li><a href="@Url.Content("~/Admin/Diagnostics")">Nancy Diagnostics</a></li>
             }
+            <li><a href="@Url.Content("~/Admin/LogViewer")">Log Viewer</a></li>
         </ul>
     </li>
 }

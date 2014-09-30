@@ -364,7 +364,7 @@ namespace LANSearch.Data.Redis
         }
 
         #endregion Ftp Crawler
-
+        
         public List<string> SearchKeys(string s)
         {
             using (var client = Pool.GetClient())

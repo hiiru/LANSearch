@@ -17,7 +17,7 @@ namespace LANSearch
             app.Use<LoggerMiddleware>(app);
             logger.Debug("LoggerMiddleware added.");
             
-            app.MapSignalR("/test", new HubConfiguration());
+            app.MapSignalR("/sr", new HubConfiguration {EnableJavaScriptProxies = false});
             logger.Debug("MapSignalR Done.");
 
             app.UseNancy(options =>

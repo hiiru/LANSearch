@@ -158,7 +158,7 @@
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Hubs\CustomAuthorizeAttribute.cs" />
-    <Compile Include="Hubs\TestHub.cs" />
+    <Compile Include="Hubs\LogHub.cs" />
     <Compile Include="InitConfig.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpCrawler.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />
@@ -179,6 +179,7 @@
     <Compile Include="Models\Search\SearchFilter.cs" />
     <Compile Include="Models\Search\SearchModel.cs" />
     <Compile Include="Modules\Admin\ConfigurationModule.cs" />
+    <Compile Include="Modules\Admin\LogViewerModule.cs" />
     <Compile Include="Modules\Admin\ServerModule.cs" />
     <Compile Include="Modules\Admin\SetupModule.cs" />
     <Compile Include="Modules\Admin\UserModule.cs" />
@@ -213,6 +214,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Scripts\jquery-1.9.0.min.map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Admin\LogViewer.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="zTesting\Test.cshtml">
