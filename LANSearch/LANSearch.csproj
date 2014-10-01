@@ -137,6 +137,7 @@
     <Compile Include="Data\Jobs\JobManager.cs" />
     <Compile Include="Data\PasswordHash.cs" />
     <Compile Include="Data\Redis\RedisManager.cs" />
+    <Compile Include="Data\Search\SearchManager.cs" />
     <Compile Include="Data\Search\Solr\Filters\Extension.cs" />
     <Compile Include="Data\Search\Solr\Filters\IFilter.cs" />
     <Compile Include="Data\Search\Solr\Filters\Server.cs" />

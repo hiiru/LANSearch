@@ -13,8 +13,8 @@ namespace LANSearch.Modules
 
         private dynamic HandleGet()
         {
-            var query = new SolrHandler(Request);
-            return View["search", query.SolrSearch()];
+            var results=Ctx.SearchManager.Search(Request);
+            return View["search", results];
         }
     }
 }

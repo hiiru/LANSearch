@@ -3,6 +3,7 @@ using Common.Logging;
 using LANSearch.Data.Feedback;
 using LANSearch.Data.Jobs;
 using LANSearch.Data.Redis;
+using LANSearch.Data.Search;
 using LANSearch.Data.Search.Solr;
 using LANSearch.Data.Server;
 using LANSearch.Data.User;
@@ -31,21 +32,17 @@ namespace LANSearch
             FeedbackManager = new FeedbackManager(RedisManager);
             ServerManager = new ServerManager(RedisManager);
             JobManager = new JobManager(RedisManager, Config);
-
-            SolrServer = new HttpSolrServer(Config.SearchServerUrl);
-            SolrMapper = new ReflectionDataMapper<File>();
+            SearchManager = new SearchManager(Config);
 
             Logger.Info("AppContext is initialized.");
         }
 
         public RedisManager RedisManager { get; protected set; }
 
+        public SearchManager SearchManager { get; protected set; }
+
         public AppConfig Config { get; protected set; }
-
-        public ISolrServerHandler SolrServer { get; protected set; }
-
-        public ReflectionDataMapper<File> SolrMapper { get; protected set; }
-
+        
         public FeedbackManager FeedbackManager { get; protected set; }
 
         public UserManager UserManager { get; protected set; }

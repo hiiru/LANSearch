@@ -66,7 +66,7 @@ namespace LANSearch.Data.Jobs.Ftp
 
         public void CrawlServers()
         {
-            if (!Ctx.SolrServer.IsOnline)
+            if (!Ctx.SearchManager.SolrServer.IsOnline)
             {
                 Logger.Info("CrawlServers stopped because solr is offline.");
                 return;
@@ -82,7 +82,7 @@ namespace LANSearch.Data.Jobs.Ftp
 
         public void CrawlServer(int id)
         {
-            if (!Ctx.SolrServer.IsOnline)
+            if (!Ctx.SearchManager.SolrServer.IsOnline)
             {
                 Logger.InfoFormat("CrawlServer for id {0} stopped because solr is offline.",id);
                 return;
@@ -148,14 +148,14 @@ namespace LANSearch.Data.Jobs.Ftp
         {
             try
             {
-                var updateRequest = new UpdateRequest(Ctx.SolrServer.GetUriBuilder());
+                var updateRequest = new UpdateRequest(Ctx.SearchManager.SolrServer.GetUriBuilder());
                 foreach (var file in list)
                 {
-                    var doc = Ctx.SolrMapper.GetDocument(file);
+                    var doc = Ctx.SearchManager.SolrMapper.GetDocument(file);
                     updateRequest.Add(doc);
                 }
                 //This has to throw an error if there is a problem, do not use TryRequest here.
-                Ctx.SolrServer.Request<UpdateResponse>(updateRequest);
+                Ctx.SearchManager.SolrServer.Request<UpdateResponse>(updateRequest);
             }
             catch (Exception e)
             {

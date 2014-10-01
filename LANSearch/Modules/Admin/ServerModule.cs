@@ -75,7 +75,7 @@ namespace LANSearch.Modules.Admin
 
                 if (Request.Form.remove)
                 {
-                    //TODO
+                    Ctx.SearchManager.UnindexServer(server.Id);
                 }
                 else if (Request.Form.rescan)
                 {

@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Mizore.DataMappingHandler;
+using Mizore.SolrServerHandler;
 
 namespace LANSearch.Data.Search.Solr
 {
@@ -38,6 +40,9 @@ namespace LANSearch.Data.Search.Solr
             UrlBuilder = new UrlBuilder(request.Url);
         }
 
+        protected ISolrServerHandler SolrServer { get { return Ctx.SearchManager.SolrServer; } }
+        protected IDataMappingHandler SolrMapper { get { return Ctx.SearchManager.SolrMapper; } }
+
         protected List<IFilter> SolrFilters { get; set; }
 
         protected UrlBuilder UrlBuilder { get; set; }
@@ -51,10 +56,10 @@ namespace LANSearch.Data.Search.Solr
                 return new SearchModel("Search is currently disabled by the Administrator.");
             }
 
-            var solrRequest = new SelectRequest(Ctx.SolrServer.GetUriBuilder(), QueryBuilder);
+            var solrRequest = new SelectRequest(SolrServer.GetUriBuilder(), QueryBuilder);
             SelectResponse solrResponse;
 
-            if (!Ctx.SolrServer.TryRequest(solrRequest, out solrResponse))
+            if (!SolrServer.TryRequest(solrRequest, out solrResponse))
             {
                 return new SearchModel("Sorry, you're search couldn't be executed at the moment, please try again later.");
             }
@@ -62,7 +67,7 @@ namespace LANSearch.Data.Search.Solr
             if (solrResponse.Documents.IsNullOrEmpty())
                 return sm;
             sm.Count = solrResponse.Documents.NumFound;
-            sm.Results = ParseDocuments(solrResponse.GetObjects<File>(Ctx.SolrMapper));
+            sm.Results = ParseDocuments(solrResponse.GetObjects<File>(SolrMapper));
             sm.Filters = ParseFacets(solrResponse.Facets);
 
             return sm;
