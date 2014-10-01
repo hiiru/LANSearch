@@ -20,13 +20,6 @@ namespace LANSearch
             app.MapSignalR("/sr", new HubConfiguration {EnableJavaScriptProxies = false});
             logger.Debug("MapSignalR Done.");
 
-            app.UseNancy(options =>
-            {
-                options.PerformPassThrough = context => context.Request.Url.Path.StartsWith("/Admin/Hangfire");
-            });
-
-            logger.Debug("UseNancy Done.");
-            
             app.UseHangfire(config =>
             {
                 config.UseRedisStorage(string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort), InitConfig.RedisDbHangfire);
@@ -34,7 +27,15 @@ namespace LANSearch
                 config.UseDashboardPath("/Admin/Hangfire");
                 config.UseAuthorizationFilters(new HangfireAuthorizationFilter());
             });
-            logger.Debug("UseHangfire Done, completed startup configuration");
+            logger.Debug("UseHangfire Done.");
+
+            app.UseNancy(options =>
+            {
+                options.PerformPassThrough = context => context.Request.Url.Path.StartsWith("/Admin/Hangfire");
+            });
+
+            logger.Debug("UseNancy Done, completed startup configuration");
+
         }
     }
 }

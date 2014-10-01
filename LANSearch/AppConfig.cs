@@ -129,6 +129,7 @@ namespace LANSearch
             SearchDisabled = false;
             SearchAllowHideServer = true;
             CrawlerOfflineLimit = 5;
+            JobHourlyCrawling = true;
         }
 
         #region Setup Variables (Blacklisted from configuration page)
@@ -175,5 +176,6 @@ namespace LANSearch
         public int CrawlerOfflineLimit { get; set; }
 
         public string NancyDiagnosticsPassword { get; set; }
+        public bool JobHourlyCrawling { get; set; }
     }
 }

@@ -81,9 +81,13 @@ namespace LANSearch.Modules.Admin
                 {
                     BackgroundJob.Enqueue(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId));
                 }
+                else if (Request.Form.delete)
+                {
+                    Ctx.ServerManager.SetDeleted(server);
+                }
                 else if (Request.Form.restore)
                 {
-                    Ctx.ServerManager.SetDeleted(server,false);
+                    Ctx.ServerManager.SetDeleted(server, false);
                 }
 
                 //Workaround because Response.AsRedirect doesn't accept dynamic arguments

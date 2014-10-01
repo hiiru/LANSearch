@@ -93,9 +93,9 @@ namespace LANSearch.Data.Jobs.Ftp
                 Logger.InfoFormat("CrawlServer for id {0} stopped because id is invalid (server object is null).", id);
                 return;
             }
-            if (server.NoScans)
+            if (server.NoScans || server.Deleted)
             {
-                Logger.InfoFormat("CrawlServer for id {0} stopped because NoScans is set.", id);
+                Logger.InfoFormat("CrawlServer for id {0} stopped because NoScans or Deleted is set.", id);
                 return;
             }
             if (Ctx.RedisManager.FtpCrawlerServerIsLocked(id))
@@ -207,6 +207,9 @@ namespace LANSearch.Data.Jobs.Ftp
             }
         }
 
+        protected HashSet<string> IgnoredFiles = new HashSet<string> { "Thumbs.db", "desktop.ini", ".DS_Store", ".apdisk", ".com.apple.timemachine.supported", ".Parent", ".iTunes Preferences.plist", ".directory" };
+        protected HashSet<string> IgnoredFolders = new HashSet<string> { ".@__thumb", ".AppleDouble", ".localized" };
+
         private void GetList(FtpClient client, string path, BlockingCollection<FtpListItem> collection, Dictionary<string, bool> visited, FtpListItem[] preRequested = null)
         {
             var items = preRequested ?? client.GetListing(path, FtpListOption.AllFiles | FtpListOption.Size);
@@ -217,11 +220,12 @@ namespace LANSearch.Data.Jobs.Ftp
                 switch (item.Type)
                 {
                     case FtpFileSystemObjectType.File:
-                        collection.Add(item);
+                        if (!IgnoredFiles.Contains(item.Name))
+                            collection.Add(item);
                         break;
 
                     case FtpFileSystemObjectType.Directory:
-                        if (!visited.ContainsKey(item.FullName))
+                        if (!IgnoredFolders.Contains(item.Name) && !visited.ContainsKey(item.FullName))
                             toCheck.Add(item.FullName);
                         break;
 

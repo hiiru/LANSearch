@@ -203,6 +203,7 @@ namespace LANSearch.Data.Server
         public void SetDeleted(Server server, bool deleted=true)
         {
             server.Deleted = deleted;
+            server.Hidden = deleted;
             Save(server);
         }
     }

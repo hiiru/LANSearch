@@ -8,14 +8,16 @@ namespace LANSearch.Data.Jobs
     {
         protected RedisManager RedisManager;
 
-        public JobManager(RedisManager redisManager)
+        public JobManager(RedisManager redisManager, AppConfig config)
         {
             RedisManager = redisManager;
-
             FtpCrawler = new FtpCrawler();
 
-            //RecurringJob.AddOrUpdate(JOB_CRAWL_SERVERS, () => FtpCrawler.CrawlServers(), Cron.Hourly);
-            //RecurringJob.RemoveIfExists(JOB_CRAWL_SERVERS);
+            //Setup hourly crawling
+            if (config.JobHourlyCrawling)
+                RecurringJob.AddOrUpdate(JOB_CRAWL_SERVERS, () => FtpCrawler.CrawlServers(), Cron.Hourly);
+            else
+                RecurringJob.RemoveIfExists(JOB_CRAWL_SERVERS);
         }
 
         #region Background Jobs

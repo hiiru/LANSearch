@@ -30,7 +30,7 @@ namespace LANSearch
             UserManager = new UserManager(RedisManager);
             FeedbackManager = new FeedbackManager(RedisManager);
             ServerManager = new ServerManager(RedisManager);
-            JobManager = new JobManager(RedisManager);
+            JobManager = new JobManager(RedisManager, Config);
 
             SolrServer = new HttpSolrServer(Config.SearchServerUrl);
             SolrMapper = new ReflectionDataMapper<File>();
