@@ -24,18 +24,25 @@ namespace LANSearch.Hubs
         {
             var entries = System.IO.File.ReadLines("lansearch.log").Reverse().Take(500).Select(x =>
             {
-                var splited = x.Split('|');
-                var date = splited[0];
-                date = date.Substring(0, date.IndexOf('.'));
-                var loglevel = splited[1][0] + splited[1].Substring(1).ToLower();
-                return new LogEntry
+                try
                 {
-                    date = date,
-                    logLevel = loglevel,
-                    callsite = splited[2],
-                    message = splited[3]
-                };
-            }).ToArray();
+                    var splited = x.Split('|');
+                    var date = splited[0];
+                    date = date.Substring(0, date.IndexOf('.'));
+                    var loglevel = splited[1][0] + splited[1].Substring(1).ToLower();
+                    return new LogEntry
+                    {
+                        date = date,
+                        logLevel = loglevel,
+                        callsite = splited[2],
+                        message = splited[3]
+                    };
+                }
+                catch
+                {
+                    return null;
+                }
+            }).Where(x=>x!=null).ToArray();
 
             Clients.Caller.getLastEvents(entries);
         }
