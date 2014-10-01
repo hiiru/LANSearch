@@ -18,7 +18,7 @@ namespace LANSearch.Models.Search
 
         public string Size { get; set; }
 
-        public Server Server { get; set; }
+        public LANSearch.Data.Server.Server Server { get; set; }
 
         public string ServerName
         {

@@ -23,6 +23,7 @@ namespace LANSearch
             formsAuthenticationConfiguration.UserMapper = container.Resolve<IUserMapper>();
             FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration); 
             StaticConfiguration.DisableErrorTraces = false;
+            Nancy.Security.Csrf.Enable(pipelines);
         }
 
         protected override DiagnosticsConfiguration DiagnosticsConfiguration

@@ -1,9 +1,10 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerListModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Admin .:. Server .:. List";
 }
 <div class="col-xs-12 content">
-    <a href="@Url.Content("~/Admin/Server/Create")">Add new Server</a>
+    <a class="btn btn-primary" href="@Url.Content("~/Admin/Server/Add")"><span class="glyphicon glyphicon-plus"></span> Add new Server</a>
 </div>
 <div class="col-xs-12 content">
     <table class="table">
@@ -23,8 +24,8 @@
             {
                 <tr>
                     <td><a href="@Url.Content(string.Format("~/Admin/Server/Detail/{0}", server.Id))">@server.Id</a></td>
-                    <td><a href="@Url.Content(string.Format("~/Admin/Server/Detail/{0}", server.Id))">@server.Name</a></td>
-                    <td>@server.Owner</td>
+                    <td><a href="@Url.Content(string.Format("~/Admin/Server/Detail/{0}", server.Id))">@(string.Format("{0}:{1}", server.Address, server.Port))@(!string.IsNullOrWhiteSpace(server.Name) ? " " + server.Name : "")</a></td>
+                    <td>@server.OwnerId</td>
                     <td>@server.Online</td>
                     <td>@server.Closed</td>
                     <td>@server.NoScans</td>

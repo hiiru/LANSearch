@@ -1,8 +1,8 @@
-﻿using LANSearch.Data;
+﻿using System.Collections.Generic;
+using LANSearch.Data;
 using LANSearch.Models.BaseModels;
-using System.Collections.Generic;
 
-namespace LANSearch.Models.Admin.Server
+namespace LANSearch.Models.Server
 {
     public class ServerListModel : BaseListModel
     {

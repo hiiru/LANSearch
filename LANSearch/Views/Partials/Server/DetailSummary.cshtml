@@ -1,0 +1,40 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
+@using LANSearch
+<div class="row">
+    <div class="col-md-2"><strong>ServerId: </strong>@Model.Server.Id</div>
+    <div class="col-md-2"><strong>ServerType: </strong>@Model.Server.TypeName</div>
+    <div class="col-md-3"><strong>Created: </strong>@Model.Server.Created</div>
+    <div class="col-md-5"><a href="@Model.Server.Url">@Model.Server.Url</a></div>
+</div>
+<div class="row">
+    @if (Model.IsAdmin)
+    {
+        <div class="col-md-4"><strong>Owner: </strong><a href="@Model.OwnerAdminUrl">@Model.OwnerName</a></div>
+    }
+    <div class="col-md-4"><strong>Fist Scan: </strong>@Model.Server.ScanDateFirst</div>
+    <div class="col-md-4"><strong>Last Scan: </strong>@Model.Server.ScanDateLast</div>
+</div>
+@if (Model.Server.ScanFailedAttempts > 0)
+{
+    <div class="row">
+        <div class="panel panel-danger">
+            <div class="panel-heading">Scan Failure detected!</div>
+            <div class="panel-body">
+                <div class="col-sm-6">Last Failed: @Model.Server.ScanFailedLastDate.ToString()</div>
+                <div class="col-sm-6">Failed Attempts: @Model.Server.ScanFailedAttempts</div>
+                <strong class="col-sm-12">Failure Message:</strong>
+                <div class="col-sm-12">@Model.Server.ScanFailedMessage</div>
+            </div>
+            <div class="panel-footer">
+                @if (!Model.Server.Online)
+                {
+                    <p class="bg-danger">Server flagged as Offline by Crawler due to too many failed attempts.</p>
+                }
+                else
+                {
+                    <p>Note: Server will be flagged offline after @AppContext.GetContext().Config.CrawlerOfflineLimit failed attempts.</p>
+                }
+            </div>
+        </div>
+    </div>
+}

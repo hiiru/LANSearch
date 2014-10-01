@@ -1,0 +1,76 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerListModel>
+@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Member .:. Server .:. List";
+}
+<div class="col-xs-12 content">
+    <a class="btn btn-primary" href="@Url.Content("~/Member/Server/Add")"><span class="glyphicon glyphicon-plus"></span> Add new Server</a>
+</div>
+@if (Model.Servers.Count > 0)
+{
+    <hr/>
+    <div class="col-xs-12 content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-1">Id</th>
+                    <th class="col-md-5">Server</th>
+                    <th class="col-md-1">Closed</th>
+                    <th class="col-md-1">hidden</th>
+                    <th class="col-md-1">Scan Server</th>
+                    <th class="col-md-1">Online</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var server in Model.Servers)
+                {
+                    <tr>
+                        <td><a href="@Url.Content(string.Format("~/Member/Server/Detail/{0}", server.Id))">@server.Id</a></td>
+                        <td><a href="@Url.Content(string.Format("~/Member/Server/Detail/{0}", server.Id))">@(string.Format("{0}:{1}", server.Address, server.Port))@(!string.IsNullOrWhiteSpace(server.Name) ? " "+server.Name : "")</a></td>
+                        @if (server.Closed)
+                        {
+                            <td class="warning">Closed</td>
+                        }
+                        else
+                        {
+                            <td>Open</td>
+                        }
+                        @if (server.Hidden)
+                        {
+                            <td class="warning">Hidden</td>
+                        }
+                        else
+                        {
+                            <td>Visible</td>
+                        }
+                        @if (server.NoScans)
+                        {
+                            <td class="warning">No</td>
+                        }
+                        else
+                        {
+                            <td>Yes</td>
+                        }
+                        @if (server.Online)
+                        {
+                            <td class="danger">Offline</td>
+                        }
+                        else
+                        {
+                            <td class="success">Online</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.HasPaging)
+        {
+            <ul class="pagination">
+                @foreach (var page in Model.GetPages())
+                {
+                    <li @(string.IsNullOrWhiteSpace(page.CssClass) ? "" : "class=" + page.CssClass)><a href="@page.Url">@page.Label</a></li>
+                }
+            </ul>
+        }
+    </div>
+}

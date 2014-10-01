@@ -150,6 +150,7 @@
     <Compile Include="Data\User\HangfireAuthorizationFilter.cs" />
     <Compile Include="Data\User\User.cs" />
     <Compile Include="Data\UrlBuilder.cs" />
+    <Compile Include="Data\User\UserExtensions.cs" />
     <Compile Include="Data\User\UserManager.cs" />
     <Compile Include="Data\User\UserMapper.cs" />
     <Compile Include="Data\User\UserRegisterState.cs" />
@@ -164,8 +165,8 @@
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />
     <Compile Include="LoggerMiddleware.cs" />
     <Compile Include="Models\Admin\FeedbackModel.cs" />
-    <Compile Include="Models\Admin\Server\ServerDetailModel.cs" />
-    <Compile Include="Models\Admin\Server\ServerListModel.cs" />
+    <Compile Include="Models\Server\ServerDetailModel.cs" />
+    <Compile Include="Models\Server\ServerListModel.cs" />
     <Compile Include="Models\Admin\SetupModel.cs" />
     <Compile Include="Models\Admin\User\UserDetailModel.cs" />
     <Compile Include="Models\Admin\User\UserListModel.cs" />
@@ -223,7 +224,19 @@
     <None Include="Views\Member\Profile.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Member\Server.cshtml">
+    <None Include="Views\Member\Server\Add.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Server\Detail.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Server\List.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Partials\Server\DetailForm.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Partials\Server\DetailSummary.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="zTesting\Test.cshtml">
@@ -332,16 +345,16 @@
     <None Include="Views\Master\NavBarMember.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Partials\SearchBar.cshtml">
+    <None Include="Views\Partials\Search\Bar.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Partials\SearchFilter.cshtml">
+    <None Include="Views\Partials\Search\Filter.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Partials\SearchItem.cshtml">
+    <None Include="Views\Partials\Search\ListItem.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Partials\SearchList.cshtml">
+    <None Include="Views\Partials\Search\List.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Search.cshtml">

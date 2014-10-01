@@ -1,0 +1,23 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
+@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Member .:. Server .:. Details";
+}
+
+<div class="row">
+    <h4 class="col-sm-6">Manage Server</h4>
+    <form method="POST" action="@Url.Content(string.Format("~/Member/Server/Detail/{0}/Action",Model.Server.Id))">
+        <div class="btn-toolbar pull-right" role="toolbar">
+            <div class="btn-group"><button type="submit" name="delete" value="true" class="btn btn-danger delete-button"><span class="glyphicon glyphicon-remove"></span> Delete Server</button></div>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+</div>
+<hr />
+<div class="col-xs-12">
+    @Html.Partial("Partials/Server/DetailSummary.cshtml", Model)
+</div>
+<hr />
+<div class="col-xs-12">
+    @Html.Partial("Partials/Server/DetailForm.cshtml", Model)
+</div>

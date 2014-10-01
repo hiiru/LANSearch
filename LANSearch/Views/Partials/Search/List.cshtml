@@ -3,7 +3,7 @@
     {
         @foreach (var item in Model.Results)
         {
-            @Html.Partial("Partials/SearchItem", item)
+            @Html.Partial("Partials/Search/ListItem", item)
         }
         @if (Model.HasPaging)
         {

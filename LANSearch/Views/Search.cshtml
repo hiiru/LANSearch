@@ -9,14 +9,14 @@
 }
 else
 {
-    @Html.Partial("Partials/SearchBar", Model)
+    @Html.Partial("Partials/Search/Bar", Model)
     <div class="container-fluid spacer-10">
         <div class="row row-offcanvas row-offcanvas-left">
             @if (Model.HasFilter)
             {
-                @Html.Partial("Partials/SearchFilter", Model)
+                @Html.Partial("Partials/Search/Filter", Model)
             }
-            @Html.Partial("Partials/SearchList", Model)
+            @Html.Partial("Partials/Search/List", Model)
         </div>
     </div>
 }

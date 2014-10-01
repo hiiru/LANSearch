@@ -7,4 +7,13 @@
         }
         $('.row-offcanvas').toggleClass('active');
     });
+
+    $(".server-login-toggle").on('change', function (e) {
+        var checkbox = $(e.target);
+        var serverlogin = checkbox.parents(".server-login");
+        serverlogin.find(".server-login-item").toggleClass("open", checkbox.is(':checked'));
+    });
+    $(".delete-button").on('click', function() {
+        return confirm("Are you sure you want to delete this server?");
+    });
 });
