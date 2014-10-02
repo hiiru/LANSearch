@@ -1,4 +1,6 @@
-﻿using LANSearch.Data.Search.Solr.Filters;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using LANSearch.Data.Search.Solr.Filters;
 using Mizore.CommunicationHandler;
 using Mizore.CommunicationHandler.Data.Params;
 using Mizore.ContentSerializer.Data;
@@ -14,7 +16,7 @@ namespace LANSearch.Data.Search.Solr
     {
         private AppContext Ctx { get { return AppContext.GetContext(); } }
 
-        public SolrQueryBuilder(Request request, List<IFilter> filters)
+        public SolrQueryBuilder(Request request, List<IFilter> filters, bool notification=false)
         {
             QueryParameters = new NamedList<string>();
 
@@ -56,6 +58,12 @@ namespace LANSearch.Data.Search.Solr
                         break;
 
                     default:
+                        if (notification && qsKey == "fsrv")
+                        {
+                            int srv;
+                            int.TryParse(request.Query[qsKey], out srv);
+                            ServerId = srv;
+                        }
                         var filter = filters.FirstOrDefault(x => x.QSKey == qsKey);
                         if (filter != null)
                         {
@@ -71,6 +79,10 @@ namespace LANSearch.Data.Search.Solr
                 PageSize = 20;
 
             QueryParameters.Add(CommonParams.Q, keyword);
+
+            if (notification)
+                return;
+
             QueryParameters.Add(CommonParams.ROWS, PageSize.ToString());
             QueryParameters.Add(CommonParams.START, (PageSize * Page).ToString());
 
@@ -85,6 +97,31 @@ namespace LANSearch.Data.Search.Solr
 
             if (Ctx.Config.SearchAllowHideServer)
                 HideHiddenServers();
+        }
+
+        public SolrQueryBuilder(string rawSolrQuery, DateTime lastExecution)
+        {
+            if (string.IsNullOrWhiteSpace(rawSolrQuery))
+                throw new ArgumentNullException("rawSolrQuery");
+
+            QueryParameters = new NamedList<string>();
+            var kvPairs= rawSolrQuery.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(part =>
+                {
+                    var split = part.Split(new[] {'='}, 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (split.Length != 2)
+                        return null;
+                    return new KeyValuePair<string, string>?(new KeyValuePair<string, string>(split[0], split[1]));
+
+                }).Where(x => x.HasValue).Select(x => x.Value);
+            foreach (var kvp in kvPairs)
+            {
+                QueryParameters.Add(kvp.Key,kvp.Value);
+            }
+            QueryParameters.Add(CommonParams.ROWS, "20");
+            QueryParameters.Add(CommonParams.START, "0");
+
+            QueryParameters.Add(CommonParams.FQ, string.Format("dateSeenFirst:[{0} TO *]",lastExecution.ToUniversalTime().ToString("u")));
         }
 
         private void HideHiddenServers()
@@ -105,11 +142,25 @@ namespace LANSearch.Data.Search.Solr
 
         public int PageSize { get; protected set; }
 
+        public int ServerId { get; protected set; }
+
         public string Keyword { get; protected set; }
 
         public string GetRawQuery()
         {
-            throw new NotImplementedException();
+            //Do a sort here so that every search for the same thing, gets the same raw query
+            var sortDict = new Dictionary<int, string>(QueryParameters.Count);
+            for (int i = 0; i < QueryParameters.Count; i++)
+            {
+                sortDict.Add(i, QueryParameters.GetKey(i));
+            }
+            var sb = new StringBuilder();
+            foreach (var sorted in sortDict.OrderBy(x => x.Value))
+            {
+                if (sb.Length > 0) sb.Append('&');
+                sb.AppendFormat("{0}={1}", sorted.Value, QueryParameters.Get(sorted.Key));
+            }
+            return sb.ToString();
         }
 
         public INamedList<string> QueryParameters { get; private set; }

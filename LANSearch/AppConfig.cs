@@ -1,4 +1,5 @@
-﻿using LANSearch.Data.Redis;
+﻿using System.Globalization;
+using LANSearch.Data.Redis;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
@@ -136,8 +137,13 @@ namespace LANSearch
             MailFromName = "LANSearch";
             MailCopyToSelf = true;
             UserRequireMailActivation = true;
+            NotificationEnabled = true;
+            NotificationFixedExpiration = true;
+            NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014","dd.MM.yyyy",CultureInfo.InvariantCulture);
+            NotificationLifetimeDays = 7;
         }
-        
+
+
         #region Setup Variables (Blacklisted from configuration page)
 
         public static List<string> ConfigBlacklist = new List<string>
@@ -192,5 +198,10 @@ namespace LANSearch
         public string MailFromName { get; set; }
         public bool MailCopyToSelf { get; set; }
         public bool UserRequireMailActivation { get; set; }
+
+        public bool NotificationEnabled { get; set; }
+        public bool NotificationFixedExpiration { get; set; }
+        public DateTime NotificationFixedExpirationDate { get; set; }
+        public int NotificationLifetimeDays { get; set; }
     }
 }

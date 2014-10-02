@@ -3,6 +3,7 @@ using Common.Logging;
 using LANSearch.Data.Feedback;
 using LANSearch.Data.Jobs;
 using LANSearch.Data.Mail;
+using LANSearch.Data.Notification;
 using LANSearch.Data.Redis;
 using LANSearch.Data.Search;
 using LANSearch.Data.Search.Solr;
@@ -35,6 +36,7 @@ namespace LANSearch
             JobManager = new JobManager(RedisManager, Config);
             SearchManager = new SearchManager(Config);
             MailManager = new MailManager();
+            NotificationManager = new NotificationManager(RedisManager);
             Logger.Info("AppContext is initialized.");
         }
 
@@ -53,5 +55,7 @@ namespace LANSearch
         public JobManager JobManager { get; protected set; }
 
         public MailManager MailManager { get; protected set; }
+
+        public NotificationManager NotificationManager { get; protected set; }
     }
 }

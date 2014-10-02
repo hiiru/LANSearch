@@ -135,7 +135,11 @@
     <Compile Include="Data\Feedback\Feedback.cs" />
     <Compile Include="Data\Feedback\FeedbackManager.cs" />
     <Compile Include="Data\Jobs\JobManager.cs" />
+    <Compile Include="Data\Jobs\NotificationJob.cs" />
     <Compile Include="Data\Mail\MailManager.cs" />
+    <Compile Include="Data\Notification\Notification.cs" />
+    <Compile Include="Data\Notification\NotificationManager.cs" />
+    <Compile Include="Data\Notification\NotificationType.cs" />
     <Compile Include="Data\PasswordHash.cs" />
     <Compile Include="Data\Redis\RedisManager.cs" />
     <Compile Include="Data\Search\SearchManager.cs" />

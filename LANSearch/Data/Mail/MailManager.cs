@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
+using LANSearch.Models.Search;
 
 namespace LANSearch.Data.Mail
 {
@@ -43,16 +44,7 @@ namespace LANSearch.Data.Mail
                 Logger.Error("Exception while sending mail to "+mail.To, e);
             }
         }
-
-        public void SendTestMail()
-        {
-            var mail = new MailMessage(new MailAddress("lansearch@gmx.ch","LANSearch"),new MailAddress( "fhsfwegkgmkfso@mailinator.com"));
-            mail.Subject = "Test mail";
-            mail.Body = "This is a short test mail";
-            SendEmail(mail);
-
-        }
-
+        
         public void SendActivationMail(User.User user, string host)
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Email) ||
@@ -91,8 +83,39 @@ LANSearch
 Note: If you didn't request this mail, please ignore it, or if there is a problem, contact us at lansearch@gmx.ch ",
 user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 
-            SendEmail(mail);
+            SendEmail(mail).Wait();
 
+        }
+
+        public void SendNotification(Notification.Notification notification, User.User user, SearchModel results)
+        {
+            if (notification==null || user==null || results==null || !results.HasResults)
+                return;
+            
+            var sb = new StringBuilder();
+            foreach (var item in results.Results.Take(5))
+            {
+                sb.AppendLine(string.Format("File: {0} ({1})", item.Name, item.Size));
+                sb.AppendLine(string.Format("Url: {0}", item.Url));
+                sb.AppendLine();
+            }
+            
+            var mail = new MailMessage(new MailAddress(Ctx.Config.MailFromAddress, Ctx.Config.MailFromName), new MailAddress(user.Email, user.UserName));
+            if (Ctx.Config.MailCopyToSelf)
+                mail.Bcc.Add(Ctx.Config.MailFromAddress);
+            mail.Subject = "LANSearch Search Notification: "+notification.Name;
+            mail.IsBodyHtml = false;
+            mail.Body = string.Format(
+@"Hi {0},
+
+We have new results for your Notification: {1}
+
+{2}
+Regards,
+LANSearch
+
+Note: If you didn't request this mail, please ignore it, or if there is a problem, contact us at lansearch@gmx.ch ",
+user.UserName, notification.Name, sb);
         }
     }
 }

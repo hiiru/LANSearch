@@ -383,7 +383,50 @@ namespace LANSearch.Data.Redis
         }
 
         #endregion Ftp Crawler
-        
+
+        #region Notification
+
+        protected const string RedisNotificationKeyId = "urn:feedback:id";
+
+        public void NotificationSave(Notification.Notification notification)
+        {
+            if (notification == null) return;
+            if (notification.Id == 0)
+            {
+                notification.Id = GetId(RedisNotificationKeyId);
+            }
+            using (var client = Pool.GetClient())
+            {
+                var notificationkClient = client.As<Notification.Notification>();
+                using (var transaction = notificationkClient.CreateTransaction())
+                {
+                    transaction.QueueCommand(x => x.DeleteById(notification.Id));
+                    transaction.QueueCommand(x => x.Store(notification));
+                    transaction.Commit();
+                }
+            }
+        }
+
+        public IList<Notification.Notification> NotificationGetAll()
+        {
+            using (var client = Pool.GetClient())
+            {
+                var notificationkClient = client.As<Notification.Notification>();
+                return notificationkClient.GetAll();
+            }
+        }
+
+        public Notification.Notification NotificationGet(int id)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var notificationkClient = client.As<Notification.Notification>();
+                return notificationkClient.GetById(id);
+            }
+        }
+
+        #endregion
+
         public List<string> SearchKeys(string s)
         {
             using (var client = Pool.GetClient())
@@ -391,5 +434,6 @@ namespace LANSearch.Data.Redis
                 return client.SearchKeys(s);
             }
         }
+
     }
 }
