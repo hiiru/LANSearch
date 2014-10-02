@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using Hangfire;
 using Mizore.CommunicationHandler.RequestHandler;
 using Mizore.CommunicationHandler.ResponseHandler;
 using System;
@@ -16,6 +17,7 @@ namespace LANSearch.Data.Jobs.Ftp
 {
     public class FtpCrawler
     {
+        private readonly static DateTime _minDate = new DateTime(1, 1, 2);
         protected ILog Logger = LogManager.GetCurrentClassLogger();
         protected AppContext Ctx { get { return AppContext.GetContext(); } }
 
@@ -78,6 +80,7 @@ namespace LANSearch.Data.Jobs.Ftp
                 return;
             }
             Task.WaitAll(servers.Select(CrawlServer).ToArray());
+            BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyAll());
         }
 
         public void CrawlServer(int id)
@@ -106,6 +109,7 @@ namespace LANSearch.Data.Jobs.Ftp
             var task = CrawlServer(server);
             task.Wait();
             Ctx.RedisManager.FtpCrawlerServerUnlock(id);
+            BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyServer(id));
         }
 
         private Task CrawlServer(Server.Server server)
@@ -151,6 +155,19 @@ namespace LANSearch.Data.Jobs.Ftp
                 var updateRequest = new UpdateRequest(Ctx.SearchManager.SolrServer.GetUriBuilder());
                 foreach (var file in list)
                 {
+                    var getRequest = new GetRequest(Ctx.SearchManager.SolrServer.GetUriBuilder(), file.Id);
+                    GetResponse response;
+                    if (Ctx.SearchManager.SolrServer.TryRequest(getRequest, out response) && response.Document != null)
+                    {
+                        var indexedFile = response.GetObject<File>(Ctx.SearchManager.SolrMapper);
+                        if (indexedFile != null)
+                            file.DateFirstSeen = indexedFile.DateFirstSeen;
+                    }
+                    if (file.DateFirstSeen <= _minDate)
+                    {
+                        file.DateFirstSeen = DateTime.Now;
+                    }
+
                     var doc = Ctx.SearchManager.SolrMapper.GetDocument(file);
                     updateRequest.Add(doc);
                 }

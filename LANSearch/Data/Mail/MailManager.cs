@@ -25,6 +25,7 @@ namespace LANSearch.Data.Mail
             try
             {
                 Logger.Info("Sending Email to "+mail.To);
+                Logger.Trace(mail);
                 using (
                     var client = new SmtpClient
                     {
@@ -87,13 +88,13 @@ user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 
         }
 
-        public void SendNotification(Notification.Notification notification, User.User user, SearchModel results)
+        public void SendNotification(Notification.Notification notification, User.User user, IEnumerable<SearchFile> results)
         {
-            if (notification==null || user==null || results==null || !results.HasResults)
+            if (notification==null || user==null || results==null)
                 return;
             
             var sb = new StringBuilder();
-            foreach (var item in results.Results.Take(5))
+            foreach (var item in results)
             {
                 sb.AppendLine(string.Format("File: {0} ({1})", item.Name, item.Size));
                 sb.AppendLine(string.Format("Url: {0}", item.Url));
@@ -119,6 +120,7 @@ LANSearch
 
 Note: If you didn't request this mail, please ignore it, or if there is a problem, contact me at lansearch@gmx.ch ",
 user.UserName, notification.Name, sb, notification.SearchUrl);
+            SendEmail(mail).Wait();
         }
     }
 }

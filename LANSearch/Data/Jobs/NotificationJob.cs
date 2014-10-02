@@ -49,16 +49,16 @@ namespace LANSearch.Data.Jobs
                 return;
             }
 
-            notification.LastExecution = DateTime.Now;
-            Ctx.NotificationManager.Save(notification);
 
             var results = Ctx.SearchManager.SearchByQuery(notification.SolrQuery, notification.LastExecution);
+            notification.LastExecution = DateTime.Now;
+            Ctx.NotificationManager.Save(notification);
             if (!results.HasResults)
                 return;
 
             if (notification.Type.HasFlag(NotificationType.Mail))
             {
-                BackgroundJob.Enqueue(() => Ctx.MailManager.SendNotification(notification, user, results));
+                BackgroundJob.Enqueue(() => Ctx.MailManager.SendNotification(notification, user, results.Results.Take(5)));
             }
             if (notification.Type.HasFlag(NotificationType.Html5))
             {

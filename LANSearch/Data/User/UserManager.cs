@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using Hangfire;
 using LANSearch.Data.Redis;
@@ -276,10 +277,10 @@ namespace LANSearch.Data.User
                 return null;
 
             var authCookieValue = requestHeaders["Cookie"]
-                .Select(cookie => cookie.Split(';')[0])
+                .SelectMany(cookie => cookie.Split(';'))
                 .Select(cookie =>
                 {
-                    var x = cookie.Split('=');
+                    var x = cookie.Trim().Split(new[] { '=' }, 2, StringSplitOptions.RemoveEmptyEntries);
                     if (x.Length == 2 && x[0] == FormsAuthentication.FormsAuthenticationCookieName)
                         return x[1];
                     return null;

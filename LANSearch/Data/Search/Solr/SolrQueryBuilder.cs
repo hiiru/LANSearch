@@ -120,7 +120,8 @@ namespace LANSearch.Data.Search.Solr
             QueryParameters.Add(CommonParams.ROWS, "20");
             QueryParameters.Add(CommonParams.START, "0");
 
-            QueryParameters.Add(CommonParams.FQ, string.Format("dateSeenFirst:[{0} TO *]", lastExecution.ToUniversalTime().ToString("u")));
+            lastExecution = DateTime.SpecifyKind(lastExecution, DateTimeKind.Local);
+            QueryParameters.Add(CommonParams.FQ, string.Format("dateSeenFirst:[{0} TO *]", lastExecution.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")));
         }
 
         private void HideHiddenServers()

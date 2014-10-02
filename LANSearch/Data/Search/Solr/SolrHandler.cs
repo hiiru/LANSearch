@@ -41,6 +41,7 @@ namespace LANSearch.Data.Search.Solr
         public SolrHandler(string rawQuery, DateTime lastExecution)
         {
             QueryBuilder = new SolrQueryBuilder(rawQuery, lastExecution);
+            UrlBuilder = new UrlBuilder("/");
             NoFacets = true;
         }
 
