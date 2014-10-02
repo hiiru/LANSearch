@@ -1,12 +1,20 @@
 ﻿using Common.Logging;
+using Hangfire;
 using Nancy;
 
 namespace LANSearch.zTesting
 {
     public class TestModule : NancyModule
     {
+        protected AppContext Ctx { get { return AppContext.GetContext();} }
         public TestModule()
         {
+            Get["/z/notification"] = x =>
+            {
+                BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyAll());
+
+                return "OK";
+            };
             Get["/z/test"] = x =>
             {
                 return View["zTesting/test.cshtml"];

@@ -33,8 +33,8 @@ namespace LANSearch.Data.Search.Solr
                     //Invalid request
                     throw new InvalidOperationException("SolrHandler can only be used in /Search");
             }
-
-            QueryBuilder = new SolrQueryBuilder(request, Ctx.SearchManager.Filters);
+            Filters = Ctx.SearchManager.GetFilters();
+            QueryBuilder = new SolrQueryBuilder(request, Filters);
             UrlBuilder = new UrlBuilder(request.Url);
         }
 
@@ -45,6 +45,7 @@ namespace LANSearch.Data.Search.Solr
         }
 
         protected bool NoFacets { get; set; }
+        protected List<IFilter> Filters { get; set; }
 
         protected ISolrServerHandler SolrServer { get { return Ctx.SearchManager.SolrServer; } }
         protected IDataMappingHandler SolrMapper { get { return Ctx.SearchManager.SolrMapper; } }
@@ -67,14 +68,20 @@ namespace LANSearch.Data.Search.Solr
             {
                 return new SearchModel("Sorry, you're search couldn't be executed at the moment, please try again later.");
             }
-            var sm = new SearchModel(UrlBuilder.Clone()) { Keyword = QueryBuilder.Keyword, PageSize = QueryBuilder.PageSize, Page = QueryBuilder.Page };
+            var sm = new SearchModel(UrlBuilder.Clone())
+            {
+                Keyword = QueryBuilder.Keyword,
+                PageSize = QueryBuilder.PageSize,
+                Page = QueryBuilder.Page,
+                HasSearchParameters = !QueryBuilder.IsEmptySearch
+            };
+
             if (solrResponse.Documents.IsNullOrEmpty())
                 return sm;
             sm.Count = solrResponse.Documents.NumFound;
             sm.Results = ParseDocuments(solrResponse.GetObjects<File>(SolrMapper));
             if (!NoFacets)
                 sm.Filters = ParseFacets(solrResponse.Facets);
-
             return sm;
         }
         
@@ -90,7 +97,7 @@ namespace LANSearch.Data.Search.Solr
                 for (int i = 0; i < facets.Fields.Count; i++)
                 {
                     var key = facets.Fields.GetKey(i);
-                    var solrFilter = Ctx.SearchManager.Filters.FirstOrDefault(x => x.HandlesSolrKey(key));
+                    var solrFilter = Filters.FirstOrDefault(x => x.HandlesSolrKey(key));
                     if (solrFilter == null) continue;
                     SearchFilter current;
                     switch (key)
@@ -133,7 +140,7 @@ namespace LANSearch.Data.Search.Solr
                 for (int i = 0; i < facets.Queries.Count; i++)
                 {
                     var key = facets.Queries.GetKey(i);
-                    var solrFilter = Ctx.SearchManager.Filters.FirstOrDefault(x => x.HandlesSolrKey(key));
+                    var solrFilter = Filters.FirstOrDefault(x => x.HandlesSolrKey(key));
                     if (solrFilter == null) continue;
                     if (key != null)
                     {

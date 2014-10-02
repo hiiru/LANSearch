@@ -16,14 +16,15 @@ namespace LANSearch.Data.Search
 {
     public class SearchManager
     {
-        public List<IFilter> Filters { get; protected set; }
-
         public SearchManager(AppConfig config)
         {
             SolrServer = new HttpSolrServer(config.SearchServerUrl);
             SolrMapper = new ReflectionDataMapper<File>();
+        }
 
-            Filters = new List<IFilter> { new Solr.Filters.Server(), new Extension(), new Size() };
+        public List<IFilter> GetFilters()
+        {
+            return new List<IFilter> { new Solr.Filters.Server(), new Extension(), new Size() };
         }
 
         public ISolrServerHandler SolrServer { get; protected set; }

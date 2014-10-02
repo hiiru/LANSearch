@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using LANSearch.Data.Search.Solr.Filters;
+﻿using LANSearch.Data.Search.Solr.Filters;
 using Mizore.CommunicationHandler;
 using Mizore.CommunicationHandler.Data.Params;
 using Mizore.ContentSerializer.Data;
@@ -16,10 +14,10 @@ namespace LANSearch.Data.Search.Solr
     {
         private AppContext Ctx { get { return AppContext.GetContext(); } }
 
-        public SolrQueryBuilder(Request request, List<IFilter> filters, bool notification=false)
+        public SolrQueryBuilder(Request request, List<IFilter> filters, bool notification = false)
         {
             QueryParameters = new NamedList<string>();
-
+            IsEmptySearch = true;
             // FTS keyword
             string keyword = "*:*";
             foreach (var qs in request.Query)
@@ -40,6 +38,7 @@ namespace LANSearch.Data.Search.Solr
                                 sbKeywordQuery.AppendFormat("fts:{0}", word);
                             }
                             keyword = sbKeywordQuery.ToString();
+                            IsEmptySearch = false;
                         }
                         break;
 
@@ -69,6 +68,7 @@ namespace LANSearch.Data.Search.Solr
                         {
                             filter.UpdateFilterQuery(QueryParameters, request.Query[qsKey]);
                         }
+                        IsEmptySearch = false;
                         break;
                 }
             }
@@ -105,23 +105,22 @@ namespace LANSearch.Data.Search.Solr
                 throw new ArgumentNullException("rawSolrQuery");
 
             QueryParameters = new NamedList<string>();
-            var kvPairs= rawSolrQuery.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries)
+            var kvPairs = rawSolrQuery.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(part =>
                 {
-                    var split = part.Split(new[] {'='}, 2, StringSplitOptions.RemoveEmptyEntries);
+                    var split = part.Split(new[] { '=' }, 2, StringSplitOptions.RemoveEmptyEntries);
                     if (split.Length != 2)
                         return null;
                     return new KeyValuePair<string, string>?(new KeyValuePair<string, string>(split[0], split[1]));
-
                 }).Where(x => x.HasValue).Select(x => x.Value);
             foreach (var kvp in kvPairs)
             {
-                QueryParameters.Add(kvp.Key,kvp.Value);
+                QueryParameters.Add(kvp.Key, kvp.Value);
             }
             QueryParameters.Add(CommonParams.ROWS, "20");
             QueryParameters.Add(CommonParams.START, "0");
 
-            QueryParameters.Add(CommonParams.FQ, string.Format("dateSeenFirst:[{0} TO *]",lastExecution.ToUniversalTime().ToString("u")));
+            QueryParameters.Add(CommonParams.FQ, string.Format("dateSeenFirst:[{0} TO *]", lastExecution.ToUniversalTime().ToString("u")));
         }
 
         private void HideHiddenServers()
@@ -137,6 +136,8 @@ namespace LANSearch.Data.Search.Solr
             }
             QueryParameters.Add(CommonParams.FQ, sbFilter.ToString());
         }
+
+        public bool IsEmptySearch { get; protected set; }
 
         public int Page { get; protected set; }
 

@@ -12,6 +12,7 @@ namespace LANSearch.Data.Jobs
         {
             RedisManager = redisManager;
             FtpCrawler = new FtpCrawler();
+            NotificationJob = new NotificationJob();
 
             //Setup hourly crawling
             if (config.JobHourlyCrawling)
@@ -23,6 +24,7 @@ namespace LANSearch.Data.Jobs
         #region Background Jobs
 
         public FtpCrawler FtpCrawler { get; protected set; }
+        public NotificationJob NotificationJob { get; protected set; }
 
         #endregion Background Jobs
 

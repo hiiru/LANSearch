@@ -1,6 +1,7 @@
-﻿<div class="row search-bar">
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Search.SearchModel>
+<div class="row search-bar">
     <div class="col-xs-12">
-        <form class="form-search" method="get" id="search" action="@Url.Content("~/Search")">
+        <form class="form-search" method="POST" id="search">
             <div class="input-group">
                 <input type="text" class="form-control" name="q" placeholder="Search" value="@Model.Keyword">
                 <span class="input-group-btn">
@@ -13,6 +14,9 @@
 <div class="row">
     <div class="col-xs-10 col-sm-12">
         @Model.Count Results Found
-        <div class="pull-right"><a href="@Model.GetNotificationUrl()">Save search as Notification</a></div>
+        @if (Model.HasSearchParameters)
+        {
+            <div class="pull-right"><a href="@Model.GetNotificationUrl()">Save as Notification</a></div>
+        }
     </div>
 </div>

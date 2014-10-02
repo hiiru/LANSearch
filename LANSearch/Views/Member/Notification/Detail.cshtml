@@ -1,0 +1,26 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationDetailModel>
+@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Member .:. Notification .:. Details";
+}
+<div class="row">
+    <h4 class="col-sm-6">Manage Notification</h4>
+    <form method="POST" action="@Url.Content(string.Format("~/Member/Notification/Detail/{0}/Action",Model.Notification.Id))">
+        <div class="btn-toolbar pull-right" role="toolbar">
+            @if (Model.Notification.Disabled)
+            {
+                <div class="btn-group"><button type="submit" name="enable" value="true" class="btn btn-info"><span class="glyphicon glyphicon-remove"></span> Enable Notification</button></div>
+            }
+            else
+            {
+                <div class="btn-group"><button type="submit" name="disable" value="true" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Disable Notification</button></div>
+            }
+            <div class="btn-group"><button type="submit" name="delete" value="true" class="btn btn-danger confirm-button" data-confirm="Are you sure you want to delete this Notification?"><span class="glyphicon glyphicon-remove"></span> Delete Notification</button></div>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+</div>
+<hr />
+<div class="col-xs-12">
+    @Html.Partial("Partials/NotificationForm.cshtml", Model)
+</div>

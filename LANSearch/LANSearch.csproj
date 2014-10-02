@@ -171,6 +171,8 @@
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />
     <Compile Include="LoggerMiddleware.cs" />
     <Compile Include="Models\Admin\FeedbackModel.cs" />
+    <Compile Include="Models\Notification\NotificationListModel.cs" />
+    <Compile Include="Models\Notification\NotificationDetailModel.cs" />
     <Compile Include="Models\Server\ServerDetailModel.cs" />
     <Compile Include="Models\Server\ServerListModel.cs" />
     <Compile Include="Models\Admin\SetupModel.cs" />
@@ -227,6 +229,15 @@
     <None Include="Views\Admin\LogViewer.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Views\Member\Notification\Create.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Notification\Detail.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Member\Notification\List.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Views\Member\Profile.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -237,6 +248,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Member\Server\List.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Partials\NotificationForm.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Partials\Server\DetailForm.cshtml">

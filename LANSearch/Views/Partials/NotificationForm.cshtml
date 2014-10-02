@@ -1,0 +1,39 @@
+﻿@using LANSearch.Data.Notification
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationDetailModel>
+<form role="form" method="POST">
+    <fieldset>
+        <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("notName") ? " has-error" : "")">
+            <label for="notName">Name</label>
+            <input type="text" class="form-control" name="notName" placeholder="e.g. Epic Search@(string.IsNullOrWhiteSpace(Model.Keyword)?"":" for "+Model.Keyword)" value="@Model.Notification.Name" maxlength="50">
+            @if (Model.Errors.ContainsKey("notName"))
+            {
+                <p class="help-block">@Model.Errors["notName"]</p>
+            }
+        </div>
+    </fieldset>
+    <h4>Notification Type</h4>
+    <p>This specifies how you're informed about new results.</p>
+    <fieldset>
+        @if (Model.Errors.ContainsKey("notType"))
+        {
+            <div class="alert alert-danger" role="alert">@Model.Errors["notType"]</div>
+        }
+        <div class="form-group col-md-12">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="notTypeMail" @(Model.Notification.Type.HasFlag(NotificationType.Mail)? " checked=\"checked\"" : "")> E-Mail
+                </label>
+            </div>
+        </div>
+        <div class="form-group col-md-12">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="notTypeHtml" @(Model.Notification.Type.HasFlag(NotificationType.Html5) ? " checked=\"checked\"" : "")> HTML5 Notification
+                </label>
+            </div>
+            <p class="help-block">This only works if the browser is open, notifications are allowed and the page is loaded.</p>
+        </div>
+    </fieldset>
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

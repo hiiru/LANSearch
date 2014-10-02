@@ -80,7 +80,7 @@ Code: {1}
 Regards,
 LANSearch
 
-Note: If you didn't request this mail, please ignore it, or if there is a problem, contact us at lansearch@gmx.ch ",
+Note: If you didn't request this mail, please ignore it, or if there is a problem, contact me at lansearch@gmx.ch ",
 user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 
             SendEmail(mail).Wait();
@@ -111,11 +111,14 @@ user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 We have new results for your Notification: {1}
 
 {2}
+Alternativly you can open the Search-results here:
+{3}
+
 Regards,
 LANSearch
 
-Note: If you didn't request this mail, please ignore it, or if there is a problem, contact us at lansearch@gmx.ch ",
-user.UserName, notification.Name, sb);
+Note: If you didn't request this mail, please ignore it, or if there is a problem, contact me at lansearch@gmx.ch ",
+user.UserName, notification.Name, sb, notification.SearchUrl);
         }
     }
 }

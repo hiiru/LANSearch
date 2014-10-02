@@ -20,8 +20,13 @@ namespace LANSearch.Data.Jobs
         {
             if (!Ctx.Config.NotificationEnabled || notification == null || notification.Disabled || notification.Deleted)
                 return;
+            if (DateTime.Now-notification.LastExecution < TimeSpan.FromMinutes(1))
+            {
+                //Prevent searching too often
+                return;
+            }
             var logger = LogManager.GetCurrentClassLogger();
-            if (string.IsNullOrWhiteSpace(notification.Query))
+            if (string.IsNullOrWhiteSpace(notification.SolrQuery))
             {
                 notification.Disabled = true;
                 Ctx.NotificationManager.Save(notification);
@@ -44,7 +49,10 @@ namespace LANSearch.Data.Jobs
                 return;
             }
 
-            var results = Ctx.SearchManager.SearchByQuery(notification.Query, notification.LastExecution);
+            notification.LastExecution = DateTime.Now;
+            Ctx.NotificationManager.Save(notification);
+
+            var results = Ctx.SearchManager.SearchByQuery(notification.SolrQuery, notification.LastExecution);
             if (!results.HasResults)
                 return;
 

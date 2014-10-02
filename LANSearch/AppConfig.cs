@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using Common.Logging;
 using LANSearch.Data.Redis;
+using Newtonsoft.Json;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -14,9 +16,11 @@ namespace LANSearch
         protected RedisManager RedisManager;
 
         private readonly List<PropertyInfo> _propertyInfos;
+        protected ILog Logger;
 
         public AppConfig(RedisManager redisManager)
         {
+            Logger = LogManager.GetCurrentClassLogger();
             _propertyInfos = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty).ToList();
 
             InitDefaults();
@@ -86,17 +90,30 @@ namespace LANSearch
             foreach (var pi in _propertyInfos)
             {
                 var value = pi.GetValue(this);
-                if (pi.PropertyType == typeof(List<string>))
+                try
                 {
-                    var list = value as List<string>;
-                    dict[pi.Name] = list == null ? "" : string.Join(",", list);
+                    if (pi.PropertyType == typeof(List<string>))
+                    {
+                        var list = value as List<string>;
+                        dict[pi.Name] = list == null ? "" : string.Join(",", list);
+                    }
+                    else if (pi.PropertyType == typeof(byte[]))
+                    {
+                        dict[pi.Name] = value == null ? null : Convert.ToBase64String((byte[])value);
+                    }
+                    else if (pi.PropertyType == typeof(DateTime))
+                    {
+                        //store and display the date in a readable way, also otherwise standard .NET classes can't easily deserialize it
+                        dict[pi.Name] = ((DateTime) value).ToString("u");
+                    }
+                    else
+                        dict[pi.Name] = value;
                 }
-                else if (pi.PropertyType == typeof(byte[]))
+                catch (Exception e)
                 {
-                    dict[pi.Name] = value == null ? null : Convert.ToBase64String((byte[])value);
+                    Logger.FatalFormat("Invalid Type Serialization for {0} (Type: {1}, Value: {2})", e, pi.Name, pi.PropertyType.Name, value);
+                    throw e;
                 }
-                else
-                    dict[pi.Name] = value;
             }
             return dict;
         }
@@ -106,21 +123,35 @@ namespace LANSearch
             if (config == null || config.Count == 0) return;
             foreach (var kvp in config)
             {
-                var prop = _propertyInfos.FirstOrDefault(x => x.Name == kvp.Key);
-                if (prop == null)
+                var pi = _propertyInfos.FirstOrDefault(x => x.Name == kvp.Key);
+                if (pi == null)
                     continue;
-                if (prop.PropertyType == typeof(List<string>))
+                try
                 {
-                    var valueCsv = kvp.Value as string;
+                    if (pi.PropertyType == typeof(List<string>))
+                    {
+                        var valueCsv = kvp.Value as string;
 
-                    prop.SetValue(this, valueCsv == null ? new List<string>() : valueCsv.Split(new[] { ',' }).Select(x => x.Trim()).ToList());
+                        pi.SetValue(this,
+                            valueCsv == null
+                                ? new List<string>()
+                                : valueCsv.Split(new[] { ',' }).Select(x => x.Trim()).ToList());
+                    }
+                    else if (pi.PropertyType == typeof(byte[]))
+                    {
+                        pi.SetValue(this, Convert.FromBase64String((string)kvp.Value));
+                    }
+                    else
+                        pi.SetValue(this,
+                            kvp.Value == null
+                                ? pi.PropertyType.GetDefaultValue()
+                                : Convert.ChangeType(kvp.Value, pi.PropertyType));
                 }
-                else if (prop.PropertyType == typeof(byte[]))
+                catch (Exception e)
                 {
-                    prop.SetValue(this, Convert.FromBase64String((string)kvp.Value));
+                    Logger.FatalFormat("Invalid Type Deserialization for {0} (Type: {1}, Value: {2})", e, kvp.Key, pi.PropertyType.Name, kvp.Value);
+                    throw e;
                 }
-                else
-                    prop.SetValue(this, kvp.Value == null ? prop.PropertyType.GetDefaultValue() : Convert.ChangeType(kvp.Value, prop.PropertyType));
             }
         }
 
@@ -139,10 +170,10 @@ namespace LANSearch
             UserRequireMailActivation = true;
             NotificationEnabled = true;
             NotificationFixedExpiration = true;
-            NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014","dd.MM.yyyy",CultureInfo.InvariantCulture);
+            NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014", "dd.MM.yyyy", CultureInfo.InvariantCulture);
             NotificationLifetimeDays = 7;
+            NotificationPerUser = 5;
         }
-
 
         #region Setup Variables (Blacklisted from configuration page)
 
@@ -178,6 +209,7 @@ namespace LANSearch
         public string AppAnnouncementMessage { get; set; }
 
         public string SearchServerUrl { get; set; }
+
         public bool SearchDisabled { get; set; }
 
         public bool SearchAllowHideServer { get; set; }
@@ -188,20 +220,35 @@ namespace LANSearch
         public int CrawlerOfflineLimit { get; set; }
 
         public string NancyDiagnosticsPassword { get; set; }
+
         public bool JobHourlyCrawling { get; set; }
+
         public string MailServer { get; set; }
+
         public int MailPort { get; set; }
+
         public bool MailSsl { get; set; }
+
         public string MailAccount { get; set; }
+
         public string MailPassword { get; set; }
+
         public string MailFromAddress { get; set; }
+
         public string MailFromName { get; set; }
+
         public bool MailCopyToSelf { get; set; }
+
         public bool UserRequireMailActivation { get; set; }
 
         public bool NotificationEnabled { get; set; }
+
         public bool NotificationFixedExpiration { get; set; }
+
         public DateTime NotificationFixedExpirationDate { get; set; }
+
         public int NotificationLifetimeDays { get; set; }
+
+        public int NotificationPerUser { get; set; }
     }
 }

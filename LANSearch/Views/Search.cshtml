@@ -1,4 +1,5 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Search.SearchModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Search";
     ViewBag.NavBar_ShowFilter = Model.HasFilter;

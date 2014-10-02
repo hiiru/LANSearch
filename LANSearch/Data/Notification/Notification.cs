@@ -15,7 +15,8 @@ namespace LANSearch.Data.Notification
 
         public string Name { get; set; }
 
-        public string Query { get; set; }
+        public string SolrQuery { get; set; }
+        public string SearchUrl { get; set; }
 
         public bool Disabled { get; set; }
 

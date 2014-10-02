@@ -1,4 +1,5 @@
-﻿<div class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas hidden-print" id="sidebar" role="navigation">
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Search.SearchModel>
+<div class="col-xs-6 col-sm-4 col-md-3 sidebar-offcanvas hidden-print" id="sidebar" role="navigation">
     @foreach (var filter in Model.Filters)
     {
         <div class="panel panel-default">

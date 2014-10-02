@@ -1,0 +1,60 @@
+﻿@using System
+@using System.Text
+@using LANSearch.Data.Notification
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationListModel>
+@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Member .:. Notification .:. List";
+}
+@if (Model.Notifications.Count == 0)
+{
+    <div class="alert alert-info" role="alert">No Notification added yet, please perform a search and use the "Save as Notification" link.</div>
+}
+else
+{
+        <hr />
+        <div class="col-xs-12 content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="col-md-7">Name</th>
+                        <th class="col-md-3">Type</th>
+                        <th class="col-md-2">Last Execution</th>
+                        <th class="col-md-1">Enabled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var notification in Model.Notifications)
+                {
+                        <tr>
+                            <td><a href="@Url.Content(string.Format("~/Member/Notification/Detail/{0}", notification.Id))">@notification.Name</a></td>
+                            <td>
+                                @foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
+                                {
+                                    if (type == NotificationType.Invalid)
+                                    {
+                                        continue;
+                                    }
+                                    if (notification.Type.HasFlag(type))
+                                    {
+                                        @(type.ToString("G")+" ")
+                                    }
+                                }
+                            </td>
+
+
+                            <td>@notification.LastExecution</td>
+                            @if (notification.Disabled)
+                        {
+                                <td class="danger">No</td>
+                        }
+                        else
+                        {
+                                <td class="success">Yes</td>
+                        }
+                        </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        }
