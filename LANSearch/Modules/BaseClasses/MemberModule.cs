@@ -1,4 +1,5 @@
-﻿using Nancy.Security;
+﻿using LANSearch.Data.User;
+using Nancy.Security;
 
 namespace LANSearch.Modules.BaseClasses
 {
@@ -8,6 +9,7 @@ namespace LANSearch.Modules.BaseClasses
             : base("/member")
         {
             this.RequiresAuthentication();
+            this.RequiresClaims(new[]{UserRoles.MEMBER});
         }
     }
 }

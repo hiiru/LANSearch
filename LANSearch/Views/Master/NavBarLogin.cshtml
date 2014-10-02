@@ -14,6 +14,7 @@
                         <label class="control-label" for="pass">Password</label>
                         <input name="pass" type="password" class="form-control" maxlength="20">
                     </div>
+                    @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-default">Login</button>
                 </form>
             </div>

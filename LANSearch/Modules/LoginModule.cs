@@ -4,6 +4,7 @@ using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Authentication.Forms;
 using System;
+using Nancy.Security;
 
 namespace LANSearch.Modules
 {
@@ -31,6 +32,14 @@ namespace LANSearch.Modules
 
             Post["/Login"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 if (Context.CurrentUser != null)
                     return Response.AsRedirect("~/Login");
 
@@ -77,6 +86,14 @@ namespace LANSearch.Modules
 
             Post["/Login/Register"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 if (Context.CurrentUser != null)
                     return Response.AsRedirect("~/Login");
 
@@ -118,6 +135,10 @@ namespace LANSearch.Modules
                 else if (registerStatus.HasFlag(UserRegisterState.EmailInvalid))
                 {
                     model.RegisterErrorEmail = "Invalid Email Format, please enter it in name@domain.tld format";
+                }
+                else if (registerStatus.HasFlag(UserRegisterState.EmailAlreadyUsed))
+                {
+                    model.RegisterErrorEmail = "Email is already used.";
                 }
 
                 if (registerStatus.HasFlag(UserRegisterState.PassEmpty))

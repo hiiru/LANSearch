@@ -15,6 +15,7 @@ namespace LANSearch.Data.User
         EmailInvalid = 32,
         PassEmpty = 64,
         PassMissmatch = 128,
-        Ok = 256
+        Ok = 256,
+        EmailAlreadyUsed=512,
     }
 }

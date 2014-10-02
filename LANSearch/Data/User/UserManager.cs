@@ -1,4 +1,7 @@
-﻿using LANSearch.Data.Redis;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Hangfire;
+using LANSearch.Data.Redis;
 using Nancy;
 using Nancy.Authentication.Forms;
 using ServiceStack.Common;
@@ -11,6 +14,8 @@ namespace LANSearch.Data.User
     public class UserManager
     {
         protected RedisManager RedisManager;
+
+        protected AppContext Ctx { get { return AppContext.GetContext(); } }
 
         public UserManager(RedisManager redisManager)
         {
@@ -84,6 +89,7 @@ namespace LANSearch.Data.User
             using (var lockUser = RedisManager.UserGetLock(username))
             {
                 if (RedisManager.UserIsNameUsed(username)) return UserRegisterState.UserAlreadyTaken;
+                if (RedisManager.UserIsEmailUsed(email)) return UserRegisterState.EmailAlreadyUsed;
 
                 var user = new User
                 {
@@ -109,16 +115,17 @@ namespace LANSearch.Data.User
                 }
                 else
                 {
-                    user.ClaimAdd(UserRoles.MEMBER);
+                    user.ClaimAdd(Ctx.Config.UserRequireMailActivation ? UserRoles.UNVERIFIED : UserRoles.MEMBER);
                 }
 
                 if (user.ClaimHas(UserRoles.UNVERIFIED))
                 {
-                    //TODO: Email validation
-                    //user.EmailValidationKey
-                }
+                    user.EmailValidationKey = GetUniqueKey(6);
+                    RedisManager.UserSave(user);
+                    BackgroundJob.Enqueue(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
+                } else
+                    RedisManager.UserSave(user);
 
-                RedisManager.UserSave(user);
 
                 guid = RedisManager.UserSessionStart(user);
                 return UserRegisterState.Ok;
@@ -156,6 +163,10 @@ namespace LANSearch.Data.User
             else if (!ValidationHelper.EmailValid(email))
             {
                 state = state.Add(UserRegisterState.EmailInvalid);
+            }
+            else if (RedisManager.UserIsEmailUsed(email))
+            {
+                state = state.Add(UserRegisterState.EmailAlreadyUsed);
             }
 
             if (password != password2)
@@ -292,6 +303,50 @@ namespace LANSearch.Data.User
         {
             user.Password = PasswordHash.CreateHash(newpass);
             RedisManager.UserSave(user);
+        }
+
+
+        public string GetUniqueKey(int maxSize)
+        {
+            var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+            var data = new byte[maxSize];
+            var crypto = new RNGCryptoServiceProvider();
+            crypto.GetNonZeroBytes(data);
+            var result = new StringBuilder(maxSize);
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            return result.ToString();
+        }
+
+        public bool ActivateAccount(User user, string code)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(code)) return false;
+            bool codeValid=user.EmailValidationKey == code;
+            if (codeValid)
+            {
+                user.EmailValidationKey = null;
+                user.ClaimRemove(UserRoles.UNVERIFIED);
+                user.ClaimAdd(UserRoles.MEMBER);
+                RedisManager.UserSave(user);
+            }
+            return codeValid;
+        }
+
+        public int ResendActivationMail(User user, string mail, Request request)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(mail) || !ValidationHelper.EmailValid(mail)) return 2;
+            if (user.Email != mail)
+            {
+                if (RedisManager.UserIsEmailUsed(mail)) return 3;
+                user.Email = mail;
+            }
+
+            user.EmailValidationKey = GetUniqueKey(6);
+            RedisManager.UserSave(user);
+            BackgroundJob.Enqueue(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
+            return 0;
         }
     }
 }

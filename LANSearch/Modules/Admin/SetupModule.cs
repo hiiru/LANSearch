@@ -11,6 +11,8 @@ namespace LANSearch.Modules.Admin
     {
         public SetupModule()
         {
+            //TODO: Email configuration
+
             var Ctx = AppContext.GetContext();
             Before += nancycontext =>
             {
@@ -72,6 +74,10 @@ namespace LANSearch.Modules.Admin
                 else if (registerStatus.HasFlag(UserRegisterState.EmailInvalid))
                 {
                     sbError.AppendLine("Invalid Email Format, please enter it in name@domain.tld format.<br>");
+                }
+                else if (registerStatus.HasFlag(UserRegisterState.EmailAlreadyUsed))
+                {
+                    sbError.AppendLine("Email is already used.<br>");
                 }
 
                 if (registerStatus.HasFlag(UserRegisterState.PassEmpty))

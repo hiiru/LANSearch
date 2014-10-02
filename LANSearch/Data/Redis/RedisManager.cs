@@ -108,34 +108,45 @@ namespace LANSearch.Data.Redis
 
         protected const string RedisUserKeyId = "urn:user:id";
         protected const string RedisUserKeyHash = "urn:user:nameHash";
+        protected const string RedisUserKeyMail = "urn:user:mailaddresses";
         protected const string RedisUserKeySession = "urn:user:sess_{0}";
 
         protected const string RedisUserKeyLock = "urn:user:lock_{0}";
 
-        public void UserSave(User.User obj)
+        public void UserSave(User.User user)
         {
-            if (obj == null) return;
-            if (obj.Id == 0)
+            if (user == null) return;
+            if (user.Id == 0)
             {
-                obj.Id = GetId(RedisUserKeyId);
+                user.Id = GetId(RedisUserKeyId);
             }
             using (var client = Pool.GetClient())
             {
                 var userClient = client.As<User.User>();
-                var oldUser = userClient.GetById(obj.Id);
+                var oldUser = userClient.GetById(user.Id);
                 using (var transaction = userClient.CreateTransaction())
                 {
-                    transaction.QueueCommand(x => x.DeleteById(obj.Id));
-                    transaction.QueueCommand(x => x.Store(obj));
+                    transaction.QueueCommand(x => x.DeleteById(user.Id));
+                    transaction.QueueCommand(x => x.Store(user));
                     transaction.Commit();
                 }
-                if (oldUser != null && oldUser.UserName == obj.UserName)
+                if (oldUser != null && oldUser.UserName == user.UserName)
                     return;
 
                 var clientNames = client.Hashes[RedisUserKeyHash];
                 if (oldUser != null)
                     clientNames.Remove(oldUser.UserName);
-                clientNames.Add(obj.UserName, obj.Id.ToString());
+                clientNames.Add(user.UserName, user.Id.ToString());
+
+                bool mailChanged=oldUser==null || oldUser.Email!=user.Email;
+                if (mailChanged)
+                {
+                    var mailaddresses = client.Lists[RedisUserKeyMail];
+                    if (oldUser != null)
+                        mailaddresses.Remove(oldUser.Email);
+                    mailaddresses.Add(user.Email);
+                }
+
             }
         }
 
@@ -179,6 +190,14 @@ namespace LANSearch.Data.Redis
             {
                 var clientNames = client.Hashes[RedisUserKeyHash];
                 return clientNames.ContainsKey(name);
+            }
+        }
+        public bool UserIsEmailUsed(string mail)
+        {
+            using (var client = Pool.GetClient())
+            {
+                var mailaddresses = client.Lists[RedisUserKeyMail];
+                return mailaddresses.Contains(mail);
             }
         }
 

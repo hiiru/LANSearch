@@ -18,5 +18,10 @@ namespace LANSearch.Models.Member
         public bool ChangeMailErrorPass { get; set; }
         public bool ChangeMailErrorMail { get; set; }
         public bool ChangeMailSuccess { get; set; }
+        public bool ConfirmError { get; set; }
+        public bool ConfirmAccountSuccess { get; set; }
+        public bool ConfirmMailInvalid { get; set; }
+        public bool ConfirmMailAlreadyUsed { get; set; }
+        public bool ConfirmResendSuccess { get; set; }
     }
 }

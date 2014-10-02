@@ -51,6 +51,7 @@
                     </div>
                 </div>
             }
+            @Html.AntiForgeryToken()
             <button type="submit" class="btn btn-default">Save Changes</button>
         </form>
     </div>
@@ -78,6 +79,7 @@
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
+                        @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-default" name="add" value="true">Add</button>
                         <button type="submit" class="btn btn-default" name="remove" value="true">Remove</button>
                     </form>

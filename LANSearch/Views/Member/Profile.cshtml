@@ -1,93 +1,153 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Member.ProfileModel>
+﻿@using LANSearch.Data.User
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Member.ProfileModel>
 @{
     Layout = "Master/Master";
     ViewBag.Title = "Member .:. Profile";
 }
 <div class="col-xs-12 content">
     <h2>Profile</h2>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Change Password</h4>
-        </div>
-        <div class="panel-body">
-            @if (Model.ChangePassSuccess)
-            {
-                <div class="alert alert-success" role="alert">Your password is changed.</div>
-            }
-            else
-            {
-                <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Profile/ChangePass")">
-                    <div class="form-group@(Model.ChangePassErrorOldPass ? " has-error" : "")">
-                        <label for="oldpass" class="col-sm-3 control-label">Old password</label>
-                        <div class="col-sm-9"><input name="oldpass" type="password" class="form-control" maxlength="20"></div>
-                        @if (Model.ChangePassErrorOldPass)
+    @if (Model.User.ClaimHas(UserRoles.UNVERIFIED))
+    {
+        <div class="alert alert-info" role="alert">The Activation code was sent to @Model.User.Email, please check your Mails or request a new mail bellow.</div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>E-Mail Activation</h4></div>
+            <div class="panel-body">
+                <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Confirm")">
+                    <div class="form-group@(Model.ConfirmError ? " has-error" : "")">
+                        <label for="code" class="col-sm-3 control-label">Activation Code</label>
+                        <div class="col-sm-9"><input name="code" type="text" class="form-control"></div>
+                        @if (Model.ConfirmError)
                         {
-                            <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Password is invalid.</p></div>
+                            <p class="help-block">The Activation code is invalid.</p>
                         }
                     </div>
-                    <div class="form-group@(Model.ChangePassErrorNewPass ? " has-error" : "")">
-                        <label for="" class="col-sm-3 control-label">New password</label>
-                        <div class="col-sm-9"><input name="newpass" type="password" class="form-control" maxlength="20"></div>
-                        @if (Model.ChangePassErrorNewPass)
-                        {
-                            <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">@Model.ChangePassErrorNewPassText</p></div>
-                        }
-                    </div>
-                    <div class="form-group@(Model.ChangePassErrorNewPass ? " has-error" : "")">
-                        <label for="newpass2" class="col-sm-3 control-label">Repeat new password</label>
-                        <div class="col-sm-9"><input name="newpass2" type="password" class="form-control" maxlength="20"></div>
-                        @if (Model.ChangePassErrorNewPass)
-                        {
-                            <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">@Model.ChangePassErrorNewPassText</p></div>
-                        }
-                    </div>
-                    <div class="col-sm-offset-3 col-sm-2"><button type="submit" class="btn btn-primary">Change Password</button></div>
+                    @Html.AntiForgeryToken()
+                    <div class="col-sm-offset-3 col-sm-2"><button type="submit" name="confirm" value="true class=" btn btn-primary">Activate Account</button></div>
                 </form>
-            }
+            </div>
         </div>
-    </div>
+
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Change Email</h4>
-        </div>
+        <div class="panel-heading"><h4>Re-Send activation</h4></div>
         <div class="panel-body">
-            @if (Model.ChangeMailSuccess)
+            @if (Model.ConfirmResendSuccess)
             {
-                <div class="alert alert-success" role="alert">Your Email is changed.</div>
-            }
-            else
-            {
-                <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Profile/ChangeEmail")">
-                    <div class="form-group@(Model.ChangeMailErrorPass ? " has-error" : "")">
-                        <label for="emailpass" class="col-sm-3 control-label">Password</label>
-                        <div class="col-sm-9"><input name="emailpass" type="password" class="form-control" maxlength="20"></div>
-                        @if (Model.ChangeMailErrorPass)
-                        {
-                            <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Password is invalid.</p></div>
-                        }
-                    </div>
-                    <div class="form-group@(Model.ChangeMailErrorMail ? " has-error" : "")">
-                        <label for="email" class="col-sm-3 control-label">New Email</label>
-                        <div class="col-sm-9"><input name="email" type="text" class="form-control" maxlength="20"></div>
-                        @if (Model.ChangeMailErrorMail)
-                        {
-                            <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Email is invalid.</p></div>
-                        }
-                    </div>
-                    <div class="col-sm-offset-3 col-sm-2"><button type="submit" class="btn btn-primary">Change Email</button></div>
-                </form>
+            <div class="alert alert-success" role="alert">EMail with a confirmation code is resent.</div>
+            } else {
+            <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Confirm")">
+                <div class="form-group@(Model.ConfirmMailInvalid || Model.ConfirmMailAlreadyUsed ? " has-error" : "")">
+                    <label for="email" class="col-sm-3 control-label">Activation Code</label>
+                    <div class="col-sm-9"><input name="email" type="text" class="form-control" value="@Model.User.Email"></div>
+                    @if (Model.ConfirmMailInvalid)
+                    {
+                        <p class="help-block">The entered Email is Invalid</p>
+                    } 
+                    else if(Model.ConfirmMailAlreadyUsed)
+                    {
+                        <p class="help-block">This Email Address is already used by another account.</p>
+
+                    }
+                </div>
+                @Html.AntiForgeryToken()
+                <div class="col-sm-offset-3 col-sm-2"><button type="submit" name="resend" value="true" class="btn btn-primary">Resend Email</button></div>
+            </form>
             }
         </div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Account Log (last 10 entries)</h4>
-        </div>
-        <ul class="list-group">
-            @foreach (var logEntry in Model.User.GetReversedLoginLog(10))
-            {
-                <li class="list-group-item">@logEntry</li>
+    }
+    else
+    {
+        if (Model.ConfirmAccountSuccess)
+        {
+            <div class="alert alert-success" role="alert">Account is now Activated.</div>
+        }
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Change Password</h4>
+                </div>
+                <div class="panel-body">
+                    @if (Model.ChangePassSuccess)
+                {
+                        <div class="alert alert-success" role="alert">Your password is changed.</div>
+                }
+                else
+                {
+                        <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Profile/ChangePass")">
+                            <div class="form-group@(Model.ChangePassErrorOldPass ? " has-error" : "")">
+                                <label for="oldpass" class="col-sm-3 control-label">Old password</label>
+                                <div class="col-sm-9"><input name="oldpass" type="password" class="form-control" maxlength="20"></div>
+                                @if (Model.ChangePassErrorOldPass)
+                            {
+                                    <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Password is invalid.</p></div>
+                            }
+                            </div>
+                            <div class="form-group@(Model.ChangePassErrorNewPass ? " has-error" : "")">
+                                <label for="" class="col-sm-3 control-label">New password</label>
+                                <div class="col-sm-9"><input name="newpass" type="password" class="form-control" maxlength="20"></div>
+                                @if (Model.ChangePassErrorNewPass)
+                            {
+                                    <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">@Model.ChangePassErrorNewPassText</p></div>
+                            }
+                            </div>
+                            <div class="form-group@(Model.ChangePassErrorNewPass ? " has-error" : "")">
+                                <label for="newpass2" class="col-sm-3 control-label">Repeat new password</label>
+                                <div class="col-sm-9"><input name="newpass2" type="password" class="form-control" maxlength="20"></div>
+                                @if (Model.ChangePassErrorNewPass)
+                                {
+                                    <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">@Model.ChangePassErrorNewPassText</p></div>
+                                }
+                            </div>
+                            @Html.AntiForgeryToken()
+                            <div class="col-sm-offset-3 col-sm-2"><button type="submit" class="btn btn-primary">Change Password</button></div>
+                        </form>
+                }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Change Email</h4>
+                </div>
+                <div class="panel-body">
+                    @if (Model.ChangeMailSuccess)
+                {
+                        <div class="alert alert-success" role="alert">Your Email is changed.</div>
+                }
+                else
+                {
+                        <form class="form-horizontal" role="form" method="post" action="@Url.Content("~/Member/Profile/ChangeEmail")">
+                            <div class="form-group@(Model.ChangeMailErrorPass ? " has-error" : "")">
+                                <label for="emailpass" class="col-sm-3 control-label">Password</label>
+                                <div class="col-sm-9"><input name="emailpass" type="password" class="form-control" maxlength="20"></div>
+                                @if (Model.ChangeMailErrorPass)
+                            {
+                                    <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Password is invalid.</p></div>
+                            }
+                            </div>
+                            <div class="form-group@(Model.ChangeMailErrorMail ? " has-error" : "")">
+                                <label for="email" class="col-sm-3 control-label">New Email</label>
+                                <div class="col-sm-9"><input name="email" type="text" class="form-control" maxlength="20"></div>
+                                @if (Model.ChangeMailErrorMail)
+                                {
+                                    <div class="col-sm-offset-3 col-sm-9"><p class="text-danger spacer-5">Email is invalid.</p></div>
+                                }
+                            </div>
+                            @Html.AntiForgeryToken()
+                            <div class="col-sm-offset-3 col-sm-2"><button type="submit" class="btn btn-primary">Change Email</button></div>
+                        </form>
+                }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Account Log (last 10 entries)</h4>
+                </div>
+                <ul class="list-group">
+                    @foreach (var logEntry in Model.User.GetReversedLoginLog(10))
+                {
+                        <li class="list-group-item">@logEntry</li>
+                }
+                </ul>
+            </div>
             }
-        </ul>
-    </div>
-</div>
+        </div>

@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using LANSearch.Data.Mail;
 using Microsoft.Owin.Hosting;
 
 namespace LANSearch

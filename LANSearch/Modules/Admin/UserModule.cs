@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.Responses;
 using System;
 using System.Text;
+using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {
@@ -40,6 +41,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/user/detail/{id:int}"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 int id = x.id;
                 var user = Ctx.UserManager.Get(id);
                 if (user == null)
@@ -60,12 +69,20 @@ namespace LANSearch.Modules.Admin
                 }
 
                 //Workaround because Response.AsRedirect doesn't accept dynamic arguments
-                var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Admin/User/Detail/", Request.Form.user);
+                var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Admin/User/Detail/", user.Id);
                 return new RedirectResponse(path, RedirectResponse.RedirectType.SeeOther);
             };
 
             Post["/user/detail/{id:int}/claims"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 int id = x.id;
                 User user = Ctx.UserManager.Get(id);
                 if (user == null)
@@ -95,6 +112,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/user/create"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 Guid unused;
                 UserRegisterState registerStatus = Ctx.UserManager.Register(Request.Form.user, Request.Form.email, Request.Form.pass, Request.Form.pass, Request, out unused, true);
                 if (registerStatus == UserRegisterState.Ok)
@@ -132,6 +157,10 @@ namespace LANSearch.Modules.Admin
                 else if (registerStatus.HasFlag(UserRegisterState.EmailInvalid))
                 {
                     sbError.AppendLine("Invalid Email Format, please enter it in name@domain.tld format.<br>");
+                }
+                else if (registerStatus.HasFlag(UserRegisterState.EmailAlreadyUsed))
+                {
+                    sbError.AppendLine("Email is already used.<br>");
                 }
 
                 if (registerStatus.HasFlag(UserRegisterState.PassEmpty))

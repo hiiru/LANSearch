@@ -130,8 +130,14 @@ namespace LANSearch
             SearchAllowHideServer = true;
             CrawlerOfflineLimit = 5;
             JobHourlyCrawling = true;
-        }
 
+            MailPort = 587;
+            MailSsl = true;
+            MailFromName = "LANSearch";
+            MailCopyToSelf = true;
+            UserRequireMailActivation = true;
+        }
+        
         #region Setup Variables (Blacklisted from configuration page)
 
         public static List<string> ConfigBlacklist = new List<string>
@@ -177,5 +183,14 @@ namespace LANSearch
 
         public string NancyDiagnosticsPassword { get; set; }
         public bool JobHourlyCrawling { get; set; }
+        public string MailServer { get; set; }
+        public int MailPort { get; set; }
+        public bool MailSsl { get; set; }
+        public string MailAccount { get; set; }
+        public string MailPassword { get; set; }
+        public string MailFromAddress { get; set; }
+        public string MailFromName { get; set; }
+        public bool MailCopyToSelf { get; set; }
+        public bool UserRequireMailActivation { get; set; }
     }
 }

@@ -35,6 +35,7 @@
                             <p class="text-danger">@Model.LoginErrorPassword</p>
                         }
                     </div>
+                    @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-primary">Login</button>
                     </form>
                     </p>
@@ -48,12 +49,12 @@
                                 <input name="regUser" type="text" class="form-control" maxlength="20" value="@Model.RegisterUser">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorUser))
                                 {
-                                    <p class="text-danger">@Model.RegisterErrorUser</p>
+                        <p class="text-danger">@Model.RegisterErrorUser</p>
                                 }
                             </div>
                             <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail) ? " has-error" : "")">
                                 <label class="control-label" for="regEmail">E-Mail</label>
-                                @*<div class="alert alert-info" role="alert">You will get an email on this address.</div>*@
+                                <div class="alert alert-info" role="alert">You will get an activation email to this address.</div>
                                 <input name="regEmail" type="text" class="form-control" maxlength="50" value="@Model.RegisterEmail">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail))
                                 {
@@ -76,9 +77,10 @@
                                     <p class="text-danger">@Model.RegisterErrorPassword</p>
                                 }
                             </div>
+                            @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-default">Register</button>
-                        </form>
-                    </p>
-</div>
-}
-</div>
+                            </form>
+                            </p>
+                            </div>
+    }
+    </div>

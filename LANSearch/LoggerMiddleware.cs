@@ -28,7 +28,7 @@ namespace LANSearch
                 context.Request.Path,
                 context.Request.QueryString,
                 context.Response.StatusCode,
-                context.Response.ContentLength??0,
+                context.Request.RemoteIpAddress,
                 referer,
                 uagent);
         }
