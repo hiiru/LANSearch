@@ -14,9 +14,7 @@ namespace LANSearch.Data.Notification
         public List<NotificationEventItem> Items { get; set; }
 
         public DateTime NotificationTime { get; set; }
-
-        public int UserId { get; set; }
-
+        
         public string UserName { get; set; }
 
         public string UserEmail { get; set; }
@@ -29,5 +27,7 @@ namespace LANSearch.Data.Notification
         public string FileSize { get; set; }
 
         public string FileUrl { get; set; }
+
+        public string ServerName { get; set; }
     }
 }

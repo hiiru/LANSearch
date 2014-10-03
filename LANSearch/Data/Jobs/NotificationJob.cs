@@ -55,10 +55,9 @@ namespace LANSearch.Data.Jobs
                 Name = notification.Name,
                 SearchUrl = notification.SearchUrl,
                 NotificationTime = DateTime.Now,
-                UserId = user.Id,
                 UserName = user.UserName,
                 UserEmail = user.Email,
-                Items = results.Results.Select(result => new NotificationEventItem { FileName = result.Name, FileSize = result.Size, FileUrl = result.Url }).ToList()
+                Items = results.Results.Select(result => new NotificationEventItem { FileName = result.Name, FileSize = result.Size, FileUrl = result.Url, ServerName = result.ServerName}).ToList()
             };
 
             if (notification.Type.HasFlag(NotificationType.Mail))
@@ -67,7 +66,7 @@ namespace LANSearch.Data.Jobs
             }
             if (notification.Type.HasFlag(NotificationType.Html5))
             {
-                BackgroundJob.Enqueue(() => NotificationHub.PushNotification(notEvent));
+                BackgroundJob.Enqueue(() => NotificationHub.SearchNotification(notEvent));
             }
         }
 
