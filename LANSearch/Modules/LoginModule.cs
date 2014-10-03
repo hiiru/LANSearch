@@ -101,7 +101,7 @@ namespace LANSearch.Modules
                 UserRegisterState registerStatus = Ctx.UserManager.Register(Request.Form.regUser, Request.Form.regEmail, Request.Form.regPass1, Request.Form.regPass2, Request, out guid);
                 if (registerStatus == UserRegisterState.Ok)
                 {
-                    return this.LoginAndRedirect(guid);
+                    return this.LoginAndRedirect(guid,fallbackRedirectUrl:"~/Member/Profile");
                 }
                 var model = new LoginModel();
                 model.RegisterUser = Request.Form.regUser;

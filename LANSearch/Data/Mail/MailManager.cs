@@ -27,7 +27,7 @@ namespace LANSearch.Data.Mail
             try
             {
                 Logger.Info("Sending Email to " + mail.To);
-                MailLogger.Trace(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
+                LogEmail(mail);
                 using (
                     var client = new SmtpClient
                     {
@@ -133,14 +133,12 @@ LANSearch
 
 Note: If you didn't request this mail, please ignore it, or if there is a problem, contact me at lansearch@gmx.ch ",
 notificationEvent.UserName, notificationEvent.Name, sb, notificationEvent.SearchUrl);
-            //SendEmail(mail).Wait();
-
-            LogEmail(mail);
+            SendEmail(mail).Wait();
         }
 
         private void LogEmail(MailMessage mail)
         {
-            MailLogger.Warn(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
+            MailLogger.Trace(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
         }
     }
 }

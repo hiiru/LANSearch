@@ -39,7 +39,7 @@ namespace LANSearch.Modules.Member
                         else if ((errPassCode & 4) == 4)
                         {
                             model.ChangePassErrorNewPass = true;
-                            model.ChangePassErrorNewPassText = "Password is invalid.";
+                            model.ChangePassErrorNewPassText = "Password is empty.";
                         }
                     }
 
@@ -111,7 +111,7 @@ namespace LANSearch.Modules.Member
                     return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
                 }
                 bool oldPassValid = Ctx.UserManager.ValidatePassword(Context.CurrentUser as User, Request.Form.oldpass);
-                bool newPassMatch = Request.Form.newpass == Request.Form.newpass2;
+                bool newPassMatch = (string)Request.Form.newpass == (string)Request.Form.newpass2;
                 bool newPassInvalid = string.IsNullOrWhiteSpace(Request.Form.newpass);
                 if (oldPassValid && newPassMatch && newPassInvalid)
                 {

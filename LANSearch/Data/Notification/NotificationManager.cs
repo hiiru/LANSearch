@@ -72,19 +72,27 @@ namespace LANSearch.Data.Notification
             return all.Where(x => x.ServerId == id && !x.Deleted).ToList();
         }
 
+        protected int GetActiveNotificationCount(int userId)
+        {
+            if (userId <= 0) return 0;
+            var notifications = GetForUser(userId);
+            if (notifications == null) return 0;
+            return notifications.Count(x => !x.Disabled && !x.Deleted);
+        }
+
         public NotificationListModel GetListModel(Request request, User.User user)
         {
             if (user == null) return null;
             var notifications = GetForUser(user.Id);
-            return new NotificationListModel { Notifications = notifications, ActiveLimitReached = notifications.Count(x => !x.Disabled) >= Ctx.Config.NotificationPerUser };
+            return new NotificationListModel { Notifications = notifications, ActiveLimitReached = notifications.Count(x => !x.Disabled && !x.Deleted) >= Ctx.Config.NotificationPerUser };
         }
 
         public NotificationDetailModel GetNotificationFromQuery(Request request, User.User user)
         {
             if (request == null || user == null || user.Disabled) return null;
-            
-            var notifications = GetForUser(user.Id);
-            if (notifications.Count(x => !x.Disabled) >= Ctx.Config.NotificationPerUser)
+
+            var count = GetActiveNotificationCount(user.Id);
+            if (count >= Ctx.Config.NotificationPerUser)
             {
                 return new NotificationDetailModel {ActiveLimitReached = true};
             }
@@ -133,6 +141,8 @@ namespace LANSearch.Data.Notification
             var model = new NotificationDetailModel();
             model.Notification = Get(notificationId);
             model.IsCreation = false;
+            var count = GetActiveNotificationCount(model.Notification.OwnerId);
+            model.ActiveLimitReached = count >= Ctx.Config.NotificationPerUser;
             if (user != null)
             {
                 model.OwnerName = user.UserName;
@@ -155,9 +165,15 @@ namespace LANSearch.Data.Notification
             return model;
         }
 
-        public void SetDisabled(Notification notification, bool status)
+        public void SetDisabled(Notification notification, bool disable, bool isAdmin=false)
         {
-            notification.Disabled = status;
+            if (!isAdmin && !disable)
+            {
+                var count = GetActiveNotificationCount(notification.OwnerId);
+                if (count >= Ctx.Config.NotificationPerUser)
+                    return;
+            }
+            notification.Disabled = disable;
             Save(notification);
         }
 
