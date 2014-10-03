@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Logging;
+﻿using Common.Logging;
 using LANSearch.Data.Server;
 using LANSearch.Data.User;
 using LANSearch.Models;
@@ -19,7 +18,7 @@ namespace LANSearch.Modules.Member
             {
                 var user = Context.CurrentUser as User;
                 var model = Ctx.ServerManager.GetServerListModel(Request, user.Id);
-                return View["views/Member/Server/List.cshtml",model];
+                return View["views/Member/Server/List.cshtml", model];
             };
 
             Get["/server/add"] = x =>
@@ -46,9 +45,8 @@ namespace LANSearch.Modules.Member
                     Ctx.ServerManager.Save(model.Server);
                     return Response.AsRedirect("~/Member/Server");
                 }
-                return View["views/Member/Server/Add.cshtml",model];
+                return View["views/Member/Server/Add.cshtml", model];
             };
-
 
             Get["/server/detail/{serverId:int}"] = x =>
             {
@@ -86,9 +84,8 @@ namespace LANSearch.Modules.Member
                 {
                     Ctx.ServerManager.Save(model.Server);
                     return Response.AsRedirect("~/Member/Server");
-                    
                 }
-                return View["views/Member/Server/Detail.cshtml",model];
+                return View["views/Member/Server/Detail.cshtml", model];
             };
 
             Post["/server/detail/{serverId:int}/action"] = x =>
@@ -121,9 +118,8 @@ namespace LANSearch.Modules.Member
                 var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Member/Server/Detail/", x.serverId);
                 return new RedirectResponse(path, RedirectResponse.RedirectType.SeeOther);
             };
-
         }
-        
+
         protected dynamic ForbiddenResponse(Server srv, NancyContext context)
         {
             if (srv == null)
@@ -139,7 +135,7 @@ namespace LANSearch.Modules.Member
             var view = View["views/Error.cshtml", new ErrorModel
             {
                 StatusCode = 403,
-                ErrorTitle = "Unauthorized Access to Server "+srv.Id+" Forbidden!",
+                ErrorTitle = "Unauthorized Access to Server " + srv.Id + " Forbidden!",
                 ErrorType = "danger",
                 ErrorMessage =
                     "<strong>Unauthorized Access to a Server detected and logged!</strong>" +
@@ -148,7 +144,6 @@ namespace LANSearch.Modules.Member
             }];
             view.NegotiationContext.StatusCode = HttpStatusCode.Forbidden;
             return view;
-
         }
     }
 }

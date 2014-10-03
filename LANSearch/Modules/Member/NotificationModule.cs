@@ -1,13 +1,11 @@
 ﻿using Common.Logging;
 using LANSearch.Data.Notification;
-using LANSearch.Data.Server;
 using LANSearch.Data.User;
 using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
-using ServiceStack.Common;
 
 namespace LANSearch.Modules.Member
 {
@@ -50,7 +48,6 @@ namespace LANSearch.Modules.Member
                     return ForbiddenResponse(model.Notification, Context);
                 }
                 return View["Member/Notification/Detail.cshtml", model];
-
             };
             Post["/Notification/Detail/{id:int}"] = x =>
             {
@@ -140,7 +137,6 @@ namespace LANSearch.Modules.Member
             }];
             view.NegotiationContext.StatusCode = HttpStatusCode.Forbidden;
             return view;
-
         }
     }
 }

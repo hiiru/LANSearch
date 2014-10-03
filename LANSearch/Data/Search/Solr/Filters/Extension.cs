@@ -28,6 +28,7 @@ namespace LANSearch.Data.Search.Solr.Filters
             if (ActiveValue == null) return false;
             return value == ActiveValue;
         }
+
         public void UpdateFacetQuery(INamedList<string> qp)
         {
             if (qp == null) throw new ArgumentException("qp");
@@ -39,12 +40,12 @@ namespace LANSearch.Data.Search.Solr.Filters
         }
 
         protected string ActiveValue;
+
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
             if (value.Contains(" ")) return;
             ActiveValue = value;
             qp.Add(CommonParams.FQ, string.Format("{0}:{1}", "{!tag=fileExt}fileExt", value));
         }
-
     }
 }

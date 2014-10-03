@@ -5,12 +5,12 @@ using Mizore.CommunicationHandler.Data;
 using Mizore.CommunicationHandler.RequestHandler;
 using Mizore.CommunicationHandler.ResponseHandler;
 using Mizore.ContentSerializer.Data;
+using Mizore.DataMappingHandler;
+using Mizore.SolrServerHandler;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Mizore.DataMappingHandler;
-using Mizore.SolrServerHandler;
 
 namespace LANSearch.Data.Search.Solr
 {
@@ -46,11 +46,13 @@ namespace LANSearch.Data.Search.Solr
         }
 
         protected bool NoFacets { get; set; }
+
         protected List<IFilter> Filters { get; set; }
 
         protected ISolrServerHandler SolrServer { get { return Ctx.SearchManager.SolrServer; } }
+
         protected IDataMappingHandler SolrMapper { get { return Ctx.SearchManager.SolrMapper; } }
-        
+
         protected UrlBuilder UrlBuilder { get; set; }
 
         protected SolrQueryBuilder QueryBuilder { get; set; }
@@ -85,7 +87,7 @@ namespace LANSearch.Data.Search.Solr
                 sm.Filters = ParseFacets(solrResponse.Facets);
             return sm;
         }
-        
+
         private List<SearchFilter> ParseFacets(FacetData facets)
         {
             if (facets == null) return null;

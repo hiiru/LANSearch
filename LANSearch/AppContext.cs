@@ -1,16 +1,12 @@
-﻿using System;
-using Common.Logging;
+﻿using Common.Logging;
 using LANSearch.Data.Feedback;
 using LANSearch.Data.Jobs;
 using LANSearch.Data.Mail;
 using LANSearch.Data.Notification;
 using LANSearch.Data.Redis;
 using LANSearch.Data.Search;
-using LANSearch.Data.Search.Solr;
 using LANSearch.Data.Server;
 using LANSearch.Data.User;
-using Mizore.DataMappingHandler.Reflection;
-using Mizore.SolrServerHandler;
 
 namespace LANSearch
 {
@@ -24,6 +20,7 @@ namespace LANSearch
         }
 
         protected ILog Logger;
+
         protected AppContext()
         {
             Logger = LogManager.GetCurrentClassLogger();
@@ -45,7 +42,7 @@ namespace LANSearch
         public SearchManager SearchManager { get; protected set; }
 
         public AppConfig Config { get; protected set; }
-        
+
         public FeedbackManager FeedbackManager { get; protected set; }
 
         public UserManager UserManager { get; protected set; }

@@ -1,5 +1,4 @@
 ﻿using LANSearch.Data;
-using LANSearch.Data.Search.Solr;
 using LANSearch.Modules.BaseClasses;
 using Nancy.Responses;
 
@@ -20,6 +19,7 @@ namespace LANSearch.Modules
             var results = Ctx.SearchManager.Search(Request);
             return View["search", results];
         }
+
         private dynamic HandlePost()
         {
             var urlBuilder = new UrlBuilder(Request.Url);

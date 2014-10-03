@@ -1,7 +1,6 @@
-﻿using System;
+﻿using LANSearch.Data.Notification;
+using System;
 using System.Collections.Generic;
-using LANSearch.Data;
-using LANSearch.Data.Notification;
 
 namespace LANSearch.Models.Notification
 {
@@ -11,6 +10,7 @@ namespace LANSearch.Models.Notification
         {
             Errors = new Dictionary<string, string>();
         }
+
         public Data.Notification.Notification Notification { get; set; }
 
         public string OwnerName { get; set; }
@@ -22,8 +22,8 @@ namespace LANSearch.Models.Notification
         public bool IsAdmin { get; set; }
 
         public Dictionary<string, string> Errors { get; set; }
-        public string Keyword { get; set; }
 
+        public string Keyword { get; set; }
 
         public bool ValidateNotification()
         {
@@ -37,8 +37,8 @@ namespace LANSearch.Models.Notification
             {
                 Errors["notType"] = "Please select at least 1 Type.";
             }
-  
-            return Errors.Count==0;
+
+            return Errors.Count == 0;
         }
     }
 }

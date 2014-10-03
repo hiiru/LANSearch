@@ -1,15 +1,16 @@
-﻿using System.Threading;
-using Common.Logging;
+﻿using Common.Logging;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace LANSearch.Data.Redis
 {
     public class RedisManager
     {
         protected ILog Logger;
+
         public RedisManager()
         {
             Logger = LogManager.GetCurrentClassLogger();
@@ -25,21 +26,22 @@ namespace LANSearch.Data.Redis
                 using (var client = new RedisClient(string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort)))
                 {
                     var subscription = client.CreateSubscription();
-                    subscription.OnMessage+=OnSubscriptionMessage;
-                    subscription.SubscribeToChannels("server","user","feedback");
+                    subscription.OnMessage += OnSubscriptionMessage;
+                    subscription.SubscribeToChannels("server", "user", "feedback");
                 }
             });
             Logger.Debug("Subscribe Thread started, RedisManager is initialized.");
         }
 
         public delegate void RedisChangeMessage(string channel, string message);
+
         public event RedisChangeMessage OnMessage;
 
         private void OnSubscriptionMessage(string channel, string message)
         {
             if (OnMessage != null)
                 OnMessage(channel, message);
-            Logger.TraceFormat("OnSubscriptionMessage, channel:{0} message:{1}",channel,message);
+            Logger.TraceFormat("OnSubscriptionMessage, channel:{0} message:{1}", channel, message);
         }
 
         public PooledRedisClientManager Pool { get; protected set; }
@@ -138,7 +140,7 @@ namespace LANSearch.Data.Redis
                     clientNames.Remove(oldUser.UserName);
                 clientNames.Add(user.UserName, user.Id.ToString());
 
-                bool mailChanged=oldUser==null || oldUser.Email!=user.Email;
+                bool mailChanged = oldUser == null || oldUser.Email != user.Email;
                 if (mailChanged)
                 {
                     var mailaddresses = client.Lists[RedisUserKeyMail];
@@ -146,7 +148,6 @@ namespace LANSearch.Data.Redis
                         mailaddresses.Remove(oldUser.Email);
                     mailaddresses.Add(user.Email);
                 }
-
             }
         }
 
@@ -192,6 +193,7 @@ namespace LANSearch.Data.Redis
                 return clientNames.ContainsKey(name);
             }
         }
+
         public bool UserIsEmailUsed(string mail)
         {
             using (var client = Pool.GetClient())
@@ -291,7 +293,6 @@ namespace LANSearch.Data.Redis
                 else if (!obj.Hidden && isHidden)
                     hiddenList.Remove(obj.Id);
 
-
                 client.PublishMessage("server", obj.Id.ToString());
             }
         }
@@ -322,7 +323,7 @@ namespace LANSearch.Data.Redis
                 return intClient.Lists[RedisKeyHidden].ToList();
             }
         }
-        
+
         #endregion Server
 
         #region Configuration Management
@@ -425,7 +426,7 @@ namespace LANSearch.Data.Redis
             }
         }
 
-        #endregion
+        #endregion Notification
 
         public List<string> SearchKeys(string s)
         {
@@ -434,6 +435,5 @@ namespace LANSearch.Data.Redis
                 return client.SearchKeys(s);
             }
         }
-
     }
 }

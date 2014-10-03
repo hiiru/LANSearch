@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace LANSearch.Data.Server
 {
@@ -17,7 +14,7 @@ namespace LANSearch.Data.Server
         public string TypeName { get { return Type == 1 ? "FTP" : "-"; } }
 
         public int OwnerId { get; set; }
-        
+
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -36,7 +33,7 @@ namespace LANSearch.Data.Server
         public string Password { get; set; }
 
         public bool Deleted { get; set; }
-        
+
         /// <summary>
         /// Will be shown on search results and results are no longer linked, can be set by Owner/Admin.
         /// This will overwrite online status
@@ -87,7 +84,6 @@ namespace LANSearch.Data.Server
         /// </summary>
         public string AdminNote { get; set; }
 
-
         /* for future use
         /// <summary>
         /// Admin Public Notice, set by the admin for public information about the server.
@@ -114,6 +110,5 @@ namespace LANSearch.Data.Server
         /// </summary>
         public string PublicNoticeType { get; set; }
         */
-
     }
 }

@@ -10,7 +10,8 @@ namespace LANSearch.Modules.Member
 {
     public class ProfileModule : AppModule
     {
-        public ProfileModule() : base("/member")
+        public ProfileModule()
+            : base("/member")
         {
             // Note: Because this module isn't a MemberModule, we have to require Authentication here.
             // The module isn't MemberModule because of Unverified users.
@@ -22,7 +23,6 @@ namespace LANSearch.Modules.Member
                 var success = Request.Query.success;
                 if (!success.HasValue)
                 {
-
                     var errPass = Request.Query.errPass;
                     int errPassCode = 0;
                     if (errPass.HasValue && int.TryParse(errPass.Value, out errPassCode))
@@ -65,9 +65,11 @@ namespace LANSearch.Modules.Member
                             case 1:
                                 model.ConfirmError = true;
                                 break;
+
                             case 2:
                                 model.ConfirmMailInvalid = true;
                                 break;
+
                             case 3:
                                 model.ConfirmMailAlreadyUsed = true;
                                 break;
@@ -81,21 +83,23 @@ namespace LANSearch.Modules.Member
                         case "1":
                             model.ChangePassSuccess = true;
                             break;
+
                         case "2":
                             model.ChangeMailSuccess = true;
                             break;
+
                         case "3":
                             model.ConfirmAccountSuccess = true;
                             break;
+
                         case "4":
                             model.ConfirmResendSuccess = true;
                             break;
-
                     }
                 }
                 return View["views/Member/Profile.cshtml", model];
             };
-            
+
             Post["/profile/ChangePass"] = x =>
             {
                 try
@@ -177,7 +181,7 @@ namespace LANSearch.Modules.Member
                 else if (Request.Form.resend)
                 {
                     var user = Context.CurrentUser as User;
-                    error=Ctx.UserManager.ResendActivationMail(user, Request.Form.email, Request);
+                    error = Ctx.UserManager.ResendActivationMail(user, Request.Form.email, Request);
                     if (error == 0)
                     {
                         return Response.AsRedirect("~/Member/Profile?success=4");

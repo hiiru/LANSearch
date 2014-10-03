@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Security.Cryptography;
-using System.Text;
-using Hangfire;
+﻿using Hangfire;
 using LANSearch.Data.Redis;
 using Nancy;
 using Nancy.Authentication.Forms;
@@ -10,6 +6,9 @@ using ServiceStack.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LANSearch.Data.User
 {
@@ -35,7 +34,7 @@ namespace LANSearch.Data.User
             var valueBool = Expression.Parameter(typeof(bool), "value");
             var memberIsAuth = type.GetProperty("IsAuthenticated");
             var memExpIsAuth = Expression.Property(targetExp, memberIsAuth);
-            _setterIsAuth = Expression.Lambda<Action<User, bool>>(Expression.Assign(memExpIsAuth,valueBool), targetExp, valueBool).Compile();
+            _setterIsAuth = Expression.Lambda<Action<User, bool>>(Expression.Assign(memExpIsAuth, valueBool), targetExp, valueBool).Compile();
 
             var valueString = Expression.Parameter(typeof(string), "value");
             var memberAuthType = type.GetProperty("AuthenticationType");
@@ -92,7 +91,7 @@ namespace LANSearch.Data.User
                 {
                     return 4;
                 }
-                if (!ValidatePassword(user,password))
+                if (!ValidatePassword(user, password))
                 {
                     return 5;
                 }
@@ -150,9 +149,9 @@ namespace LANSearch.Data.User
                     user.EmailValidationKey = GetUniqueKey(6);
                     RedisManager.UserSave(user);
                     BackgroundJob.Enqueue(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
-                } else
+                }
+                else
                     RedisManager.UserSave(user);
-
 
                 guid = RedisManager.UserSessionStart(user);
                 return UserRegisterState.Ok;
@@ -335,7 +334,6 @@ namespace LANSearch.Data.User
             RedisManager.UserSave(user);
         }
 
-
         public string GetUniqueKey(int maxSize)
         {
             var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
@@ -353,7 +351,7 @@ namespace LANSearch.Data.User
         public bool ActivateAccount(User user, string code)
         {
             if (user == null || string.IsNullOrWhiteSpace(code)) return false;
-            bool codeValid=user.EmailValidationKey == code;
+            bool codeValid = user.EmailValidationKey == code;
             if (codeValid)
             {
                 user.EmailValidationKey = null;

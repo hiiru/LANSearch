@@ -4,9 +4,9 @@ using LANSearch.Models.Admin.User;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Responses;
+using Nancy.Security;
 using System;
 using System.Text;
-using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {

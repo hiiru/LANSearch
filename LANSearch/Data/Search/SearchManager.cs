@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LANSearch.Data.Search.Solr;
+﻿using LANSearch.Data.Search.Solr;
 using LANSearch.Data.Search.Solr.Filters;
 using LANSearch.Models.Search;
 using Mizore.CommunicationHandler.RequestHandler;
@@ -11,6 +6,8 @@ using Mizore.CommunicationHandler.ResponseHandler;
 using Mizore.DataMappingHandler.Reflection;
 using Mizore.SolrServerHandler;
 using Nancy;
+using System;
+using System.Collections.Generic;
 
 namespace LANSearch.Data.Search
 {

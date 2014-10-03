@@ -1,6 +1,5 @@
 ﻿using Common.Logging;
 using LANSearch.Data.Redis;
-using Newtonsoft.Json;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
@@ -104,7 +103,7 @@ namespace LANSearch
                     else if (pi.PropertyType == typeof(DateTime))
                     {
                         //store and display the date in a readable way, also otherwise standard .NET classes can't easily deserialize it
-                        dict[pi.Name] = ((DateTime) value).ToString("u");
+                        dict[pi.Name] = ((DateTime)value).ToString("u");
                     }
                     else
                         dict[pi.Name] = value;

@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Common.Logging;
+using LANSearch.Data.Notification;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Logging;
-using LANSearch.Data.Notification;
-using LANSearch.Models.Search;
 
 namespace LANSearch.Data.Mail
 {
     public class MailManager
     {
-        protected AppContext Ctx { get { return AppContext.GetContext();} }
+        protected AppContext Ctx { get { return AppContext.GetContext(); } }
 
         protected ILog Logger;
         protected ILog MailLogger;
+
         public MailManager()
         {
             Logger = LogManager.GetCurrentClassLogger();
@@ -27,7 +26,7 @@ namespace LANSearch.Data.Mail
         {
             try
             {
-                Logger.Info("Sending Email to "+mail.To);
+                Logger.Info("Sending Email to " + mail.To);
                 MailLogger.Trace(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
                 using (
                     var client = new SmtpClient
@@ -45,17 +44,17 @@ namespace LANSearch.Data.Mail
             }
             catch (Exception e)
             {
-                Logger.Error("Exception while sending mail to "+mail.To, e);
+                Logger.Error("Exception while sending mail to " + mail.To, e);
             }
         }
-        
+
         public void SendActivationMail(User.User user, string host)
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Email) ||
                 string.IsNullOrWhiteSpace(user.EmailValidationKey))
                 return;
 
-            string confirmLinkSnipet="";
+            string confirmLinkSnipet = "";
             if (!string.IsNullOrWhiteSpace(host) || InitConfig.ListenHost != "+")
             {
                 var sbUrl = new StringBuilder("http://");
@@ -70,7 +69,7 @@ Alternatively you can use this link:
                 confirmLinkSnipet = sbUrl.ToString();
             }
 
-            var mail = new MailMessage(new MailAddress(Ctx.Config.MailFromAddress, Ctx.Config.MailFromName), new MailAddress(user.Email,user.UserName));
+            var mail = new MailMessage(new MailAddress(Ctx.Config.MailFromAddress, Ctx.Config.MailFromName), new MailAddress(user.Email, user.UserName));
             if (Ctx.Config.MailCopyToSelf)
                 mail.Bcc.Add(Ctx.Config.MailFromAddress);
             mail.Subject = "LANSearch User Activation";
@@ -88,7 +87,6 @@ Note: If you didn't request this mail, please ignore it, or if there is a proble
 user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 
             SendEmail(mail).Wait();
-
         }
 
         //public void SendNotification(Notification.Notification notification, User.User user, IEnumerable<SearchFile> results)
@@ -99,7 +97,7 @@ user.UserName, user.EmailValidationKey, confirmLinkSnipet);
                 Logger.Info("Empty NotificationEvent was passed to SendNotification.");
                 return;
             }
-            if(string.IsNullOrWhiteSpace(notificationEvent.UserEmail) ||
+            if (string.IsNullOrWhiteSpace(notificationEvent.UserEmail) ||
                 string.IsNullOrWhiteSpace(notificationEvent.UserName) ||
                 string.IsNullOrWhiteSpace(notificationEvent.Name) ||
                 string.IsNullOrWhiteSpace(notificationEvent.SearchUrl))

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using LANSearch.Data.Redis;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LANSearch.Data.Redis;
 using LANSearch.Data.User;
-using LANSearch.Hubs;
 using LANSearch.Models.Server;
 using Nancy;
-using ServiceStack.Redis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LANSearch.Data.Server
 {
@@ -18,7 +14,7 @@ namespace LANSearch.Data.Server
 
         protected RedisManager RedisManager;
         protected Dictionary<int, Server> Cache;
-        protected List<int> CacheHidden; 
+        protected List<int> CacheHidden;
 
         public ServerManager(RedisManager redisManager)
         {
@@ -29,8 +25,8 @@ namespace LANSearch.Data.Server
 
             redisManager.OnMessage += redisManager_OnMessage;
         }
-        
-        void redisManager_OnMessage(string channel, string message)
+
+        private void redisManager_OnMessage(string channel, string message)
         {
             if (channel != "server") return;
             int id;
@@ -50,12 +46,9 @@ namespace LANSearch.Data.Server
                         CacheHidden.Add(id);
                     else if (!server.Hidden && isHidden)
                         CacheHidden.RemoveAll(x => x == id);
-
                 }
             }
-
         }
-
 
         public void Save(Server obj)
         {
@@ -94,13 +87,13 @@ namespace LANSearch.Data.Server
             //return RedisManager.ServerGetHidden();
         }
 
-        public ServerDetailModel GetModelDetail(int serverId, dynamic form=null, bool isAdmin=false)
+        public ServerDetailModel GetModelDetail(int serverId, dynamic form = null, bool isAdmin = false)
         {
             Server server;
             if (serverId > 0)
             {
                 server = Get(serverId);
-                if (server == null || (server.Deleted &&!isAdmin))
+                if (server == null || (server.Deleted && !isAdmin))
                     return null;
             }
             else
@@ -113,10 +106,9 @@ namespace LANSearch.Data.Server
                 };
             }
 
-
             var model = new ServerDetailModel
             {
-                Server = server, 
+                Server = server,
                 IsAdmin = isAdmin
             };
 
@@ -147,7 +139,6 @@ namespace LANSearch.Data.Server
                 server.Hidden = form.srvHidden;
                 server.NoScans = form.srvNoScan;
             }
-
 
             if (server.OwnerId > 0)
             {
@@ -200,7 +191,7 @@ namespace LANSearch.Data.Server
             return userlist;
         }
 
-        public void SetDeleted(Server server, bool deleted=true)
+        public void SetDeleted(Server server, bool deleted = true)
         {
             server.Deleted = deleted;
             server.Hidden = deleted;

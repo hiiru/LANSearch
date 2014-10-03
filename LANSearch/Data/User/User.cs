@@ -1,13 +1,13 @@
-﻿using System.Runtime.Serialization;
-using System.Security.Principal;
-using Nancy.Security;
+﻿using Nancy.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.Principal;
 
 namespace LANSearch.Data.User
 {
-    public class User : IUserIdentity,IIdentity, IPrincipal
+    public class User : IUserIdentity, IIdentity, IPrincipal
     {
         public User()
         {
@@ -63,7 +63,7 @@ namespace LANSearch.Data.User
         /// </summary>
         public List<string> LoginLog { get; set; }
 
-        public IEnumerable<string> GetReversedLoginLog(int? entries=null)
+        public IEnumerable<string> GetReversedLoginLog(int? entries = null)
         {
             var log = LoginLog.AsEnumerable().Reverse();
             if (entries.HasValue && entries.Value > 0)
@@ -77,25 +77,32 @@ namespace LANSearch.Data.User
 
         public bool Disabled { get; set; }
 
-
         #region IPrincipal Implementation
+
         public bool IsInRole(string role)
         {
             return ClaimHas(role);
         }
+
         /// <summary>
         /// Using a single object for simplicity
         /// </summary>
         [IgnoreDataMember]
         public IIdentity Identity { get { return this; } }
-        #endregion
+
+        #endregion IPrincipal Implementation
+
         #region IIdentity Implementation
+
         [IgnoreDataMember]
         public string Name { get { return UserName; } }
+
         [IgnoreDataMember]
         public string AuthenticationType { get; private set; }
+
         [IgnoreDataMember]
         public bool IsAuthenticated { get; private set; }
-        #endregion
+
+        #endregion IIdentity Implementation
     }
 }

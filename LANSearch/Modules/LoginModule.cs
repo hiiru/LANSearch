@@ -3,8 +3,8 @@ using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Authentication.Forms;
-using System;
 using Nancy.Security;
+using System;
 
 namespace LANSearch.Modules
 {

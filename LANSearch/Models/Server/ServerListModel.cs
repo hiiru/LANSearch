@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using LANSearch.Data;
+﻿using LANSearch.Data;
 using LANSearch.Models.BaseModels;
+using System.Collections.Generic;
 
 namespace LANSearch.Models.Server
 {

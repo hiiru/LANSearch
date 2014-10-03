@@ -11,6 +11,7 @@ namespace LANSearch
     public class Bootstrapper : DefaultNancyBootstrapper
     {
         protected AppContext Ctx { get { return AppContext.GetContext(); } }
+
         protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
         {
             base.ConfigureRequestContainer(container, context);
@@ -21,7 +22,7 @@ namespace LANSearch
         {
             var formsAuthenticationConfiguration = AuthenticationConfiguration.GetContext().FormsAuthenticationConfiguration;
             formsAuthenticationConfiguration.UserMapper = container.Resolve<IUserMapper>();
-            FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration); 
+            FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration);
             StaticConfiguration.DisableErrorTraces = false;
             Nancy.Security.Csrf.Enable(pipelines);
         }

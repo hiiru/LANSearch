@@ -24,6 +24,7 @@ namespace LANSearch.Data.Jobs
         #region Background Jobs
 
         public FtpCrawler FtpCrawler { get; protected set; }
+
         public NotificationJob NotificationJob { get; protected set; }
 
         #endregion Background Jobs

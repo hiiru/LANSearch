@@ -17,6 +17,7 @@ namespace LANSearch.Data.Search.Solr.Filters
         {
             return solrValue;
         }
+
         public bool IsSelected(string value)
         {
             if (ActiveValue == null) return false;
@@ -47,6 +48,7 @@ namespace LANSearch.Data.Search.Solr.Filters
         }
 
         protected string ActiveValue;
+
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return;

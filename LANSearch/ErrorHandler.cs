@@ -1,11 +1,11 @@
-﻿using System;
-using Common.Logging;
+﻿using Common.Logging;
 using LANSearch.Data.User;
 using LANSearch.Models;
 using Nancy;
 using Nancy.ErrorHandling;
 using Nancy.Security;
 using Nancy.ViewEngines;
+using System;
 
 namespace LANSearch
 {

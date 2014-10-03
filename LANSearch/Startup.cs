@@ -20,8 +20,8 @@ namespace LANSearch
 
             app.Use<Nancy2OwinAuthMiddleware>();
             logger.Debug("Nancy2OwinAuthMiddleware added.");
-            
-            app.MapSignalR("/sr", new HubConfiguration {EnableJavaScriptProxies = false});
+
+            app.MapSignalR("/sr", new HubConfiguration { EnableJavaScriptProxies = false });
             logger.Debug("MapSignalR Done.");
 
             app.UseHangfire(config =>
@@ -39,7 +39,6 @@ namespace LANSearch
             });
 
             logger.Debug("UseNancy Done, completed startup configuration");
-
         }
     }
 }

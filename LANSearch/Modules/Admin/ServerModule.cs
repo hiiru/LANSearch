@@ -1,16 +1,10 @@
-﻿using System.Collections.Generic;
-using Hangfire;
-using LANSearch.Data;
+﻿using Hangfire;
 using LANSearch.Data.Server;
-using LANSearch.Data.User;
 using LANSearch.Models.Server;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Responses;
-using System;
 using Nancy.Security;
-using ServiceStack;
-using ServiceStack.Common.Utils;
 
 namespace LANSearch.Modules.Admin
 {
@@ -42,7 +36,7 @@ namespace LANSearch.Modules.Admin
                 {
                     return Response.AsText("Can't add Server, CSRF Token is invalid.").WithStatusCode(403);
                 }
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, Request.Form,true);
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, Request.Form, true);
                 if (model == null)
                     return Response.AsRedirect("~/Admin/Server");
                 if (model.ValidateServer())

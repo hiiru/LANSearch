@@ -1,5 +1,4 @@
 ﻿using Common.Logging;
-using LANSearch.Data.Mail;
 using Microsoft.Owin.Hosting;
 
 namespace LANSearch
@@ -10,7 +9,7 @@ namespace LANSearch
     {
         private static int Main(string[] args)
         {
-            var logger=LogManager.GetCurrentClassLogger();
+            var logger = LogManager.GetCurrentClassLogger();
             logger.InfoFormat("LANSearch started{0}.", (args.Length == 0 ? "" : ", args: " + string.Join(" ", args)));
             var status = InitConfig.Init(args);
             if (status != 0)

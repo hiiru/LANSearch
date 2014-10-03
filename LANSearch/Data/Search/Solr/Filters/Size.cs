@@ -1,7 +1,6 @@
-﻿using System;
-using Mizore.CommunicationHandler.Data.Params;
+﻿using Mizore.CommunicationHandler.Data.Params;
 using Mizore.ContentSerializer.Data;
-using ServiceStack.Common.Extensions;
+using System;
 
 namespace LANSearch.Data.Search.Solr.Filters
 {
@@ -18,7 +17,7 @@ namespace LANSearch.Data.Search.Solr.Filters
         public string GetQSValue(string solrValue)
         {
             if (string.IsNullOrWhiteSpace(solrValue) || solrValue.Length < 16) return null;
-            var range = solrValue.Substring(16, solrValue.Length - 17).Replace(" TO ","-");
+            var range = solrValue.Substring(16, solrValue.Length - 17).Replace(" TO ", "-");
 
             return range;
         }
@@ -46,7 +45,7 @@ namespace LANSearch.Data.Search.Solr.Filters
 
         public bool IsSelected(string value)
         {
-            if (value == null || ActiveValue==null) return false;
+            if (value == null || ActiveValue == null) return false;
             return ActiveValue == GetQSValue(value);
         }
 
@@ -59,10 +58,11 @@ namespace LANSearch.Data.Search.Solr.Filters
         }
 
         protected string ActiveValue;
+
         public void UpdateFilterQuery(INamedList<string> qp, string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return;
-            var splited=value.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
+            var splited = value.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
             if (splited.Length != 2) return;
             int start, end;
             if (!int.TryParse(splited[0], out start)) return;

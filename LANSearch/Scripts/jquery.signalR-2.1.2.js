@@ -11,7 +11,6 @@
 /// <reference path="Scripts/jquery-1.6.4.js" />
 /// <reference path="jquery.signalR.version.js" />
 (function ($, window, undefined) {
-
     var resources = {
         nojQuery: "jQuery was not found. Please ensure jQuery is referenced before the SignalR client JavaScript file.",
         noTransportOnInit: "No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",
@@ -98,7 +97,7 @@
         isDisconnecting = function (connection) {
             return connection.state === signalR.connectionState.disconnected;
         },
-        
+
         supportsKeepAlive = function (connection) {
             return connection._.keepAliveData.activated &&
                    connection.transport.supportsKeepAlive(connection);
@@ -276,7 +275,6 @@
         } else if (requestedTransport === "auto" && signalR._.ieVersion <= 8) {
             // If we're doing an auto transport and we're IE8 then force longPolling, #1764
             return ["longPolling"];
-
         }
 
         return requestedTransport;
@@ -389,7 +387,7 @@
             link = window.document.createElement("a");
             link.href = url;
 
-            // When checking for cross domain we have to special case port 80 because the window.location will remove the 
+            // When checking for cross domain we have to special case port 80 because the window.location will remove the
             return link.protocol + addDefaultPort(link.protocol, link.host) !== against.protocol + addDefaultPort(against.protocol, against.host);
         },
 
@@ -409,7 +407,7 @@
 
         disconnectTimeout: 30000, // This should be set by the server in response to the negotiate request (30s default)
 
-        reconnectWindow: 30000, // This should be set by the server in response to the negotiate request 
+        reconnectWindow: 30000, // This should be set by the server in response to the negotiate request
 
         keepAliveWarnAt: 2 / 3, // Warn user of slow connection if we breach the X% mark of the keep alive timeout
 
@@ -506,7 +504,7 @@
                 config.transport = "longPolling";
             }
 
-            // If the url is protocol relative, prepend the current windows protocol to the url. 
+            // If the url is protocol relative, prepend the current windows protocol to the url.
             if (connection.url.indexOf("//") === 0) {
                 connection.url = window.location.protocol + connection.url;
                 connection.log("Protocol relative URL detected, normalizing it to '" + connection.url + "'.");
@@ -990,7 +988,6 @@
     }
 
     $.connection = $.signalR = signalR;
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.common.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -999,7 +996,6 @@
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1262,7 +1258,6 @@
                 onFail = function (error, connection) {
                     $(connection).triggerHandler(events.onError, [signalR._.transportError(signalR.resources.sendFailed, connection.transport, error, xhr), data]);
                 };
-
 
             xhr = transportLogic.ajax(connection, {
                 url: url,
@@ -1559,7 +1554,6 @@
             connections: {}
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.webSockets.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -1568,7 +1562,6 @@
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1712,7 +1705,6 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.serverSentEvents.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -1721,7 +1713,6 @@
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1893,7 +1884,6 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.foreverFrame.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -1902,7 +1892,6 @@
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1913,7 +1902,7 @@
             return frame;
         },
         // Used to prevent infinite loading icon spins in older versions of ie
-        // We build this object inside a closure so we don't pollute the rest of   
+        // We build this object inside a closure so we don't pollute the rest of
         // the foreverFrame transport with unnecessary functions/utilities.
         loadPreventer = (function () {
             var loadingFixIntervalId = null,
@@ -2055,7 +2044,7 @@
                 // If there's a custom JSON parser configured then serialize the object
                 // using the original (browser) JSON parser and then deserialize it using
                 // the custom parser (connection._parseResponse does that). This is so we
-                // can easily send the response from the server as "raw" JSON but still 
+                // can easily send the response from the server as "raw" JSON but still
                 // support custom JSON deserialization in the browser.
                 data = connection._originalJson.stringify(data);
             }
@@ -2137,7 +2126,6 @@
             }
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.longPolling.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -2146,7 +2134,6 @@
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -2309,7 +2296,6 @@
                             }
 
                             if (!tryFailConnect()) {
-
                                 // Increment our reconnect errors, we assume all errors to be reconnect errors
                                 // In the case that it's our first error this will cause Reconnect to be fired
                                 // after 1 second due to reconnectErrors being = 1.
@@ -2347,7 +2333,7 @@
                     if (reconnecting && raiseReconnect === true) {
                         // We wait to reconnect depending on how many times we've failed to reconnect.
                         // This is essentially a heuristic that will exponentially increase in wait time before
-                        // triggering reconnected.  This depends on the "error" handler of Poll to cancel this 
+                        // triggering reconnected.  This depends on the "error" handler of Poll to cancel this
                         // timeout if it triggers before the Reconnected event fires.
                         // The Math.min at the end is to ensure that the reconnect timeout does not overflow.
                         privateData.reconnectTimeoutId = window.setTimeout(function () { fireReconnected(instance); }, Math.min(1000 * (Math.pow(2, reconnectErrors) - 1), maxFireReconnectedTimeout));
@@ -2387,7 +2373,6 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.hubs.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
@@ -2396,7 +2381,6 @@
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, window, undefined) {
-
     var eventNamespace = ".hubProxy",
         signalR = $.signalR;
 
@@ -2448,7 +2432,7 @@
 
         // Loop over the callbacks and invoke them.
         // We do this using a local var reference and *after* we've cleared the cache
-        // so that if a fail callback itself tries to invoke another method we don't 
+        // so that if a fail callback itself tries to invoke another method we don't
         // end up with its callback in the list we're looping over.
         for (var callbackId in callbacks) {
             callback = callbacks[callbackId];
@@ -2752,7 +2736,7 @@
 
     hubConnection.fn._registerSubscribedHubs = function () {
         /// <summary>
-        ///     Sets the starting event to loop through the known hubs and register any new hubs 
+        ///     Sets the starting event to loop through the known hubs and register any new hubs
         ///     that have been added to the proxy.
         /// </summary>
         var connection = this;
@@ -2806,7 +2790,6 @@
     hubConnection.fn.init.prototype = hubConnection.fn;
 
     $.hubConnection = hubConnection;
-
 }(window.jQuery, window));
 /* jquery.signalR.version.js */
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.

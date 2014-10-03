@@ -19,6 +19,7 @@ namespace LANSearch.Data.Jobs.Ftp
     {
         private readonly static DateTime _minDate = new DateTime(1, 1, 2);
         protected ILog Logger = LogManager.GetCurrentClassLogger();
+
         protected AppContext Ctx { get { return AppContext.GetContext(); } }
 
         public FtpStatus CheckServer(Server.Server server)
@@ -87,7 +88,7 @@ namespace LANSearch.Data.Jobs.Ftp
         {
             if (!Ctx.SearchManager.SolrServer.IsOnline)
             {
-                Logger.InfoFormat("CrawlServer for id {0} stopped because solr is offline.",id);
+                Logger.InfoFormat("CrawlServer for id {0} stopped because solr is offline.", id);
                 return;
             }
             var server = Ctx.ServerManager.Get(id);

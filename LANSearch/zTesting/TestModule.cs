@@ -6,7 +6,8 @@ namespace LANSearch.zTesting
 {
     public class TestModule : NancyModule
     {
-        protected AppContext Ctx { get { return AppContext.GetContext();} }
+        protected AppContext Ctx { get { return AppContext.GetContext(); } }
+
         public TestModule()
         {
             Get["/z/notification"] = x =>
@@ -28,18 +29,23 @@ namespace LANSearch.zTesting
                     case "trace":
                         logger.Trace(x.text);
                         break;
+
                     case "debug":
                         logger.Debug(x.text);
                         break;
+
                     case "warn":
                         logger.Warn(x.text);
                         break;
+
                     case "error":
                         logger.Error(x.text);
                         break;
+
                     case "fatal":
                         logger.Fatal(x.text);
                         break;
+
                     case "info":
                     default:
                         logger.Info(x.text);

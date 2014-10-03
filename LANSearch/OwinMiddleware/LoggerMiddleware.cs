@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Common.Logging;
+﻿using Common.Logging;
 using Microsoft.Owin;
 using Owin;
+using System.Threading.Tasks;
 
 namespace LANSearch.OwinMiddleware
 {
@@ -9,7 +9,8 @@ namespace LANSearch.OwinMiddleware
     {
         protected ILog Logger;
 
-        public LoggerMiddleware(Microsoft.Owin.OwinMiddleware next, IAppBuilder app) : base(next)
+        public LoggerMiddleware(Microsoft.Owin.OwinMiddleware next, IAppBuilder app)
+            : base(next)
         {
             Logger = LogManager.GetCurrentClassLogger();
         }

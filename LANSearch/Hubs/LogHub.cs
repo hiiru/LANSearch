@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LANSearch.Data.User;
+using Microsoft.AspNet.SignalR;
+using System;
 using System.Globalization;
 using System.Linq;
-using LANSearch.Data.User;
-using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
 {
@@ -14,8 +14,11 @@ namespace LANSearch.Hubs
         private class LogEntry
         {
             public string date { get; set; }
+
             public string logLevel { get; set; }
+
             public string callsite { get; set; }
+
             public string message { get; set; }
         }
 
@@ -41,10 +44,11 @@ namespace LANSearch.Hubs
                 {
                     return null;
                 }
-            }).Where(x=>x!=null).ToArray();
+            }).Where(x => x != null).ToArray();
 
             Clients.Caller.getLastEvents(entries);
         }
+
         public void GetLastRequests()
         {
             var entries = System.IO.File.ReadLines("requests.log").Reverse().Take(500).Select(x =>
@@ -87,8 +91,8 @@ namespace LANSearch.Hubs
             if (_signalRHub != null)
             {
                 DateTime date;
-                DateTime.TryParseExact(longdate,dateFormat,CultureInfo.InvariantCulture,DateTimeStyles.None, out date);
-                
+                DateTime.TryParseExact(longdate, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+
                 _signalRHub.Clients.All.logEvent(date.ToString("yyyy-MM-dd HH:mm:ss"), logLevel, callsite, message);
             }
         }

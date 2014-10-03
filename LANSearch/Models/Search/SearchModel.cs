@@ -31,6 +31,7 @@ namespace LANSearch.Models.Search
         public List<SearchFilter> Filters { get; set; }
 
         public bool HasFilter { get { return Filters != null && Filters.Count > 0; } }
+
         public bool HasSearchParameters { get; set; }
 
         public string GetNotificationUrl()

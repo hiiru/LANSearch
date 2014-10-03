@@ -9,7 +9,7 @@ namespace LANSearch.Modules.BaseClasses
             : base("/member")
         {
             this.RequiresAuthentication();
-            this.RequiresClaims(new[]{UserRoles.MEMBER});
+            this.RequiresClaims(new[] { UserRoles.MEMBER });
         }
     }
 }

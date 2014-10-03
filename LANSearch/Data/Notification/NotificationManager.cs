@@ -3,10 +3,10 @@ using LANSearch.Data.Search.Solr;
 using LANSearch.Data.User;
 using LANSearch.Models.Notification;
 using Nancy;
+using ServiceStack.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ServiceStack.Common;
 
 namespace LANSearch.Data.Notification
 {
@@ -75,13 +75,13 @@ namespace LANSearch.Data.Notification
         public NotificationListModel GetListModel(Request request, User.User user)
         {
             if (user == null) return null;
-            return new NotificationListModel {Notifications = GetForUser(user.Id)};
+            return new NotificationListModel { Notifications = GetForUser(user.Id) };
         }
 
         public NotificationDetailModel GetNotificationFromQuery(Request request, User.User user)
         {
             if (request == null || user == null || user.Disabled) return null;
-            
+
             var url = request.Url.Clone();
             url.Path = "/Search";
             var solrQueryBuilder = new SolrQueryBuilder(request, Ctx.SearchManager.GetFilters(), true);
@@ -121,7 +121,7 @@ namespace LANSearch.Data.Notification
             return model;
         }
 
-        public NotificationDetailModel GetNotificationDetail(int notificationId, Request request=null, User.User user=null)
+        public NotificationDetailModel GetNotificationDetail(int notificationId, Request request = null, User.User user = null)
         {
             if (notificationId <= 0) return null;
             var model = new NotificationDetailModel();
@@ -132,7 +132,7 @@ namespace LANSearch.Data.Notification
                 model.OwnerName = user.UserName;
                 model.OwnerAdminUrl = user.GetAdminUrl();
             }
-            if (request!=null && request.Method == "POST")
+            if (request != null && request.Method == "POST")
             {
                 model.Notification.Name = request.Form.notName;
                 //reset all flags before setting selected flags
@@ -154,6 +154,7 @@ namespace LANSearch.Data.Notification
             notification.Disabled = status;
             Save(notification);
         }
+
         public void SetDeleted(Notification notification, bool status)
         {
             notification.Deleted = status;

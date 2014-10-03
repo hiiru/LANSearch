@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LANSearch.Data;
+using System;
 using System.Collections.Generic;
-using LANSearch.Data;
 
 namespace LANSearch.Models.Server
 {
@@ -10,6 +10,7 @@ namespace LANSearch.Models.Server
         {
             Errors = new Dictionary<string, string>();
         }
+
         public Data.Server.Server Server { get; set; }
 
         public string OwnerName { get; set; }
@@ -21,7 +22,6 @@ namespace LANSearch.Models.Server
         public bool IsAdmin { get; set; }
 
         public Dictionary<string, string> Errors { get; set; }
-
 
         public bool ValidateServer()
         {
@@ -46,7 +46,7 @@ namespace LANSearch.Models.Server
                 if (user == null)
                     Errors["srvOwner"] = "Invalid ownerId.";
             }
-            return Errors.Count==0;
+            return Errors.Count == 0;
         }
     }
 }

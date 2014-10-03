@@ -5,7 +5,10 @@ namespace LANSearch.OwinMiddleware
 {
     public class Nancy2OwinAuthMiddleware : Microsoft.Owin.OwinMiddleware
     {
-        public Nancy2OwinAuthMiddleware(Microsoft.Owin.OwinMiddleware next) : base(next) { }
+        public Nancy2OwinAuthMiddleware(Microsoft.Owin.OwinMiddleware next)
+            : base(next)
+        {
+        }
 
         public async override Task Invoke(IOwinContext context)
         {

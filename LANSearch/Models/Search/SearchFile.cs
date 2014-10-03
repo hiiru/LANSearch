@@ -1,6 +1,4 @@
-﻿using LANSearch.Data.Server;
-
-namespace LANSearch.Models.Search
+﻿namespace LANSearch.Models.Search
 {
     public class SearchFile
     {
