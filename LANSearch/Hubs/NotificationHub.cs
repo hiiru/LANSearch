@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LANSearch.Data.Notification;
+using LANSearch.Data.User;
 using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
@@ -38,22 +39,18 @@ namespace LANSearch.Hubs
             userClient.administratorMessage(message, type);
         }
 
-        //private static HashSet<string> ConnectedIds = new HashSet<string>();
-        //public override Task OnConnected()
-        //{
-        //    ConnectedIds.Add(Context.ConnectionId);
-        //    return base.OnConnected();
-        //}
+        [Authorize(Roles = UserRoles.ADMIN)]
+        public void SendAnnouncementMessage(string title, string message, string type)
+        {
+            Clients.Others.announcement(title, message, type);
+            Clients.Caller.cmdConfirm("Announcement is sent");
+        }
 
-        //public override Task OnDisconnected(bool stopCalled)
-        //{
-        //    ConnectedIds.Remove(Context.ConnectionId);
-        //    return base.OnDisconnected(stopCalled);
-        //}
-
-        //public override Task OnReconnected()
-        //{
-        //    return base.OnReconnected();
-        //}
+        [Authorize(Roles = UserRoles.ADMIN)]
+        public void SendAdminMessage(string username, string message, string type)
+        {
+            Clients.User(username).administratorMessage(message, type);
+            Clients.Caller.cmdConfirm("Message is sent");
+        }
     }
 }

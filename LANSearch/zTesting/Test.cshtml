@@ -12,10 +12,35 @@
 </head>
 <body>
     <div class="container">
-        <h1>Notification Test</h1>
-        <button onclick="testNotification()">Test Notification</button>
-        <button onclick="lsNotification()">LanSearch Notification</button>
-        <button onclick="dialogTest()">dialog test</button>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Announcement to all Users</h4></div>
+            <div class="panel-body">
+                <fieldset class="form-horizontal">
+                    <div class="form-group">
+                        <label for="code" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9"><input type="text" class="form-control" id="annTitle"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="code" class="col-sm-3 control-label">Message</label>
+                        <div class="col-sm-9"><textarea class="form-control" id="annMsg"></textarea></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="code" class="col-sm-3 control-label">Type</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="annType">
+                                <option value="default">Dafault</option>
+                                <option value="primary">Primary</option>
+                                <option value="info" selected="selected">Info</option>
+                                <option value="warning">Warning</option>
+                                <option value="danger">Danger</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-offset-3 col-sm-2"><button class="btn btn-primary" id="annSend">Send Announcement</button></div>
+                </fieldset>
+            </div>
+        </div>
     </div>
 
     <script src="@Url.Content("~/Scripts/jquery-1.9.0.min.js")"></script>
@@ -25,80 +50,6 @@
     <script src="@Url.Content("~/Scripts/lansearch.js")"></script>
     @*<script src="/sr/hubs"></script>*@
     <script type="text/javascript">
-
-
-        function testNotification() {
-
-            // Let's check if the browser supports notifications
-            if (!("Notification" in window)) {
-                console.log("This browser does not support desktop notification");
-                return;
-            }
-            // Let's check if the user is okay to get some notification
-            else if (Notification.permission === "granted") {
-                // If it's okay let's create a notification
-                var notification = new Notification("Test OK, notifications are enabled.");
-            }
-            // Otherwise, we need to ask the user for permission
-            // Note, Chrome does not implement the permission static property
-            // So we have to check for NOT 'denied' instead of 'default'
-            else if (Notification.permission !== 'denied') {
-                Notification.requestPermission(function(permission) {
-                    // Whatever the user answers, we make sure we store the information
-                    if (!('permission' in Notification)) {
-                        Notification.permission = permission;
-                    }
-
-                    // If the user is okay, let's create a notification
-                    if (permission === "granted") {
-                        var notification = new Notification("Test OK, notifications are now enabled.");
-                    } else {
-                        console.log("user rejected notifications");
-                    }
-                });
-            }
-        }
-        function lsNotification() {
-            if (Notification.permission === "granted") {
-                var notification = new Notification("LANSearch Notification",
-                {
-                    dir: "ltr",
-                    lang: "en",
-                    body: "This is a test notification",
-                    tag: "1"
-            });
-            }
-            else {
-                alert("Notifications are not enabled.");
-            }
-        }
-        function dialogTest() {
-            var howManyDialogs = 5;
-            for (var i = 1; i <= howManyDialogs; i++) {
-                var dialog = new BootstrapDialog({
-                    title: 'Dialog No.' + i,
-                    message: 'Hello Houston, this is dialog No.' + i,
-                    id: "test-" + i,
-                    buttons: [{
-                        label: 'Close this dialog.',
-                        action: function (dialogRef) {
-                            dialogRef.close();
-                        }
-                    }, {
-                        label: 'Close ALL opened dialogs',
-                        cssClass: 'btn-warning',
-                        action: function () {
-                            // You can also use BootstrapDialog.closeAll() to close all dialogs.
-                            $.each(BootstrapDialog.dialogs, function (id, dialog) {
-                                console.log(dialog);
-                            });
-                        }
-                    }]
-                });
-                dialog.open();
-            }
-        }
-
         $(function () {
             var disNotMsgShown = false;
             function browserNotification(name, message, tag) {
@@ -246,8 +197,32 @@
                     });
                     dialog.open();
                 });
-                connection.start();
+
+            var connectionReady = false;
+            connection.start().done(function() {
+                connectionReady = true;
             });
+
+            $("#annSend").on('click', function () {
+                if (!connectionReady) {
+                    BootstrapDialog.alert("SignalR connection not ready yet, please wait a few seconds.");
+                    return;
+                }
+                var title = $("#annTitle").val();
+                var msg = $("#annMsg").val();
+                var type = $("#annType").val();
+
+                if (title.length == 0 || msg.length == 0 || type.length == 0) {
+                    BootstrapDialog.alert("The data is incomplete, please fill out title, message and select a type.");
+                    return;
+                }
+
+                if (notifyHub)
+                    notifyHub.invoke("SendAnnouncementMessage", title, msg, type);
+                else
+                    alert("Error: SignalR connection not setup correctly, can't sent message!");
+            });
+        });
     </script>
 </body>
 </html>

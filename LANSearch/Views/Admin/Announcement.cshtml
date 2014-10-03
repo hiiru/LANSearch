@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "Master/Master";
+    ViewBag.Title = "Admin .:. Announcements";
+}
+<div class="col-xs-12 content">
+    <h2>Announcements and Messages</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Announcement to all Users</h4></div>
+        <div class="panel-body">
+            <fieldset class="form-horizontal">
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Title</label>
+                    <div class="col-sm-9"><input type="text" class="form-control" id="annTitle"></div>
+                </div>
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Message</label>
+                    <div class="col-sm-9"><textarea class="form-control" id="annMsg"></textarea></div>
+                </div>
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="annType">
+                            <option value="default">Dafault</option>
+                            <option value="primary">Primary</option>
+                            <option value="info" selected="selected">Info</option>
+                            <option value="warning">Warning</option>
+                            <option value="danger">Danger</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-offset-3 col-sm-2"><button class="btn btn-primary" id="annSend">Send Announcement</button></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Message to User</h4></div>
+        <div class="panel-body">
+            <fieldset class="form-horizontal">
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Username</label>
+                    <div class="col-sm-9"><input type="text" class="form-control" id="msgUser"></div>
+                </div>
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Message</label>
+                    <div class="col-sm-9"><textarea class="form-control" id="msgMsg"></textarea></div>
+                </div>
+                <div class="form-group">
+                    <label for="code" class="col-sm-3 control-label">Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="msgType">
+                            <option value="default">Dafault</option>
+                            <option value="primary">Primary</option>
+                            <option value="info" selected="selected">Info</option>
+                            <option value="warning">Warning</option>
+                            <option value="danger">Danger</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-offset-3 col-sm-2"><button class="btn btn-primary" id="msgSend">Send Message</button></div>
+            </fieldset>
+        </div>
+    </div>
+</div>

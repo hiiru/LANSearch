@@ -75,13 +75,19 @@ namespace LANSearch.Data.Notification
         public NotificationListModel GetListModel(Request request, User.User user)
         {
             if (user == null) return null;
-            return new NotificationListModel { Notifications = GetForUser(user.Id) };
+            var notifications = GetForUser(user.Id);
+            return new NotificationListModel { Notifications = notifications, ActiveLimitReached = notifications.Count(x => !x.Disabled) >= Ctx.Config.NotificationPerUser };
         }
 
         public NotificationDetailModel GetNotificationFromQuery(Request request, User.User user)
         {
             if (request == null || user == null || user.Disabled) return null;
-
+            
+            var notifications = GetForUser(user.Id);
+            if (notifications.Count(x => !x.Disabled) >= Ctx.Config.NotificationPerUser)
+            {
+                return new NotificationDetailModel {ActiveLimitReached = true};
+            }
             var url = request.Url.Clone();
             url.Path = "/Search";
             var solrQueryBuilder = new SolrQueryBuilder(request, Ctx.SearchManager.GetFilters(), true);

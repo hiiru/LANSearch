@@ -11,6 +11,7 @@ namespace LANSearch.Models.Notification
             Errors = new Dictionary<string, string>();
         }
 
+        public bool ActiveLimitReached { get; set; }
         public Data.Notification.Notification Notification { get; set; }
 
         public string OwnerName { get; set; }

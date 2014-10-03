@@ -20,6 +20,7 @@ namespace LANSearch.Data.Search.Solr.Filters
 
         public string GetFilterText(string value)
         {
+            if (string.IsNullOrWhiteSpace(value)) return null;
             return value;
         }
 
