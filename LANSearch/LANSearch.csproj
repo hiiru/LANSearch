@@ -138,6 +138,7 @@
     <Compile Include="Data\Jobs\NotificationJob.cs" />
     <Compile Include="Data\Mail\MailManager.cs" />
     <Compile Include="Data\Notification\Notification.cs" />
+    <Compile Include="Data\Notification\NotificationEvent.cs" />
     <Compile Include="Data\Notification\NotificationManager.cs" />
     <Compile Include="Data\Notification\NotificationType.cs" />
     <Compile Include="Data\PasswordHash.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Hubs\CustomAuthorizeAttribute.cs" />
     <Compile Include="Hubs\LogHub.cs" />
+    <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="InitConfig.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpCrawler.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />

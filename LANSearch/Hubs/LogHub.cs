@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using LANSearch.Data.Search.Solr;
 using LANSearch.Data.User;
 using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
 {
-    //[CustomAuthorize(Roles = UserRoles.ADMIN)]
+    [CustomAuthorize(Roles = UserRoles.ADMIN)]
     public class LogHub : Hub
     {
         private static IHubContext _signalRHub;

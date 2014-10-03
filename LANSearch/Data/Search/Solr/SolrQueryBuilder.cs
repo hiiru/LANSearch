@@ -117,6 +117,7 @@ namespace LANSearch.Data.Search.Solr
             {
                 QueryParameters.Add(kvp.Key, kvp.Value);
             }
+
             QueryParameters.Add(CommonParams.ROWS, "20");
             QueryParameters.Add(CommonParams.START, "0");
 

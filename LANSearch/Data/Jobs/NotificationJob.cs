@@ -9,6 +9,7 @@ using Common.Logging;
 using Hangfire;
 using LANSearch.Data.Notification;
 using LANSearch.Data.Search.Solr;
+using LANSearch.Hubs;
 
 namespace LANSearch.Data.Jobs
 {
@@ -55,14 +56,25 @@ namespace LANSearch.Data.Jobs
             Ctx.NotificationManager.Save(notification);
             if (!results.HasResults)
                 return;
+            var notEvent = new NotificationEvent
+            {
+                NotificationId = notification.Id,
+                Name = notification.Name,
+                SearchUrl = notification.SearchUrl,
+                NotificationTime = DateTime.Now,
+                UserId = user.Id,
+                UserName = user.UserName,
+                UserEmail = user.Email,
+                Items = results.Results.Select(result => new NotificationEventItem { FileName = result.Name,FileSize = result.Size,FileUrl = result.Url}).ToList()
+            };
 
             if (notification.Type.HasFlag(NotificationType.Mail))
             {
-                BackgroundJob.Enqueue(() => Ctx.MailManager.SendNotification(notification, user, results.Results.Take(5)));
+                BackgroundJob.Enqueue(() => Ctx.MailManager.SendNotification(notEvent));
             }
             if (notification.Type.HasFlag(NotificationType.Html5))
             {
-                //TODO
+                BackgroundJob.Enqueue(() => NotificationHub.PushNotification(notEvent));
             }
 
         }

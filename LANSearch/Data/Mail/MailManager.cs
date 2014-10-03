@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
+using LANSearch.Data.Notification;
 using LANSearch.Models.Search;
 
 namespace LANSearch.Data.Mail
@@ -15,9 +16,11 @@ namespace LANSearch.Data.Mail
         protected AppContext Ctx { get { return AppContext.GetContext();} }
 
         protected ILog Logger;
+        protected ILog MailLogger;
         public MailManager()
         {
             Logger = LogManager.GetCurrentClassLogger();
+            MailLogger = LogManager.GetLogger("LANSearch.Data.Mail.MailManager-MailLog");
         }
 
         protected async Task SendEmail(MailMessage mail)
@@ -25,7 +28,7 @@ namespace LANSearch.Data.Mail
             try
             {
                 Logger.Info("Sending Email to "+mail.To);
-                Logger.Trace(mail);
+                MailLogger.Trace(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
                 using (
                     var client = new SmtpClient
                     {
@@ -88,23 +91,35 @@ user.UserName, user.EmailValidationKey, confirmLinkSnipet);
 
         }
 
-        public void SendNotification(Notification.Notification notification, User.User user, IEnumerable<SearchFile> results)
+        //public void SendNotification(Notification.Notification notification, User.User user, IEnumerable<SearchFile> results)
+        public void SendNotification(NotificationEvent notificationEvent)
         {
-            if (notification==null || user==null || results==null)
-                return;
-            
-            var sb = new StringBuilder();
-            foreach (var item in results)
+            if (notificationEvent == null || notificationEvent.Items == null || notificationEvent.Items.Count == 0)
             {
-                sb.AppendLine(string.Format("File: {0} ({1})", item.Name, item.Size));
-                sb.AppendLine(string.Format("Url: {0}", item.Url));
+                Logger.Info("Empty NotificationEvent was passed to SendNotification.");
+                return;
+            }
+            if(string.IsNullOrWhiteSpace(notificationEvent.UserEmail) ||
+                string.IsNullOrWhiteSpace(notificationEvent.UserName) ||
+                string.IsNullOrWhiteSpace(notificationEvent.Name) ||
+                string.IsNullOrWhiteSpace(notificationEvent.SearchUrl))
+            {
+                Logger.WarnFormat("Invalid NotificationEvent was passed to SendNotification, Id:{0}", notificationEvent.NotificationId);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var item in notificationEvent.Items.Take(5))
+            {
+                sb.AppendLine(string.Format("File: {0} ({1})", item.FileName, item.FileSize));
+                sb.AppendLine(string.Format("Url: {0}", item.FileUrl));
                 sb.AppendLine();
             }
-            
-            var mail = new MailMessage(new MailAddress(Ctx.Config.MailFromAddress, Ctx.Config.MailFromName), new MailAddress(user.Email, user.UserName));
+
+            var mail = new MailMessage(new MailAddress(Ctx.Config.MailFromAddress, Ctx.Config.MailFromName), new MailAddress(notificationEvent.UserEmail, notificationEvent.UserName));
             if (Ctx.Config.MailCopyToSelf)
                 mail.Bcc.Add(Ctx.Config.MailFromAddress);
-            mail.Subject = "LANSearch Search Notification: "+notification.Name;
+            mail.Subject = "LANSearch Search Notification: " + notificationEvent.Name;
             mail.IsBodyHtml = false;
             mail.Body = string.Format(
 @"Hi {0},
@@ -119,8 +134,15 @@ Regards,
 LANSearch
 
 Note: If you didn't request this mail, please ignore it, or if there is a problem, contact me at lansearch@gmx.ch ",
-user.UserName, notification.Name, sb, notification.SearchUrl);
-            SendEmail(mail).Wait();
+notificationEvent.UserName, notificationEvent.Name, sb, notificationEvent.SearchUrl);
+            //SendEmail(mail).Wait();
+
+            LogEmail(mail);
+        }
+
+        private void LogEmail(MailMessage mail)
+        {
+            MailLogger.Warn(string.Format("Mail To :{0} Subject: {1}\n{2}\n--------------------------", mail.To.First().Address, mail.Subject, mail.Body));
         }
     }
 }
