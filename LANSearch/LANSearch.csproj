@@ -122,6 +122,7 @@
     <Reference Include="System.Net.FtpClient">
       <HintPath>..\packages\System.Net.FtpClient.1.0.5281.14359\lib\net40\System.Net.FtpClient.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
@@ -165,13 +166,12 @@
     <Compile Include="Data\ValidationHelper.cs" />
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Hubs\CustomAuthorizeAttribute.cs" />
     <Compile Include="Hubs\LogHub.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="InitConfig.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpCrawler.cs" />
     <Compile Include="Data\Jobs\Ftp\FtpStatus.cs" />
-    <Compile Include="LoggerMiddleware.cs" />
+    <Compile Include="OwinMiddleware\LoggerMiddleware.cs" />
     <Compile Include="Models\Admin\FeedbackModel.cs" />
     <Compile Include="Models\Notification\NotificationListModel.cs" />
     <Compile Include="Models\Notification\NotificationDetailModel.cs" />
@@ -206,6 +206,7 @@
     <Compile Include="Modules\Member\ProfileModule.cs" />
     <Compile Include="Modules\Member\ServerModule.cs" />
     <Compile Include="Modules\SearchModule.cs" />
+    <Compile Include="OwinMiddleware\Nancy2OwinAuthMiddleware.cs" />
     <Compile Include="zTesting\TestModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

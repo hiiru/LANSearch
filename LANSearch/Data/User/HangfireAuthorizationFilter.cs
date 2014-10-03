@@ -10,15 +10,12 @@ namespace LANSearch.Data.User
     {
         public bool Authorize(IDictionary<string, object> owinEnvironment)
         {
-            try
+            if (owinEnvironment.ContainsKey("server.User"))
             {
-                var user = AppContext.GetContext().UserManager.GetUserByOwinEnvironment(owinEnvironment);
-                return user != null && !user.Disabled && user.ClaimHas(UserRoles.ADMIN);
+                var user = owinEnvironment["server.User"] as User;
+                return user != null && !user.Disabled;
             }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

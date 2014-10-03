@@ -6,7 +6,7 @@ using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
 {
-    [CustomAuthorize(Roles = UserRoles.ADMIN)]
+    [Authorize(Roles = UserRoles.ADMIN)]
     public class LogHub : Hub
     {
         private static IHubContext _signalRHub;

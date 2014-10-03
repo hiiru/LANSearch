@@ -3,13 +3,13 @@ using Common.Logging;
 using Microsoft.Owin;
 using Owin;
 
-namespace LANSearch
+namespace LANSearch.OwinMiddleware
 {
-    public class LoggerMiddleware : OwinMiddleware
+    public class LoggerMiddleware : Microsoft.Owin.OwinMiddleware
     {
         protected ILog Logger;
 
-        public LoggerMiddleware(OwinMiddleware next, IAppBuilder app) : base(next)
+        public LoggerMiddleware(Microsoft.Owin.OwinMiddleware next, IAppBuilder app) : base(next)
         {
             Logger = LogManager.GetCurrentClassLogger();
         }

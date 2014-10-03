@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using Hangfire;
@@ -21,6 +22,31 @@ namespace LANSearch.Data.User
         public UserManager(RedisManager redisManager)
         {
             RedisManager = redisManager;
+            SetupExpressions();
+        }
+
+        private static Action<User, bool> _setterIsAuth;
+        private static Action<User, string> _setterAuthType;
+
+        private void SetupExpressions()
+        {
+            var type = typeof(User);
+            var targetExp = Expression.Parameter(type, "targetObject");
+            var valueBool = Expression.Parameter(typeof(bool), "value");
+            var memberIsAuth = type.GetProperty("IsAuthenticated");
+            var memExpIsAuth = Expression.Property(targetExp, memberIsAuth);
+            _setterIsAuth = Expression.Lambda<Action<User, bool>>(Expression.Assign(memExpIsAuth,valueBool), targetExp, valueBool).Compile();
+
+            var valueString = Expression.Parameter(typeof(string), "value");
+            var memberAuthType = type.GetProperty("AuthenticationType");
+            var memExpAuthType = Expression.Property(targetExp, memberAuthType);
+            _setterAuthType = Expression.Lambda<Action<User, string>>(Expression.Assign(memExpAuthType, valueString), targetExp, valueString).Compile();
+        }
+
+        protected void SetAuthenticated(User user)
+        {
+            _setterIsAuth(user, true);
+            _setterAuthType(user, "NancyFormAuthentication");
         }
 
         public User Get(string name)
@@ -189,7 +215,10 @@ namespace LANSearch.Data.User
 
         public User GetByGuid(Guid identifier)
         {
-            return RedisManager.UserSessionResolve(identifier);
+            var user = RedisManager.UserSessionResolve(identifier);
+            if (user != null)
+                SetAuthenticated(user);
+            return user;
         }
 
         #endregion Login / Registration

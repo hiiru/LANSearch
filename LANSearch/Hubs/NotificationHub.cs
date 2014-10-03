@@ -9,7 +9,7 @@ using Microsoft.AspNet.SignalR;
 
 namespace LANSearch.Hubs
 {
-    [CustomAuthorize()]
+    [Authorize()]
     public class NotificationHub
     {
         private static IHubContext _signalRHub;

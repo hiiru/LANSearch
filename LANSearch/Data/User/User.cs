@@ -1,11 +1,13 @@
-﻿using Nancy.Security;
+﻿using System.Runtime.Serialization;
+using System.Security.Principal;
+using Nancy.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LANSearch.Data.User
 {
-    public class User : IUserIdentity
+    public class User : IUserIdentity,IIdentity, IPrincipal
     {
         public User()
         {
@@ -18,6 +20,7 @@ namespace LANSearch.Data.User
 
         public List<string> ClaimList { get; set; }
 
+        [IgnoreDataMember]
         public IEnumerable<string> Claims { get { return ClaimList.AsEnumerable(); } }
 
         public void ClaimClear()
@@ -73,5 +76,26 @@ namespace LANSearch.Data.User
         public DateTime LastLogin { get; set; }
 
         public bool Disabled { get; set; }
+
+
+        #region IPrincipal Implementation
+        public bool IsInRole(string role)
+        {
+            return ClaimHas(role);
+        }
+        /// <summary>
+        /// Using a single object for simplicity
+        /// </summary>
+        [IgnoreDataMember]
+        public IIdentity Identity { get { return this; } }
+        #endregion
+        #region IIdentity Implementation
+        [IgnoreDataMember]
+        public string Name { get { return UserName; } }
+        [IgnoreDataMember]
+        public string AuthenticationType { get; private set; }
+        [IgnoreDataMember]
+        public bool IsAuthenticated { get; private set; }
+        #endregion
     }
 }

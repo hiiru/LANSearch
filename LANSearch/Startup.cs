@@ -2,6 +2,7 @@
 using Hangfire;
 using Hangfire.Redis;
 using LANSearch.Data.User;
+using LANSearch.OwinMiddleware;
 using Microsoft.AspNet.SignalR;
 using Owin;
 
@@ -16,6 +17,9 @@ namespace LANSearch
 
             app.Use<LoggerMiddleware>(app);
             logger.Debug("LoggerMiddleware added.");
+
+            app.Use<Nancy2OwinAuthMiddleware>();
+            logger.Debug("Nancy2OwinAuthMiddleware added.");
             
             app.MapSignalR("/sr", new HubConfiguration {EnableJavaScriptProxies = false});
             logger.Debug("MapSignalR Done.");
