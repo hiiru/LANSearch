@@ -3,20 +3,23 @@
 {
     <ul class="nav navbar-nav pull-right hidden-xs">
         <li class="dropdown">
-            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Login <strong class="caret"></strong></a>
+            <a class="dropdown-toggle" href="@Url.Content("~/Login")" data-toggle="dropdown">Login <strong class="caret"></strong></a>
             <div class="dropdown-menu">
-                <form class="form login" method="post" action="@Url.Content("~/Login")@RenderContext.Context.Request.Url.ToReturnUrl()">
-                    <div class="form-group">
-                        <label class="control-label" for="user">Username</label>
-                        <input name="user" type="text" class="form-control" maxlength="20">
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label" for="pass">Password</label>
-                        <input name="pass" type="password" class="form-control" maxlength="20">
-                    </div>
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-default">Login</button>
-                </form>
+                <div class="col-xs-12">
+                    <form class="form login" method="post" action="@Url.Content("~/Login")@RenderContext.Context.Request.Url.ToReturnUrl()">
+                        <div class="form-group">
+                            <label class="control-label" for="user">Username</label>
+                            <input name="user" type="text" class="form-control" maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="pass">Password</label>
+                            <input name="pass" type="password" class="form-control" maxlength="20">
+                        </div>
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <a class="pull-right" href="@Url.Content("~/Login")">Create an Account</a>
+                    </form>
+                </div>
             </div>
         </li>
     </ul>
