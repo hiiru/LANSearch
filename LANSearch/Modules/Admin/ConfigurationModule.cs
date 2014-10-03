@@ -63,12 +63,6 @@ namespace LANSearch.Modules.Admin
 
                 return View["Views/Admin/Jobs.cshtml"];
             };
-
-            //TODO
-            //Get["/security"] = x =>
-            //{
-            //    return "TODO:Security";
-            //};
         }
     }
 }

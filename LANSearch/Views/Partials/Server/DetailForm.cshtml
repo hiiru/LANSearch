@@ -1,7 +1,7 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
 <form role="form" method="POST">
     <fieldset>
-        @if (Model.IsCreation || Model.IsAdmin)
+        @if (Model.IsAdmin) //Model.IsCreation || 
         {
             <div class="form-group col-md-6">
                 <label for="srvType">Server Type (TODO)</label>
