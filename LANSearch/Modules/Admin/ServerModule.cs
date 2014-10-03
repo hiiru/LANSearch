@@ -88,12 +88,12 @@ namespace LANSearch.Modules.Admin
                 var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Admin/Server/Detail/", x.serverId);
                 return new RedirectResponse(path, RedirectResponse.RedirectType.SeeOther);
             };
-            Get["/server/create"] = x =>
+            Get["/server/add"] = x =>
             {
                 var model = new ServerDetailModel { IsCreation = true, Server = new Server(), IsAdmin = true };
                 return View["Admin/Server/ServerDetail.cshtml", model];
             };
-            Post["/server/create"] = x =>
+            Post["/server/add"] = x =>
             {
                 try
                 {

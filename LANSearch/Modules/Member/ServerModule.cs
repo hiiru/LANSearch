@@ -23,7 +23,7 @@ namespace LANSearch.Modules.Member
 
             Get["/server/add"] = x =>
             {
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId);
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0);
                 model.IsCreation = true;
                 return View["views/Member/Server/Add.cshtml", model];
             };

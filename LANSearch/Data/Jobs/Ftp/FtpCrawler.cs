@@ -186,6 +186,8 @@ namespace LANSearch.Data.Jobs.Ftp
             var ftp = new FtpClient { Host = server.Address, Port = server.Port };
             if (!string.IsNullOrWhiteSpace(server.Login))
                 ftp.Credentials = new NetworkCredential(server.Login, server.Password);
+            else
+                ftp.Credentials = new NetworkCredential("anonymous", "LANSearch");
             FtpListItem[] root;
             var status = CheckServer(ftp, out root);
             if (!status.IsOk)
@@ -199,16 +201,18 @@ namespace LANSearch.Data.Jobs.Ftp
                 {
                     server.Online = false;
                     Ctx.ServerManager.Save(server);
+                    Logger.WarnFormat("Server {0} is Offline.",server.Id);
                     return;
                 }
                 server.ScanFailedMessage = string.Format("{0} {1}", status.ErrorFtpCode, status.ErrorFtpMessage);
                 if (server.Online && server.ScanFailedAttempts > Ctx.Config.CrawlerOfflineLimit)
                     server.Online = false;
+                Logger.WarnFormat("Login Error for Server {0}: {1}",server.Id,server.ScanFailedMessage);
                 Ctx.ServerManager.Save(server);
                 return;
             }
 
-            var visited = new Dictionary<string, bool>();
+            var visited = new HashSet<string>();
             try
             {
                 GetList(ftp, "/", queue, visited, root);
@@ -228,10 +232,11 @@ namespace LANSearch.Data.Jobs.Ftp
         protected HashSet<string> IgnoredFiles = new HashSet<string> { "Thumbs.db", "desktop.ini", ".DS_Store", ".apdisk", ".com.apple.timemachine.supported", ".Parent", ".iTunes Preferences.plist", ".directory" };
         protected HashSet<string> IgnoredFolders = new HashSet<string> { ".@__thumb", ".AppleDouble", ".localized" };
 
-        private void GetList(FtpClient client, string path, BlockingCollection<FtpListItem> collection, Dictionary<string, bool> visited, FtpListItem[] preRequested = null)
+        private void GetList(FtpClient client, string path, BlockingCollection<FtpListItem> collection, HashSet<string> visited, FtpListItem[] preRequested = null)
         {
+            if (visited.Contains(path)) return;
+            visited.Add(path);
             var items = preRequested ?? client.GetListing(path, FtpListOption.AllFiles | FtpListOption.Size);
-            visited[path] = true;
             var toCheck = new List<string>();
             foreach (var item in items)
             {
@@ -243,13 +248,28 @@ namespace LANSearch.Data.Jobs.Ftp
                         break;
 
                     case FtpFileSystemObjectType.Directory:
-                        if (!IgnoredFolders.Contains(item.Name) && !visited.ContainsKey(item.FullName))
+                        if (!IgnoredFolders.Contains(item.Name) && !visited.Contains(item.FullName))
                             toCheck.Add(item.FullName);
                         break;
 
                     case FtpFileSystemObjectType.Link:
-                        if (!visited.ContainsKey(item.LinkTarget))
-                            toCheck.Add(item.LinkTarget);
+                        //Note: resolving symlinks shouldn't be necessary , however it makes crawling a LOT slower.
+                        //due to that fact, i currently removed the fixed crawling code.
+
+                        //var resolvedLink = ResolveLinkPath(path, item.LinkTarget);
+                        //item.LinkTarget = resolvedLink;
+                        //var linkTarget = client.DereferenceLink(item);
+                        //if (linkTarget != null)
+                        //{
+                        //    if (linkTarget.Type == FtpFileSystemObjectType.File)
+                        //    {
+                        //        if (!IgnoredFiles.Contains(item.Name))
+                        //            collection.Add(item);
+                        //        continue;
+                        //    }
+                        //    if (!IgnoredFolders.Contains(item.Name) && !visited.Contains(item.FullName))
+                        //        toCheck.Add(linkTarget.FullName);
+                        //}
                         break;
                 }
             }
@@ -261,5 +281,72 @@ namespace LANSearch.Data.Jobs.Ftp
                 }
             }
         }
+
+        //private static string ResolveLinkPath(string current, string relative)
+        //{
+        //    if (string.IsNullOrWhiteSpace(relative))
+        //        return current;
+        //    var relativeSplit = relative.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+        //    var pathSegments = new List<string>();
+        //    if (relative.StartsWith("/"))
+        //    {
+        //        foreach (var folder in relativeSplit)
+        //        {
+        //            switch (folder)
+        //            {
+        //                case "":
+        //                case ".":
+        //                    continue;
+        //                case "..":
+        //                    if (pathSegments.Count>0)
+        //                        pathSegments.RemoveAt(pathSegments.Count - 1);
+        //                    break;
+        //                default:
+        //                    pathSegments.Add(folder);
+        //                    break;
+        //            }
+                    
+        //        }
+        //        return "/"+string.Join("/", pathSegments);
+        //    }
+        //    var currentSplit = current.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+        //    int removeCount = 0;
+        //    foreach (var folder in relativeSplit)
+        //    {
+        //        switch (folder)
+        //        {
+        //            case "":
+        //            case ".":
+        //                continue;
+        //            case "..":
+        //                if (pathSegments.Count == 0)
+        //                    removeCount++;
+        //                else
+        //                    pathSegments.RemoveAt(pathSegments.Count - 1);
+        //                break;
+        //            default:
+        //                if (pathSegments.Count == 0)
+        //                {
+        //                    foreach (var currentFolder in currentSplit.Reverse())
+        //                    {
+        //                        if (removeCount > 0)
+        //                        {
+        //                            removeCount--;
+        //                        }
+        //                        else
+        //                        {
+        //                            pathSegments.Insert(0, currentFolder);
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    pathSegments.Add(folder);
+        //                }
+        //                break;
+        //        }
+        //    }
+        //    return string.Join("/", pathSegments);
+        //}
     }
 }
