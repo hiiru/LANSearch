@@ -23,6 +23,8 @@ namespace LANSearch.Models.Server
         public bool IsAdmin { get; set; }
 
         public Dictionary<string, string> Errors { get; set; }
+        public bool LimitReached { get; set; }
+        public bool ServerConflictDetected { get; set; }
 
         public bool ValidateServer()
         {
@@ -37,9 +39,14 @@ namespace LANSearch.Models.Server
             {
                 Errors["srvAddress"] = "Invalid Server Address.";
             }
-            else if (!IsAdmin && !AppContext.GetContext().Config.AppAllowedServerIps.Any(x => x.IsInRange(Server.Address)))
+            else if (!IsAdmin && !AppContext.GetContext().Config.ServerAllowedIps.Any(x => x.IsInRange(Server.Address)))
             {
-                Errors["srvAddress"] = string.Format("Server is in an forbidden IP-Range, allowed ranges are {0}", string.Join(", ", AppContext.GetContext().Config.AppAllowedServerIps.Select(x => x.ToString())));
+                Errors["srvAddress"] = string.Format("Server is in an forbidden IP-Range, allowed ranges are {0}",
+                    string.Join(", ", AppContext.GetContext().Config.ServerAllowedIps.Select(x => x.ToString())));
+            }
+            else if (ServerConflictDetected)
+            {
+                Errors["srvAddress"] = "This IP is already used by another user, if this is your IP, please contact a LANSearch administrator.";
             }
             if (Server.Port < 1 || Server.Port > 65535)
             {

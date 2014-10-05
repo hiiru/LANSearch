@@ -3,9 +3,16 @@
     ViewBag.Title = "Member .:. Server .:. Add";
 }
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
-<div class="col-xs-12 content">
-    <h1>Add a Server</h1>
+@if (Model.LimitReached)
+{
+    <div class="alert alert-warning" role="alert">You reached the maximum allowed servers. If you want to add more, please delete an existing or contact an Administrator.</div>
+}
+else
+{
+    <div class="col-xs-12 content">
+        <h1>Add a Server</h1>
         @Html.Partial("Partials/Server/DetailForm.cshtml", Model)
-    <hr />
-    <p>Note: If you wish any other features, e.g. blacklist some directories from crawler, please use the feedback form on the <a href="@Url.Content("~/Info")">Info Page</a>.</p>
-</div>
+        <hr />
+        <p>Note: If you wish any other features, e.g. blacklist some directories from crawler, please use the feedback form on the <a href="@Url.Content("~/Info")">Info Page</a>.</p>
+    </div>
+}

@@ -1,4 +1,5 @@
-﻿using LANSearch.Data.Redis;
+﻿using LANSearch.Data.Jobs.Ftp;
+using LANSearch.Data.Redis;
 using LANSearch.Data.User;
 using LANSearch.Models.Server;
 using Nancy;
@@ -52,6 +53,24 @@ namespace LANSearch.Data.Server
 
         public void Save(Server obj)
         {
+            if (obj == null) return;
+            if (obj.Id==0)
+            {
+                var status = Ctx.JobManager.FtpCrawler.CheckServer(obj);
+                if (!status.IsOk)
+                {
+                    obj.ScanFailedLastDate = DateTime.Now;
+                    obj.ScanFailedAttempts = 1;
+                    obj.Online = false;
+                    obj.ScanFailedMessage = status.ErrorType == FtpStatus.FtpErrorType.Offline ?
+                        string.Format("Connection couldn't be established, server is offline.") : 
+                        string.Format("{0} {1}", status.ErrorFtpCode, status.ErrorFtpMessage);
+                }
+                else
+                {
+                    obj.Online = true;
+                }
+            }
             RedisManager.ServerSave(obj);
         }
 
@@ -87,7 +106,7 @@ namespace LANSearch.Data.Server
             //return RedisManager.ServerGetHidden();
         }
 
-        public ServerDetailModel GetModelDetail(int serverId, dynamic form = null, bool isAdmin = false)
+        public ServerDetailModel GetModelDetail(int serverId, int userId, dynamic form = null, bool isAdmin = false)
         {
             Server server;
             if (serverId > 0)
@@ -98,6 +117,15 @@ namespace LANSearch.Data.Server
             }
             else
             {
+                if (!isAdmin)
+                {
+                    var serverCount = GetAll().Count(x => !x.Deleted && x.OwnerId == userId);
+                    if (serverCount >= Ctx.Config.ServerLimitPerUser)
+                    {
+                        return  new ServerDetailModel{IsAdmin = false,LimitReached=true};
+                    }
+                }
+
                 server = new Server
                 {
                     Id = 0,
@@ -140,15 +168,26 @@ namespace LANSearch.Data.Server
                 server.NoScans = form.srvNoScan;
             }
 
-            if (server.OwnerId > 0)
+            if (isAdmin)
             {
-                var user = Ctx.UserManager.Get(server.OwnerId);
-                model.OwnerName = user.UserName;
-                model.OwnerAdminUrl = user.GetAdminUrl();
+                if (server.OwnerId > 0)
+                {
+                    var user = Ctx.UserManager.Get(server.OwnerId);
+                    model.OwnerName = user.UserName;
+                    model.OwnerAdminUrl = user.GetAdminUrl();
+                }
+                else
+                {
+                    model.OwnerName = "<No Owner>";
+                }
             }
             else
             {
-                model.OwnerName = "<No Owner>";
+                var conflictingServers = GetAll().Count(x => !x.Deleted && x.OwnerId != userId && x.Address == server.Address);
+                if (conflictingServers > 0)
+                {
+                    model.ServerConflictDetected = true;
+                }
             }
 
             return model;

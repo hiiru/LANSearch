@@ -13,8 +13,8 @@ namespace LANSearch
 {
     public class AppConfig
     {
+        #region Constructor and similar methods
         protected RedisManager RedisManager;
-
         private readonly List<PropertyInfo> _propertyInfos;
         protected ILog Logger;
 
@@ -29,7 +29,11 @@ namespace LANSearch
 
             EnsureMinimalConfig();
         }
-
+        
+        ~AppConfig()
+        {
+            SaveConfigToRedis();
+        }
         private void EnsureMinimalConfig()
         {
             bool changed = false;
@@ -54,11 +58,37 @@ namespace LANSearch
                 SaveConfigToRedis();
         }
 
-        ~AppConfig()
+        private void InitDefaults()
         {
-            SaveConfigToRedis();
-        }
+            SearchServerUrl = "http://localhost:18983/solr";
+            SearchDisabled = false;
+            SearchAllowHideServer = true;
+            CrawlerOfflineLimit = 5;
+            JobHourlyCrawling = true;
 
+            MailPort = 587;
+            MailSsl = true;
+            MailFromName = "LANSearch";
+            MailCopyToSelf = true;
+            UserRequireMailActivation = true;
+            NotificationEnabled = true;
+            NotificationFixedExpiration = true;
+            NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014", "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            NotificationLifetimeDays = 7;
+            NotificationPerUser = 5;
+
+            ServerAllowedIps = new List<IpNet>
+            {
+                new IpNet("10.0.0.0/8"),
+                new IpNet("172.16.0.0/12"),
+                new IpNet("192.168.0.0/16"),
+            };
+            ServerLimitPerUser = 10;
+            ServerRestrictIpToOwner = true;
+        }
+        #endregion
+
+        #region Redis Storage
         private void LoadRedisConfig()
         {
             Dictionary<string, object> config;
@@ -83,7 +113,9 @@ namespace LANSearch
         {
             RedisManager.ConfigStore(GetConfigDictionary());
         }
+        #endregion
 
+        #region De-/Serailazation
         public Dictionary<string, object> GetConfigDictionary()
         {
             var dict = new Dictionary<string, object>();
@@ -169,33 +201,8 @@ namespace LANSearch
                 }
             }
         }
-
-        private void InitDefaults()
-        {
-            SearchServerUrl = "http://localhost:18983/solr";
-            SearchDisabled = false;
-            SearchAllowHideServer = true;
-            CrawlerOfflineLimit = 5;
-            JobHourlyCrawling = true;
-
-            MailPort = 587;
-            MailSsl = true;
-            MailFromName = "LANSearch";
-            MailCopyToSelf = true;
-            UserRequireMailActivation = true;
-            NotificationEnabled = true;
-            NotificationFixedExpiration = true;
-            NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014", "dd.MM.yyyy", CultureInfo.InvariantCulture);
-            NotificationLifetimeDays = 7;
-            NotificationPerUser = 5;
-            AppAllowedServerIps=new List<IpNet>
-            {
-                new IpNet("10.0.0.0/8"),
-                new IpNet("172.16.0.0/12"),
-                new IpNet("192.168.0.0/16"),
-            };
-        }
-
+        #endregion
+        
         #region Setup Variables (Blacklisted from configuration page)
 
         public static List<string> ConfigBlacklist = new List<string>
@@ -219,33 +226,39 @@ namespace LANSearch
 
         #endregion Setup Variables (Blacklisted from configuration page)
 
+        
         public bool AppMaintenance { get; set; }
 
         public string AppMaintenanceMessage { get; set; }
 
         public List<IpNet> AppBlockedIps { get; set; }
         
-        public List<IpNet> AppAllowedServerIps { get; set; }
-
         public bool AppAnnouncement { get; set; }
 
         public string AppAnnouncementMessage { get; set; }
+
+        public string NancyDiagnosticsPassword { get; set; }
+        public bool UserRequireMailActivation { get; set; }
+
+        #region Search
 
         public string SearchServerUrl { get; set; }
 
         public bool SearchDisabled { get; set; }
 
         public bool SearchAllowHideServer { get; set; }
+        #endregion
+
+        #region Jobs
+        public bool JobHourlyCrawling { get; set; }
 
         /// <summary>
         /// Crawler will set server offline after these tries.
         /// </summary>
         public int CrawlerOfflineLimit { get; set; }
+        #endregion
 
-        public string NancyDiagnosticsPassword { get; set; }
-
-        public bool JobHourlyCrawling { get; set; }
-
+        #region MailManager
         public string MailServer { get; set; }
 
         public int MailPort { get; set; }
@@ -261,9 +274,10 @@ namespace LANSearch
         public string MailFromName { get; set; }
 
         public bool MailCopyToSelf { get; set; }
+        #endregion
 
-        public bool UserRequireMailActivation { get; set; }
 
+        #region Notification
         public bool NotificationEnabled { get; set; }
 
         public bool NotificationFixedExpiration { get; set; }
@@ -273,5 +287,13 @@ namespace LANSearch
         public int NotificationLifetimeDays { get; set; }
 
         public int NotificationPerUser { get; set; }
+        #endregion
+
+        #region Server
+
+        public List<IpNet> ServerAllowedIps { get; set; }
+        public int ServerLimitPerUser { get; set; }
+        public bool ServerRestrictIpToOwner { get; set; }
+        #endregion
     }
 }

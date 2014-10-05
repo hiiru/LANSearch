@@ -23,7 +23,8 @@ namespace LANSearch.Modules.Member
 
             Get["/server/add"] = x =>
             {
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0);
+                var user = Context.CurrentUser as User;
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0, user.Id);
                 model.IsCreation = true;
                 return View["views/Member/Server/Add.cshtml", model];
             };
@@ -37,7 +38,8 @@ namespace LANSearch.Modules.Member
                 {
                     return Response.AsText("Can't add Server, CSRF Token is invalid.").WithStatusCode(403);
                 }
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0, Request.Form);
+                var user = Context.CurrentUser as User;
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0, user.Id, Request.Form);
                 model.IsCreation = true;
 
                 if (model.ValidateServer())
@@ -50,7 +52,8 @@ namespace LANSearch.Modules.Member
 
             Get["/server/detail/{serverId:int}"] = x =>
             {
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId);
+                var user = Context.CurrentUser as User;
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, user.Id);
                 if (model == null)
                     return Response.AsRedirect("~/Member/Server");
                 var currentUser = Context.CurrentUser as User;
@@ -72,7 +75,8 @@ namespace LANSearch.Modules.Member
                     return Response.AsText("Can't save Server, CSRF Token is invalid.").WithStatusCode(403);
                 }
 
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, Request.Form);
+                var user = Context.CurrentUser as User;
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, user.Id, Request.Form);
                 if (model == null)
                     return Response.AsRedirect("~/Member/Server");
                 var currentUser = Context.CurrentUser as User;

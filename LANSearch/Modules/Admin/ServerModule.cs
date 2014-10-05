@@ -20,7 +20,7 @@ namespace LANSearch.Modules.Admin
 
             Get["/server/detail/{serverId:int}"] = x =>
             {
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, null, true);
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, 0, null, true);
                 if (model == null)
                     return Response.AsRedirect("~/Admin/Server");
 
@@ -36,7 +36,7 @@ namespace LANSearch.Modules.Admin
                 {
                     return Response.AsText("Can't add Server, CSRF Token is invalid.").WithStatusCode(403);
                 }
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, Request.Form, true);
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(x.serverId, 0, Request.Form, true);
                 if (model == null)
                     return Response.AsRedirect("~/Admin/Server");
                 if (model.ValidateServer())
@@ -73,7 +73,7 @@ namespace LANSearch.Modules.Admin
                 }
                 else if (Request.Form.rescan)
                 {
-                    BackgroundJob.Enqueue(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId));
+                    BackgroundJob.Enqueue(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId, true));
                 }
                 else if (Request.Form.delete)
                 {
@@ -103,7 +103,7 @@ namespace LANSearch.Modules.Admin
                 {
                     return Response.AsText("Can't add Server, CSRF Token is invalid.").WithStatusCode(403);
                 }
-                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0, Request.Form, true);
+                ServerDetailModel model = Ctx.ServerManager.GetModelDetail(0, 0, Request.Form, true);
                 model.IsCreation = true;
 
                 if (model.ValidateServer())

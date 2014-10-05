@@ -84,7 +84,7 @@ namespace LANSearch.Data.Jobs.Ftp
             BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyAll());
         }
 
-        public void CrawlServer(int id)
+        public void CrawlServer(int id, bool force)
         {
             if (!Ctx.SearchManager.SolrServer.IsOnline)
             {
@@ -97,7 +97,7 @@ namespace LANSearch.Data.Jobs.Ftp
                 Logger.InfoFormat("CrawlServer for id {0} stopped because id is invalid (server object is null).", id);
                 return;
             }
-            if (server.NoScans || server.Deleted)
+            if (!force && (server.NoScans || server.Deleted))
             {
                 Logger.InfoFormat("CrawlServer for id {0} stopped because NoScans or Deleted is set.", id);
                 return;
@@ -200,6 +200,7 @@ namespace LANSearch.Data.Jobs.Ftp
                 if (status.ErrorType == FtpStatus.FtpErrorType.Offline)
                 {
                     server.Online = false;
+                    server.ScanFailedMessage=string.Format("Connection couldn't be established, server is offline.");
                     Ctx.ServerManager.Save(server);
                     Logger.WarnFormat("Server {0} is Offline.",server.Id);
                     return;
@@ -211,7 +212,13 @@ namespace LANSearch.Data.Jobs.Ftp
                 Ctx.ServerManager.Save(server);
                 return;
             }
-
+            if (!server.Online || server.ScanFailedAttempts > 0)
+            {
+                server.Online = true;
+                server.ScanFailedAttempts = 0;
+                server.ScanFailedMessage = null;
+                Logger.InfoFormat("Reseted online status and failed attempts for server {0}",server.Id);
+            }
             var visited = new HashSet<string>();
             try
             {
