@@ -1,87 +1,95 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
 <form role="form" method="POST">
     <fieldset>
-        @if (Model.IsAdmin) //Model.IsCreation || 
+        @if (Model.IsAdmin) //Model.IsCreation ||
         {
-            <div class="form-group col-md-6">
-                <label for="srvType">Server Type (TODO)</label>
-                <select class="form-control" name="srvType" @(Model.IsAdmin ? "" : " disabled=\"disabled\"")>
-                    <option value="1" selected="selected">FTP</option>
-                    <option value="2">SMB (Windows Share)</option>
-                    <option value="3">DC++</option>
-                </select>
-            </div>
-            <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvOwner") ? " has-error" : "")">
-                @if (Model.IsAdmin)
-                {
-                    <label for="srvOwner">Server OwnerId</label>
-                    <input type="text" class="form-control" name="srvOwner" value="@Model.Server.OwnerId">
-                    @if (Model.Errors.ContainsKey("srvOwner"))
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="srvType">Server Type (TODO)</label>
+                    <select class="form-control" name="srvType" @(Model.IsAdmin ? "" : " disabled=\"disabled\"")>
+                        <option value="1" selected="selected">FTP</option>
+                        <option value="2">SMB (Windows Share)</option>
+                        <option value="3">DC++</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvOwner") ? " has-error" : "")">
+                    @if (Model.IsAdmin)
                     {
-                        <p class="help-block">@Model.Errors["srvOwner"]</p>
+                        <label for="srvOwner">Server OwnerId</label>
+                        <input type="text" class="form-control" name="srvOwner" value="@Model.Server.OwnerId">
+                        @if (Model.Errors.ContainsKey("srvOwner"))
+                        {
+                            <p class="help-block">@Model.Errors["srvOwner"]</p>
+                        }
                     }
+                    else
+                    {
+                        <label for="srvOwner">Server Owner</label>
+                        <span class="form-control" disabled="disabled">User</span>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvName") ? " has-error" : "")">
+                <label for="srvName">Server name (Optional)</label>
+                <input type="text" class="form-control" name="srvName" placeholder="e.g. My little Server" value="@Model.Server.Name" maxlength="20">
+                @if (Model.Errors.ContainsKey("srvName"))
+                {
+                    <p class="help-block">@Model.Errors["srvName"]</p>
                 }
                 else
                 {
-                    <label for="srvOwner">Server Owner</label>
-                    <span class="form-control" disabled="disabled">User</span>
+                    <p class="help-block">Note: if this is kept empty, the address/port will be used as name.</p>
                 }
             </div>
-        }
-        <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvName") ? " has-error" : "")">
-            <label for="srvName">Server name (Optional)</label>
-            <input type="text" class="form-control" name="srvName" placeholder="e.g. My little Server" value="@Model.Server.Name" maxlength="20">
-            @if (Model.Errors.ContainsKey("srvName"))
-            {
-                <p class="help-block">@Model.Errors["srvName"]</p>
-            }
-            else
-            {
-                <p class="help-block">Note: if this is kept empty, the address/port will be used as name.</p>
-            }
-        </div>
-        <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvDescription") ? " has-error" : "")">
-            <label for="srvDescription">Server Description (Optional, not yet used)</label>
-            <textarea class="form-control" name="srvDescription" maxlength="5000">@Model.Server.Description</textarea>
-            @if (Model.Errors.ContainsKey("srvDescription"))
-            {
-                <p class="help-block">@Model.Errors["srvDescription"]</p>
-            }
-        </div>
-
-        <div class="form-group col-md-4 col-xs-8@(Model.Errors.ContainsKey("srvAddress") ? " has-error" : "")">
-            <label for="srvAddress">Server Address (IP) *</label>
-            <input type="text" class="form-control" name="srvAddress" placeholder="e.g. 127.13.3.7" maxlength="15" value="@Model.Server.Address">
-            @if (Model.Errors.ContainsKey("srvAddress"))
-            {
-                <p class="help-block">@Model.Errors["srvAddress"]</p>
-            }
-        </div>
-        <div class="form-group col-md-2 col-xs-4@(Model.Errors.ContainsKey("srvPort") ? " has-error" : "")">
-            <label for="srvPort">Port *</label>
-            <input type="text" class="form-control" name="srvPort" maxlength="5" value="@Model.Server.Port">
-            @if (Model.Errors.ContainsKey("srvPort"))
-            {
-                <p class="help-block">@Model.Errors["srvPort"]</p>
-            }
+            <div class="form-group col-md-6 col-xs-12@(Model.Errors.ContainsKey("srvDescription") ? " has-error" : "")">
+                <label for="srvDescription">Server Description (Optional, not yet used)</label>
+                <textarea class="form-control" name="srvDescription" maxlength="5000">@Model.Server.Description</textarea>
+                @if (Model.Errors.ContainsKey("srvDescription"))
+                {
+                    <p class="help-block">@Model.Errors["srvDescription"]</p>
+                }
+            </div>
         </div>
         <div class="server-login">
-            <div class="form-group col-md-6 col-xs-12">
-                <p>&nbsp;</p><!-- Positioning workaround -->
-                <div class="checkbox ns-hide">
-                    <label>
-                        <input type="checkbox" name="srvAuth" class="server-login-toggle" @(Model.Server.HasLogin ? " checked=\"checked\"" : "")> Server requires login
-                    </label>
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-8@(Model.Errors.ContainsKey("srvAddress") ? " has-error" : "")">
+                    <label for="srvAddress">Server Address (IP) *</label>
+                    <input type="text" class="form-control" name="srvAddress" placeholder="e.g. 127.13.3.7" maxlength="15" value="@Model.Server.Address">
+                    @if (Model.Errors.ContainsKey("srvAddress"))
+                    {
+                        <p class="help-block">@Model.Errors["srvAddress"]</p>
+                    }
+                </div>
+                <div class="form-group col-md-2 col-xs-4@(Model.Errors.ContainsKey("srvPort") ? " has-error" : "")">
+                    <label for="srvPort">Port *</label>
+                    <input type="text" class="form-control" name="srvPort" maxlength="5" value="@Model.Server.Port">
+                    @if (Model.Errors.ContainsKey("srvPort"))
+                    {
+                        <p class="help-block">@Model.Errors["srvPort"]</p>
+                    }
+                </div>
+                <div class="form-group col-md-6 col-xs-12">
+                    <p>&nbsp;</p><!-- Positioning workaround -->
+                    <div class="checkbox ns-hide">
+                        <label>
+                            <input type="checkbox" name="srvAuth" class="server-login-toggle" @(Model.Server.HasLogin ? " checked=\"checked\"" : "")> Server requires login
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="form-group col-md-6 server-login-item@(Model.Server.HasLogin?" open":"")">
-                <label for="srvLogin">Login</label>
-                <input type="text" class="form-control" name="srvLogin" value="@Model.Server.Login">
-            </div>
-            <div class="form-group col-md-6 server-login-item@(Model.Server.HasLogin?" open":"")">
-                <label for="srvPass">Password</label>
-                <input type="text" class="form-control" name="srvPass" value="@Model.Server.Password">
-                <p class="help-block">Note: The Password will be stored as plain text and shown publicly.</p>
+            <div class="row">
+                <div class="form-group col-md-6 server-login-item@(Model.Server.HasLogin?" open":"")">
+                    <label for="srvLogin">Login</label>
+                    <input type="text" class="form-control" name="srvLogin" value="@Model.Server.Login">
+                </div>
+                <div class="form-group col-md-6 server-login-item@(Model.Server.HasLogin?" open":"")">
+                    <label for="srvPass">Password</label>
+                    <input type="text" class="form-control" name="srvPass" value="@Model.Server.Password">
+                    <p class="help-block">Note: The Password will be stored as plain text and shown publicly.</p>
+                </div>
             </div>
         </div>
     </fieldset>

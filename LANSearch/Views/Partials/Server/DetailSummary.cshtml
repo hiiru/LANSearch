@@ -1,18 +1,18 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
 @using LANSearch
 <div class="row">
-    <div class="col-md-2"><strong>ServerId: </strong>@Model.Server.Id</div>
-    <div class="col-md-2"><strong>ServerType: </strong>@Model.Server.TypeName</div>
-    <div class="col-md-3"><strong>Created: </strong>@Model.Server.Created</div>
-    <div class="col-md-5"><a href="@Model.Server.Url">@Model.Server.Url</a></div>
+    <div class="col-xs-6 col-md-2"><strong>ServerId: </strong>@Model.Server.Id</div>
+    <div class="col-xs-6 col-md-2"><strong>ServerType: </strong>@Model.Server.TypeName</div>
+    <div class="col-xs-6 col-md-3"><strong>Created: </strong>@Model.Server.Created</div>
+    <div class="col-xs-6 col-md-5"><a href="@Model.Server.Url">@Model.Server.Url</a></div>
 </div>
 <div class="row">
     @if (Model.IsAdmin)
     {
-        <div class="col-md-4"><strong>Owner: </strong><a href="@Model.OwnerAdminUrl">@Model.OwnerName</a></div>
+        <div class="col-xs-12 col-md-4"><strong>Owner: </strong><a href="@Model.OwnerAdminUrl">@Model.OwnerName (id:@Model.Server.OwnerId)</a></div>
     }
-    <div class="col-md-4"><strong>Fist Scan: </strong>@Model.Server.ScanDateFirst</div>
-    <div class="col-md-4"><strong>Last Scan: </strong>@Model.Server.ScanDateLast</div>
+    <div class="col-xs-6 col-md-4"><strong>Fist Scan: </strong>@Model.Server.ScanDateFirst</div>
+    <div class="col-xs-6 col-md-4"><strong>Last Scan: </strong>@Model.Server.ScanDateLast</div>
 </div>
 @if (Model.Server.ScanFailedAttempts > 0)
 {

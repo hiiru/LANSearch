@@ -1,4 +1,5 @@
-﻿using LANSearch.Data;
+﻿using System.Linq;
+using LANSearch.Data;
 using System;
 using System.Collections.Generic;
 
@@ -35,6 +36,10 @@ namespace LANSearch.Models.Server
             if (!ValidationHelper.IsValidIP(Server.Address))
             {
                 Errors["srvAddress"] = "Invalid Server Address.";
+            }
+            else if (!IsAdmin && !AppContext.GetContext().Config.AppAllowedServerIps.Any(x => x.IsInRange(Server.Address)))
+            {
+                Errors["srvAddress"] = string.Format("Server is in an forbidden IP-Range, allowed ranges are {0}", string.Join(", ", AppContext.GetContext().Config.AppAllowedServerIps.Select(x => x.ToString())));
             }
             if (Server.Port < 1 || Server.Port > 65535)
             {
