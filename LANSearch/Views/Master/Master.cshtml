@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using SquishIt.Framework
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -7,10 +8,7 @@
     <meta name="description" content="LANSearch, FTP search engine for created Netgame">
     <meta name="author" content="Track">
     <title>LANSearch .:. @ViewBag.Title</title>
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet">
-    <link href="@Url.Content("~/Content/bootstrap-dialog.css")" rel="stylesheet">
-    <link href="@Url.Content("~/Content/bootstrap-theme.min.css")" rel="stylesheet">
-    <link href="@Url.Content("~/Content/lansearch.css")" rel="stylesheet">
+    @Html.Raw(Bundle.Css().RenderCachedAssetTag("css"))
 </head>
 <body>
     @Html.Partial("Master/NavBar")
@@ -33,11 +31,7 @@
             </div>
         </footer>
     }
-    <script src="@Url.Content("~/Scripts/jquery-1.9.0.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/jquery.signalR-2.1.2.js")"></script>
-    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/bootstrap-dialog.js")"></script>
-    <script src="@Url.Content("~/Scripts/lansearch.js")"></script>
+    @Html.Raw(Bundle.JavaScript().RenderCachedAssetTag("js"))
     @RenderSection("Scripts", false)
 </body>
 </html>

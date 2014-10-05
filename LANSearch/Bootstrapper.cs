@@ -5,6 +5,7 @@ using Nancy.Bootstrapper;
 using Nancy.Conventions;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
+using SquishIt.Framework;
 
 namespace LANSearch
 {
@@ -25,6 +26,23 @@ namespace LANSearch
             FormsAuthentication.Enable(pipelines, formsAuthenticationConfiguration);
             StaticConfiguration.DisableErrorTraces = false;
             Nancy.Security.Csrf.Enable(pipelines);
+
+            Bundle.Css()
+                .Add("~/Content/bootstrap.css")
+                .Add("~/Content/bootstrap-theme.css")
+                .Add("~/Content/bootstrap-dialog.css")
+                .Add("~/Content/lansearch.css")
+                .ForceRelease()
+                .AsCached("css", "/static/css");
+
+            Bundle.JavaScript()
+                .Add("~/Scripts/jquery-1.9.0.js")
+                .Add("~/Scripts/jquery.signalR-2.1.2.js")
+                .Add("~/Scripts/bootstrap.js")
+                .Add("~/Scripts/bootstrap-dialog.js")
+                .Add("~/Scripts/lansearch.js")
+                .ForceRelease()
+                .AsCached("js", "/static/js");
         }
 
         protected override DiagnosticsConfiguration DiagnosticsConfiguration
