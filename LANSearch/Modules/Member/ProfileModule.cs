@@ -113,18 +113,19 @@ namespace LANSearch.Modules.Member
                 bool oldPassValid = Ctx.UserManager.ValidatePassword(Context.CurrentUser as User, Request.Form.oldpass);
                 bool newPassMatch = (string)Request.Form.newpass == (string)Request.Form.newpass2;
                 bool newPassInvalid = string.IsNullOrWhiteSpace(Request.Form.newpass);
-                if (oldPassValid && newPassMatch && newPassInvalid)
+                if (oldPassValid && newPassMatch && !newPassInvalid)
                 {
                     Ctx.UserManager.ChangePassword(Context.CurrentUser as User, Request.Form.newpass);
                     return Response.AsRedirect("~/Member/Profile?success=1");
                 }
+
 
                 int error = 0;
                 if (!oldPassValid)
                     error++;
                 if (!newPassMatch)
                     error = error + 2;
-                if (!newPassInvalid)
+                if (newPassInvalid)
                     error = error + 4;
                 //Workaround because Response.AsRedirect doesn't accept dynamic arguments
                 var path = string.Format("{0}{1}{2}", Context.Request.Url.BasePath, "/Member/Profile?errpass=", error);

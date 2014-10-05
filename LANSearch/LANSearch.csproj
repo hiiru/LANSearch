@@ -225,7 +225,6 @@
     <Compile Include="Modules\Member\ServerModule.cs" />
     <Compile Include="Modules\SearchModule.cs" />
     <Compile Include="OwinMiddleware\Nancy2OwinAuthMiddleware.cs" />
-    <Compile Include="zTesting\TestModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -281,9 +280,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Partials\Server\DetailSummary.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="zTesting\Test.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Admin\Configuration.cshtml">
