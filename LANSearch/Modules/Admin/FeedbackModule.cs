@@ -2,6 +2,7 @@
 using LANSearch.Models.Admin;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
+using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {
@@ -16,6 +17,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/Feedback"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 int id;
                 if (int.TryParse(Request.Form.delete, out id))
                 {
@@ -23,22 +32,6 @@ namespace LANSearch.Modules.Admin
                 }
                 return Response.AsRedirect("/Admin/Feedback");
             };
-
-            //Get["/Admin/Feedback/TEST"] = x =>
-            //{
-            //    for (int i = 0; i < 1000; i++)
-            //    {
-            //        AppContext.GetContext().FeedbackManager.Save(new Feedback
-            //        {
-            //            Name = "user " + i,
-            //            Email = "moo." + i + "@mail.lan",
-            //            Location = "A" + i,
-            //            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed congue neque erat, at gravida felis malesuada vitae. Fusce finibus elit elit, ac porta sapien consectetur in. Sed ut eros ac tortor ornare condimentum. Aliquam eleifend ex nec nisl blandit tempor. Donec rhoncus lorem ex, sit amet fermentum metus convallis vitae. Quisque laoreet eget metus nec rutrum. In hac habitasse platea dictumst. Sed commodo id dolor vel fermentum. Integer maximus sem velit, sed posuere dolor ultricies quis.",
-            //            Created = DateTime.Now.AddMinutes(-i)
-            //        });
-            //    }
-            //    return "OK";
-            //};
         }
 
         public FeedbackModel GetFeedbackModel(Request request)

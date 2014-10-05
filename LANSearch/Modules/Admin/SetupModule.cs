@@ -4,6 +4,7 @@ using Nancy;
 using Nancy.Authentication.Forms;
 using System;
 using System.Text;
+using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {
@@ -35,6 +36,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/Admin/Setup"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 Guid guid;
                 var registerStatus = Ctx.UserManager.Register(Request.Form.user, Request.Form.email, Request.Form.pass, Request.Form.pass, Request, out guid, false, new[] { UserRoles.MEMBER, UserRoles.ADMIN });
 

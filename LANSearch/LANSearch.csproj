@@ -278,9 +278,6 @@
     <None Include="Views\Admin\Feedback.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Admin\Jobs.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Views\Admin\Redis.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

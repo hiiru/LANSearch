@@ -3,6 +3,7 @@ using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using System;
+using Nancy.Security;
 
 namespace LANSearch.Modules
 {
@@ -22,6 +23,14 @@ namespace LANSearch.Modules
 
             Post["/Info"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 var info = new InfoModel
                 {
                     Name = Request.Form.name,

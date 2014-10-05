@@ -60,13 +60,14 @@
                 </div>
                 <div class="form-group@(!string.IsNullOrWhiteSpace(Model.ErrorText) ? " has-error" : "")">
                     <label class="control-label" for="text">Text</label>
-                    <textarea name="text" class="form-control" maxlength="1000" rows="5">@Model.Text</textarea>
+                    <textarea name="text" class="form-control" maxlength="1000" rows="3">@Model.Text</textarea>
                     @if (!string.IsNullOrWhiteSpace(Model.ErrorText))
                     {
                         <p class="text-danger">@Model.ErrorText</p>
                     }
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
+                @Html.AntiForgeryToken()
             </form>
         }
     </div>

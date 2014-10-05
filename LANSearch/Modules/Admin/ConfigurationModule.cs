@@ -2,6 +2,7 @@
 using Nancy;
 using System.Collections.Generic;
 using System.Linq;
+using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {
@@ -16,6 +17,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/Configuration"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 var config = Ctx.Config.GetConfigDictionary().Where(setting => !AppConfig.ConfigBlacklist.Contains(setting.Key)).ToDictionary(y => y.Key, y => y.Value);
                 foreach (var item in config.Keys.ToList())
                 {
@@ -40,6 +49,14 @@ namespace LANSearch.Modules.Admin
             };
             Post["/Redis"] = x =>
             {
+                try
+                {
+                    this.ValidateCsrfToken();
+                }
+                catch (CsrfValidationException)
+                {
+                    return Response.AsText("CSRF Token is invalid.").WithStatusCode(403);
+                }
                 if (!string.IsNullOrWhiteSpace(Request.Form.delete))
                 {
                     using (var client = Ctx.RedisManager.Pool.GetClient())
@@ -49,19 +66,6 @@ namespace LANSearch.Modules.Admin
                 }
 
                 return Response.AsRedirect("~/Admin/Redis");
-            };
-            Get["/Jobs"] = x =>
-            {
-                return View["Views/Admin/Jobs.cshtml"];
-            };
-            Post["/Jobs"] = x =>
-            {
-                if (Request.Form.recurringStop)
-                    Ctx.JobManager.RecurringRemoveCrawler();
-                else if (Request.Form.recurringStart)
-                    Ctx.JobManager.RecuringAddCrawler();
-
-                return View["Views/Admin/Jobs.cshtml"];
             };
         }
     }
