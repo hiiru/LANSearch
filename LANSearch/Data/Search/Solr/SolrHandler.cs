@@ -79,7 +79,7 @@ namespace LANSearch.Data.Search.Solr
                 HasSearchParameters = !QueryBuilder.IsEmptySearch
             };
 
-            if (solrResponse.Documents.IsNullOrEmpty())
+            if (solrResponse.Documents==null)
                 return sm;
             sm.Count = solrResponse.Documents.NumFound;
             sm.Results = ParseDocuments(solrResponse.GetObjects<File>(SolrMapper));
@@ -121,6 +121,7 @@ namespace LANSearch.Data.Search.Solr
                         continue;
                     current.Items = new List<SearchFilter.SearchFilterItem>();
                     var url = UrlBuilder.Clone();
+                    bool isActiveAdded = false;
                     for (int j = 0; j < entries.Count; j++)
                     {
                         var text = entries.GetKey(j);
@@ -134,6 +135,23 @@ namespace LANSearch.Data.Search.Solr
                             IsActive = isActive,
                             Url = isActive ? url.Remove(solrFilter.QSKey).ToString() : url.Set(solrFilter.QSKey, solrFilter.GetQSValue(text)).ToString()
                         });
+
+                        if (isActive)
+                            isActiveAdded = true;
+                    }
+                    if (!isActiveAdded && solrFilter.HasSelected)
+                    {
+                        var text = solrFilter.GetSelectedText();
+                        if (text != null)
+                        {
+                            current.Items.Add(new SearchFilter.SearchFilterItem
+                            {
+                                Title = text,
+                                Count = 0,
+                                IsActive = true,
+                                Url = url.Remove(solrFilter.QSKey).ToString()
+                            });
+                        }
                     }
                 }
             }

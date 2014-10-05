@@ -37,6 +37,14 @@ namespace LANSearch.Data.Search.Solr.Filters
             return server.Name;
         }
 
+        public string GetSelectedText()
+        {
+            if (!HasSelected) return null;
+            return GetFilterText(ActiveValue);
+        }
+
+        public bool HasSelected { get { return ActiveValue != null; } }
+
         public void UpdateFacetQuery(INamedList<string> qp)
         {
             if (qp == null) throw new ArgumentException("qp");

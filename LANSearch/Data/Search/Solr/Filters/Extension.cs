@@ -24,6 +24,14 @@ namespace LANSearch.Data.Search.Solr.Filters
             return value;
         }
 
+        public string GetSelectedText()
+        {
+            if (!HasSelected) return null;
+            return GetFilterText(ActiveValue);
+        }
+
+        public bool HasSelected { get { return ActiveValue != null; } }
+
         public bool IsSelected(string value)
         {
             if (ActiveValue == null) return false;

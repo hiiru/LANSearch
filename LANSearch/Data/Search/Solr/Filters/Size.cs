@@ -43,6 +43,14 @@ namespace LANSearch.Data.Search.Solr.Filters
             }
         }
 
+        public string GetSelectedText()
+        {
+            if (!HasSelected) return null;
+            return GetFilterText(ActiveValue);
+        }
+
+        public bool HasSelected { get { return ActiveValue != null; } }
+
         public bool IsSelected(string value)
         {
             if (value == null || ActiveValue == null) return false;
