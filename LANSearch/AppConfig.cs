@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using LANSearch.Data;
 using LANSearch.Data.Redis;
 using ServiceStack.Text;
 using System;
@@ -96,6 +97,11 @@ namespace LANSearch
                         var list = value as List<string>;
                         dict[pi.Name] = list == null ? "" : string.Join(",", list);
                     }
+                    if (pi.PropertyType == typeof(List<IpNet>))
+                    {
+                        var list = value as List<IpNet>;
+                        dict[pi.Name] = list == null  ? "" : list.Select(x => x.ToString()).Join(",");
+                    }
                     else if (pi.PropertyType == typeof(byte[]))
                     {
                         dict[pi.Name] = value == null ? null : Convert.ToBase64String((byte[])value);
@@ -136,6 +142,16 @@ namespace LANSearch
                                 ? new List<string>()
                                 : valueCsv.Split(new[] { ',' }).Select(x => x.Trim()).ToList());
                     }
+                    if (pi.PropertyType == typeof(List<IpNet>))
+                    {
+                        var valueCsv = kvp.Value as string;
+                        if (string.IsNullOrWhiteSpace(valueCsv))
+                            pi.SetValue(this, new List<IpNet>());
+                        var splitedCidr = valueCsv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (splitedCidr.Length == 0)
+                            pi.SetValue(this, new List<IpNet>());
+                        pi.SetValue(this, splitedCidr.Select(cidr => new IpNet(cidr)).ToList());
+                    }
                     else if (pi.PropertyType == typeof(byte[]))
                     {
                         pi.SetValue(this, Convert.FromBase64String((string)kvp.Value));
@@ -172,6 +188,12 @@ namespace LANSearch
             NotificationFixedExpirationDate = DateTime.ParseExact("20.10.2014", "dd.MM.yyyy", CultureInfo.InvariantCulture);
             NotificationLifetimeDays = 7;
             NotificationPerUser = 5;
+            AppAllowedServerIps=new List<IpNet>
+            {
+                new IpNet("10.0.0.0/8"),
+                new IpNet("172.16.0.0/12"),
+                new IpNet("192.168.0.0/16"),
+            };
         }
 
         #region Setup Variables (Blacklisted from configuration page)
@@ -201,7 +223,9 @@ namespace LANSearch
 
         public string AppMaintenanceMessage { get; set; }
 
-        public List<string> AppBlockedIps { get; set; }
+        public List<IpNet> AppBlockedIps { get; set; }
+        
+        public List<IpNet> AppAllowedServerIps { get; set; }
 
         public bool AppAnnouncement { get; set; }
 

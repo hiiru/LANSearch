@@ -135,6 +135,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Data\Feedback\Feedback.cs" />
     <Compile Include="Data\Feedback\FeedbackManager.cs" />
+    <Compile Include="Data\IpNet.cs" />
     <Compile Include="Data\Jobs\JobManager.cs" />
     <Compile Include="Data\Jobs\NotificationJob.cs" />
     <Compile Include="Data\Mail\MailManager.cs" />

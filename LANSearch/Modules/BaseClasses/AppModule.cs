@@ -1,4 +1,5 @@
-﻿using LANSearch.Data.User;
+﻿using System.Linq;
+using LANSearch.Data.User;
 using Nancy;
 using Nancy.Security;
 
@@ -18,7 +19,7 @@ namespace LANSearch.Modules.BaseClasses
             {
                 if (!Context.CurrentUser.HasClaim(UserRoles.ADMIN))
                 {
-                    if (Ctx.Config.AppBlockedIps != null && Ctx.Config.AppBlockedIps.Contains(Request.UserHostAddress))
+                    if (Ctx.Config.AppBlockedIps != null && Ctx.Config.AppBlockedIps.Any(x => x.IsInRange(Request.UserHostAddress)))
                         return 403;
 
                     if (Ctx.Config.AppMaintenance || !Ctx.Config.AppSetupDone)
