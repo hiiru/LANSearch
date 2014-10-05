@@ -85,6 +85,7 @@ namespace LANSearch
             };
             ServerLimitPerUser = 10;
             ServerRestrictIpToOwner = true;
+            SearchBoostOnlineServers = true;
         }
         #endregion
 
@@ -247,6 +248,7 @@ namespace LANSearch
         public bool SearchDisabled { get; set; }
 
         public bool SearchAllowHideServer { get; set; }
+        public bool SearchBoostOnlineServers { get; set; }
         #endregion
 
         #region Jobs

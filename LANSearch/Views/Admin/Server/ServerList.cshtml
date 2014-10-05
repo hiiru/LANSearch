@@ -26,7 +26,14 @@
                     <td><a href="@Url.Content(string.Format("~/Admin/Server/Detail/{0}", server.Id))">@server.Id</a></td>
                     <td><a href="@Url.Content(string.Format("~/Admin/Server/Detail/{0}", server.Id))">@(string.Format("{0}:{1}", server.Address, server.Port))@(!string.IsNullOrWhiteSpace(server.Name) ? " " + server.Name : "")</a></td>
                     <td>@server.OwnerId</td>
-                    <td>@server.Online</td>
+                    @if (!server.Online)
+                    {
+                        <td class="danger">Offline</td>
+                    }
+                    else
+                    {
+                        <td class="success">Online</td>
+                    }
                     <td>@server.Closed</td>
                     <td>@server.NoScans</td>
                     <td><a href="@server.Url">link</a></td>

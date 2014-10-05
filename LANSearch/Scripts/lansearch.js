@@ -16,6 +16,7 @@
     $(".delete-button").on('click', function() {
         return confirm("Are you sure you want to delete this server?");
     });
+    $(".result-list").children(".disabled").on('click', function() { return false; });
 });
 
 $(function () {

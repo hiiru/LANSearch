@@ -1,11 +1,13 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Search.SearchModel>
-<div class="col-xs-12 @(Model.HasFilter ? "col-sm-8 col-md-9" : "")  content">
+<div class="col-xs-12 col-sm-8 col-md-9">
     @if (Model.HasResults)
     {
-        @foreach (var item in Model.Results)
-        {
-            @Html.Partial("Partials/Search/ListItem", item)
-        }
+        <ul class="list-group result-list">
+            @foreach (var item in Model.Results)
+            {
+                @Html.Partial("Partials/Search/ListItem", item)
+            }
+        </ul>
         @if (Model.HasPaging)
         {
             <ul class="pagination">

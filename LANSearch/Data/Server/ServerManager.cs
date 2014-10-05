@@ -15,14 +15,16 @@ namespace LANSearch.Data.Server
 
         protected RedisManager RedisManager;
         protected Dictionary<int, Server> Cache;
-        protected List<int> CacheHidden;
+        protected HashSet<int> CacheHidden;
+        protected HashSet<int> CacheOnlineAndOpen;
 
         public ServerManager(RedisManager redisManager)
         {
             RedisManager = redisManager;
 
             Cache = RedisManager.ServerGetAll().ToDictionary(x => x.Id, x => x);
-            CacheHidden = Cache.Values.Where(x => x.Hidden).Select(x => x.Id).ToList();
+            CacheHidden = new HashSet<int>(Cache.Values.Where(x => x.Hidden && !x.Deleted).Select(x => x.Id));
+            CacheOnlineAndOpen = new HashSet<int>(Cache.Values.Where(x => x.Online &&! x.Closed && !x.Deleted).Select(x => x.Id));
 
             redisManager.OnMessage += redisManager_OnMessage;
         }
@@ -37,16 +39,23 @@ namespace LANSearch.Data.Server
                 if (server == null)
                 {
                     Cache.Remove(id);
+                    CacheOnlineAndOpen.Remove(id);
                 }
                 else
                 {
                     Cache[id] = server;
                     var isHidden = CacheHidden.Contains(id);
-
                     if (server.Hidden && !isHidden)
                         CacheHidden.Add(id);
                     else if (!server.Hidden && isHidden)
-                        CacheHidden.RemoveAll(x => x == id);
+                        CacheHidden.Remove(id);
+
+                    var isOnline = CacheOnlineAndOpen.Contains(id);
+                    var onlineAndOpen = server.Online && !server.Closed;
+                    if (onlineAndOpen && !isOnline)
+                        CacheOnlineAndOpen.Add(id);
+                    else if (!onlineAndOpen && isOnline)
+                        CacheOnlineAndOpen.Remove(id);
                 }
             }
         }
@@ -100,10 +109,14 @@ namespace LANSearch.Data.Server
             return filtered.OrderBy(x => x.Id).Skip(offset).Take(pagesize).ToList();
         }
 
-        public List<int> GetHiddenIds()
+        public IEnumerable<int> GetHiddenIds()
         {
             return CacheHidden;
             //return RedisManager.ServerGetHidden();
+        }
+        public IEnumerable<int> GetOnlineIds()
+        {
+            return CacheOnlineAndOpen;
         }
 
         public ServerDetailModel GetModelDetail(int serverId, int userId, dynamic form = null, bool isAdmin = false)
@@ -236,5 +249,6 @@ namespace LANSearch.Data.Server
             server.Hidden = deleted;
             Save(server);
         }
+
     }
 }

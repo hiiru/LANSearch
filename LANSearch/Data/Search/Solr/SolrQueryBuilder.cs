@@ -19,7 +19,7 @@ namespace LANSearch.Data.Search.Solr
             QueryParameters = new NamedList<string>();
             IsEmptySearch = true;
             // FTS keyword
-            string keyword = "*:*";
+            string keyword = "*";
             foreach (var qs in request.Query)
             {
                 var qsKey = qs as string;
@@ -30,14 +30,15 @@ namespace LANSearch.Data.Search.Solr
                         if (!string.IsNullOrWhiteSpace(request.Query["q"]))
                         {
                             Keyword = request.Query["q"];
-                            var sbKeywordQuery = new StringBuilder();
-                            foreach (var word in Keyword.Split(' '))
-                            {
-                                if (sbKeywordQuery.Length > 0)
-                                    sbKeywordQuery.Append(" AND ");
-                                sbKeywordQuery.AppendFormat("fts:{0}", word);
-                            }
-                            keyword = sbKeywordQuery.ToString();
+                            keyword = Keyword;
+                            //var sbKeywordQuery = new StringBuilder();
+                            //foreach (var word in Keyword.Split(' '))
+                            //{
+                            //    if (sbKeywordQuery.Length > 0)
+                            //        sbKeywordQuery.Append(" AND ");
+                            //    sbKeywordQuery.AppendFormat("fts:{0}", word);
+                            //}
+                            //keyword = sbKeywordQuery.ToString();
                             IsEmptySearch = false;
                         }
                         break;
@@ -77,7 +78,8 @@ namespace LANSearch.Data.Search.Solr
                 Page = 0;
             if (PageSize < 20)
                 PageSize = 20;
-
+            QueryParameters.Add("defType", "edismax");
+            QueryParameters.Add("mm", "2<2 3<80%");
             QueryParameters.Add(CommonParams.Q, keyword);
 
             if (notification)
@@ -85,7 +87,10 @@ namespace LANSearch.Data.Search.Solr
 
             QueryParameters.Add(CommonParams.ROWS, PageSize.ToString());
             QueryParameters.Add(CommonParams.START, (PageSize * Page).ToString());
-
+            if (keyword == "*")
+            {
+                QueryParameters.Add(CommonParams.SORT, "dateSeenFirst desc");
+            }
             if (filters != null)
             {
                 QueryParameters.Add(FacetParams.FACET, "true");
@@ -97,8 +102,10 @@ namespace LANSearch.Data.Search.Solr
 
             if (Ctx.Config.SearchAllowHideServer)
                 HideHiddenServers();
+            if (Ctx.Config.SearchBoostOnlineServers)
+                BoostOnlineServers();
         }
-
+        
         public SolrQueryBuilder(string rawSolrQuery, DateTime lastExecution)
         {
             if (string.IsNullOrWhiteSpace(rawSolrQuery))
@@ -128,7 +135,6 @@ namespace LANSearch.Data.Search.Solr
         private void HideHiddenServers()
         {
             var hidden = Ctx.ServerManager.GetHiddenIds();
-            if (hidden == null || hidden.Count == 0) return;
             var sbFilter = new StringBuilder();
             foreach (int id in hidden)
             {
@@ -136,7 +142,21 @@ namespace LANSearch.Data.Search.Solr
                     sbFilter.Append(" AND ");
                 sbFilter.AppendFormat("-server:{0}", id);
             }
-            QueryParameters.Add(CommonParams.FQ, sbFilter.ToString());
+            if (sbFilter.Length>0)
+                QueryParameters.Add(CommonParams.FQ, sbFilter.ToString());
+        }
+        private void BoostOnlineServers()
+        {
+            var online = Ctx.ServerManager.GetOnlineIds();
+            var sbBoostQuery = new StringBuilder();
+            foreach (int id in online)
+            {
+                if (sbBoostQuery.Length > 0)
+                    sbBoostQuery.Append(" ");
+                sbBoostQuery.AppendFormat("server:{0}^2", id);
+            }
+            if (sbBoostQuery.Length > 0)
+                QueryParameters.Add("bq", sbBoostQuery.ToString());
         }
 
         public bool IsEmptySearch { get; protected set; }
