@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using LANSearch.Data.Server;
+﻿using LANSearch.Data.Server;
 using LANSearch.Models.Server;
 using LANSearch.Modules.BaseClasses;
 using Nancy;

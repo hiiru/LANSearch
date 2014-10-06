@@ -41,7 +41,7 @@ body.error {
 }
 
 .result-heading {
-    overflow:hidden; 
+    overflow:hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     margin: 0 0 5px;
@@ -51,7 +51,7 @@ body.error {
     float: left;
 }
 .result-footer {
-    overflow:hidden; 
+    overflow:hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     margin: 0;

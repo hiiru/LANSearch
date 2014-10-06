@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using LANSearch.Data;
+﻿using LANSearch.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LANSearch.Models.Server
 {
@@ -23,7 +23,9 @@ namespace LANSearch.Models.Server
         public bool IsAdmin { get; set; }
 
         public Dictionary<string, string> Errors { get; set; }
+
         public bool LimitReached { get; set; }
+
         public bool ServerConflictDetected { get; set; }
 
         public bool ValidateServer()

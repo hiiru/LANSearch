@@ -105,7 +105,7 @@ namespace LANSearch.Data.Search.Solr
             if (Ctx.Config.SearchBoostOnlineServers)
                 BoostOnlineServers();
         }
-        
+
         public SolrQueryBuilder(string rawSolrQuery, DateTime lastExecution)
         {
             if (string.IsNullOrWhiteSpace(rawSolrQuery))
@@ -142,9 +142,10 @@ namespace LANSearch.Data.Search.Solr
                     sbFilter.Append(" AND ");
                 sbFilter.AppendFormat("-server:{0}", id);
             }
-            if (sbFilter.Length>0)
+            if (sbFilter.Length > 0)
                 QueryParameters.Add(CommonParams.FQ, sbFilter.ToString());
         }
+
         private void BoostOnlineServers()
         {
             var online = Ctx.ServerManager.GetOnlineIds();

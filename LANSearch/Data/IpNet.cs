@@ -66,7 +66,7 @@ namespace LANSearch.Data
 
         private int GetCidrMask()
         {
-            int masked = 0; 
+            int masked = 0;
             for (int i = 31; i >= 0; i--)
             {
                 if ((NetMask & (1 << i)) == 0)
@@ -75,6 +75,7 @@ namespace LANSearch.Data
             }
             return masked;
         }
+
         public bool IsInRange(string value)
         {
             IPAddress ip;
@@ -87,6 +88,7 @@ namespace LANSearch.Data
         {
             return IsInRange(ip.ToInt());
         }
+
         public bool IsInRange(int ip)
         {
             return ip >= IpStartAddress && ip <= IpEndAddress;

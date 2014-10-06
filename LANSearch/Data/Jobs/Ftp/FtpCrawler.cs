@@ -1,5 +1,4 @@
 ﻿using Common.Logging;
-using Hangfire;
 using Mizore.CommunicationHandler.RequestHandler;
 using Mizore.CommunicationHandler.ResponseHandler;
 using System;
@@ -200,15 +199,15 @@ namespace LANSearch.Data.Jobs.Ftp
                 if (status.ErrorType == FtpStatus.FtpErrorType.Offline)
                 {
                     server.Online = false;
-                    server.ScanFailedMessage=string.Format("Connection couldn't be established, server is offline.");
+                    server.ScanFailedMessage = string.Format("Connection couldn't be established, server is offline.");
                     Ctx.ServerManager.Save(server);
-                    Logger.WarnFormat("Server {0} is Offline.",server.Id);
+                    Logger.WarnFormat("Server {0} is Offline.", server.Id);
                     return;
                 }
                 server.ScanFailedMessage = string.Format("{0} {1}", status.ErrorFtpCode, status.ErrorFtpMessage);
                 if (server.Online && server.ScanFailedAttempts > Ctx.Config.CrawlerOfflineLimit)
                     server.Online = false;
-                Logger.WarnFormat("Login Error for Server {0}: {1}",server.Id,server.ScanFailedMessage);
+                Logger.WarnFormat("Login Error for Server {0}: {1}", server.Id, server.ScanFailedMessage);
                 Ctx.ServerManager.Save(server);
                 return;
             }
@@ -217,7 +216,7 @@ namespace LANSearch.Data.Jobs.Ftp
                 server.Online = true;
                 server.ScanFailedAttempts = 0;
                 server.ScanFailedMessage = null;
-                Logger.InfoFormat("Reseted online status and failed attempts for server {0}",server.Id);
+                Logger.InfoFormat("Reseted online status and failed attempts for server {0}", server.Id);
             }
             var visited = new HashSet<string>();
             try
@@ -312,7 +311,7 @@ namespace LANSearch.Data.Jobs.Ftp
         //                    pathSegments.Add(folder);
         //                    break;
         //            }
-                    
+
         //        }
         //        return "/"+string.Join("/", pathSegments);
         //    }

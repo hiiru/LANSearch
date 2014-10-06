@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using LANSearch.Data.Notification;
+﻿using LANSearch.Data.Notification;
 using LANSearch.Data.User;
 using Microsoft.AspNet.SignalR;
 
@@ -21,7 +19,7 @@ namespace LANSearch.Hubs
             userClient.notify(notificationEvent.NotificationId, notificationEvent.Name, notificationEvent.SearchUrl, notificationEvent.Items);
         }
 
-        public static void SendAnnouncement(string title, string message, string type="info")
+        public static void SendAnnouncement(string title, string message, string type = "info")
         {
             if (_signalRHub == null)
                 _signalRHub = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();

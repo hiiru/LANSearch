@@ -79,7 +79,7 @@ namespace LANSearch.Data.Search.Solr
                 HasSearchParameters = !QueryBuilder.IsEmptySearch
             };
 
-            if (solrResponse.Documents==null)
+            if (solrResponse.Documents == null)
                 return sm;
             sm.Count = solrResponse.Documents.NumFound;
             sm.Results = ParseDocuments(solrResponse.GetObjects<File>(SolrMapper));

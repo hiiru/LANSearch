@@ -2,17 +2,16 @@
 
 /* ================================================
  * Make use of Bootstrap's modal more monkey-friendly.
- * 
+ *
  * For Bootstrap 3.
- * 
+ *
  * javanoob@hotmail.com
- * 
+ *
  * https://github.com/nakupanda/bootstrap3-dialog
- * 
+ *
  * Licensed under The MIT License.
  * ================================================ */
 (function(root, factory) {
-
     "use strict";
 
     // CommonJS module is defined
@@ -28,9 +27,7 @@
         // planted over the root!
         root.BootstrapDialog = factory(root.jQuery);
     }
-
 }(this, function($) {
-
     "use strict";
 
     var BootstrapDialog = function(options) {
@@ -436,9 +433,9 @@
         },
         /**
          * If there is id provided for a button option, it will be in dialog.indexedButtons list.
-         * 
+         *
          * In that case you can use dialog.getButton(id) to find the button.
-         * 
+         *
          * @param {type} id
          * @returns {undefined}
          */
@@ -593,9 +590,9 @@
         },
         /**
          * Dynamically add extra functions to $button
-         * 
+         *
          * Using '$this' to reference 'this' is just for better readability.
-         * 
+         *
          * @param {type} $button
          * @returns {_L13.BootstrapDialog.prototype}
          */
@@ -667,7 +664,7 @@
         },
         /**
          * Invoke this only after the dialog is realized.
-         * 
+         *
          * @param {type} enable
          * @returns {undefined}
          */
@@ -680,7 +677,7 @@
         },
         /**
          * Invoke this only after the dialog is realized.
-         * 
+         *
          * @returns {undefined}
          */
         updateClosable: function() {
@@ -900,7 +897,7 @@
 
     /**
      * Shortcut function: show
-     * 
+     *
      * @param {type} options
      * @returns the created dialog instance
      */
@@ -910,7 +907,7 @@
 
     /**
      * Alert window
-     * 
+     *
      * @returns the created dialog instance
      */
     BootstrapDialog.alert = function() {
@@ -959,7 +956,7 @@
 
     /**
      * Confirm window
-     * 
+     *
      * @param {type} message
      * @param {type} callback
      * @returns the created dialog instance
@@ -991,7 +988,7 @@
 
     /**
      * Warning window
-     * 
+     *
      * @param {type} message
      * @returns the created dialog instance
      */
@@ -1004,7 +1001,7 @@
 
     /**
      * Danger window
-     * 
+     *
      * @param {type} message
      * @returns the created dialog instance
      */
@@ -1017,7 +1014,7 @@
 
     /**
      * Success window
-     * 
+     *
      * @param {type} message
      * @returns the created dialog instance
      */
@@ -1029,5 +1026,4 @@
     };
 
     return BootstrapDialog;
-
 }));

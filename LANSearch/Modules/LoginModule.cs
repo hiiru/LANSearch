@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using LANSearch.Data.User;
+﻿using LANSearch.Data.User;
 using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
@@ -104,7 +103,7 @@ namespace LANSearch.Modules
                 UserRegisterState registerStatus = Ctx.UserManager.Register(Request.Form.regUser, Request.Form.regEmail, Request.Form.regPass1, Request.Form.regPass2, Request, out guid);
                 if (registerStatus == UserRegisterState.Ok)
                 {
-                    return this.LoginAndRedirect(guid,fallbackRedirectUrl:"~/Member/Profile");
+                    return this.LoginAndRedirect(guid, fallbackRedirectUrl: "~/Member/Profile");
                 }
                 var model = new LoginModel();
                 model.RegisterUser = Request.Form.regUser;
@@ -174,7 +173,7 @@ namespace LANSearch.Modules
             string returnPath = indexQuery != -1 ?
                 returnUrl.Substring(0, indexQuery).ToLower() :
                 returnUrl.ToLower();
-            var pathSegements = returnPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            var pathSegements = returnPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             if (pathSegements[0] == "member")
             {
                 if (pathSegements.Length == 1)
@@ -183,8 +182,10 @@ namespace LANSearch.Modules
                 {
                     case "notification":
                         return "Please login to create or manage a Search Notification.";
+
                     case "server":
                         return "Please login to create or manage a Server.";
+
                     case "profile":
                         return "Please login to update your Profile settings.";
                 }

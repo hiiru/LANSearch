@@ -24,7 +24,7 @@ namespace LANSearch.Data.Server
 
             Cache = RedisManager.ServerGetAll().ToDictionary(x => x.Id, x => x);
             CacheHidden = new HashSet<int>(Cache.Values.Where(x => x.Hidden && !x.Deleted).Select(x => x.Id));
-            CacheOnlineAndOpen = new HashSet<int>(Cache.Values.Where(x => x.Online &&! x.Closed && !x.Deleted).Select(x => x.Id));
+            CacheOnlineAndOpen = new HashSet<int>(Cache.Values.Where(x => x.Online && !x.Closed && !x.Deleted).Select(x => x.Id));
 
             redisManager.OnMessage += redisManager_OnMessage;
         }
@@ -63,7 +63,7 @@ namespace LANSearch.Data.Server
         public void Save(Server obj)
         {
             if (obj == null) return;
-            if (obj.Id==0)
+            if (obj.Id == 0)
             {
                 var status = Ctx.JobManager.FtpCrawler.CheckServer(obj);
                 if (!status.IsOk)
@@ -72,7 +72,7 @@ namespace LANSearch.Data.Server
                     obj.ScanFailedAttempts = 1;
                     obj.Online = false;
                     obj.ScanFailedMessage = status.ErrorType == FtpStatus.FtpErrorType.Offline ?
-                        string.Format("Connection couldn't be established, server is offline.") : 
+                        string.Format("Connection couldn't be established, server is offline.") :
                         string.Format("{0} {1}", status.ErrorFtpCode, status.ErrorFtpMessage);
                 }
                 else
@@ -114,6 +114,7 @@ namespace LANSearch.Data.Server
             return CacheHidden;
             //return RedisManager.ServerGetHidden();
         }
+
         public IEnumerable<int> GetOnlineIds()
         {
             return CacheOnlineAndOpen;
@@ -135,7 +136,7 @@ namespace LANSearch.Data.Server
                     var serverCount = GetAll().Count(x => !x.Deleted && x.OwnerId == userId);
                     if (serverCount >= Ctx.Config.ServerLimitPerUser)
                     {
-                        return  new ServerDetailModel{IsAdmin = false,LimitReached=true};
+                        return new ServerDetailModel { IsAdmin = false, LimitReached = true };
                     }
                 }
 
@@ -249,6 +250,5 @@ namespace LANSearch.Data.Server
             server.Hidden = deleted;
             Save(server);
         }
-
     }
 }

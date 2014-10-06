@@ -1,5 +1,4 @@
 ﻿using Common.Logging;
-using Hangfire;
 using LANSearch.Data.Notification;
 using LANSearch.Hubs;
 using System;
@@ -57,7 +56,7 @@ namespace LANSearch.Data.Jobs
                 NotificationTime = DateTime.Now,
                 UserName = user.UserName,
                 UserEmail = user.Email,
-                Items = results.Results.Select(result => new NotificationEventItem { FileName = result.Name, FileSize = result.Size, FileUrl = result.Url, ServerName = result.ServerName}).ToList()
+                Items = results.Results.Select(result => new NotificationEventItem { FileName = result.Name, FileSize = result.Size, FileUrl = result.Url, ServerName = result.ServerName }).ToList()
             };
 
             if (notification.Type.HasFlag(NotificationType.Mail))

@@ -94,7 +94,7 @@ namespace LANSearch.Data.Notification
             var count = GetActiveNotificationCount(user.Id);
             if (count >= Ctx.Config.NotificationPerUser)
             {
-                return new NotificationDetailModel {ActiveLimitReached = true};
+                return new NotificationDetailModel { ActiveLimitReached = true };
             }
             var url = request.Url.Clone();
             url.Path = "/Search";
@@ -165,7 +165,7 @@ namespace LANSearch.Data.Notification
             return model;
         }
 
-        public void SetDisabled(Notification notification, bool disable, bool isAdmin=false)
+        public void SetDisabled(Notification notification, bool disable, bool isAdmin = false)
         {
             if (!isAdmin && !disable)
             {

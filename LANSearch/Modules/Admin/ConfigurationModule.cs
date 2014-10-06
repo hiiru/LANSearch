@@ -1,8 +1,8 @@
 ﻿using LANSearch.Modules.BaseClasses;
 using Nancy;
+using Nancy.Security;
 using System.Collections.Generic;
 using System.Linq;
-using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {

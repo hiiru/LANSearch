@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-using Hangfire;
+﻿using Hangfire;
 using LANSearch.Data.Jobs.Ftp;
 using LANSearch.Data.Redis;
+using System;
+using System.Linq.Expressions;
 
 namespace LANSearch.Data.Jobs
 {
@@ -18,7 +18,7 @@ namespace LANSearch.Data.Jobs
 
             InitRecurring(config);
         }
-        
+
         #region Background Jobs
 
         public void EnqueueJob(Expression<Action> methodCall)
@@ -40,7 +40,6 @@ namespace LANSearch.Data.Jobs
 
         private void InitRecurring(AppConfig config)
         {
-
             if (!InitConfig.DisableHangfire)
                 return;
             //Setup hourly crawling
@@ -61,7 +60,7 @@ namespace LANSearch.Data.Jobs
         {
             RecurringJob.RemoveIfExists(JOB_CRAWL_SERVERS);
         }
-        
+
         #endregion Recurring Jobs
     }
 }

@@ -13,6 +13,7 @@ namespace LANSearch.Data.Search.Solr.Filters
         string GetFilterText(string value);
 
         string GetSelectedText();
+
         bool HasSelected { get; }
 
         bool IsSelected(string value);

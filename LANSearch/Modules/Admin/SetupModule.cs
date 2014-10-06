@@ -2,9 +2,9 @@
 using LANSearch.Models.Admin;
 using Nancy;
 using Nancy.Authentication.Forms;
+using Nancy.Security;
 using System;
 using System.Text;
-using Nancy.Security;
 
 namespace LANSearch.Modules.Admin
 {

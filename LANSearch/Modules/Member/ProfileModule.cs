@@ -119,7 +119,6 @@ namespace LANSearch.Modules.Member
                     return Response.AsRedirect("~/Member/Profile?success=1");
                 }
 
-
                 int error = 0;
                 if (!oldPassValid)
                     error++;

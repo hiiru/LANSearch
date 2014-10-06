@@ -14,6 +14,7 @@ namespace LANSearch
     public class AppConfig
     {
         #region Constructor and similar methods
+
         protected RedisManager RedisManager;
         private readonly List<PropertyInfo> _propertyInfos;
         protected ILog Logger;
@@ -29,11 +30,12 @@ namespace LANSearch
 
             EnsureMinimalConfig();
         }
-        
+
         ~AppConfig()
         {
             SaveConfigToRedis();
         }
+
         private void EnsureMinimalConfig()
         {
             bool changed = false;
@@ -87,9 +89,11 @@ namespace LANSearch
             ServerRestrictIpToOwner = true;
             SearchBoostOnlineServers = true;
         }
-        #endregion
+
+        #endregion Constructor and similar methods
 
         #region Redis Storage
+
         private void LoadRedisConfig()
         {
             Dictionary<string, object> config;
@@ -114,9 +118,11 @@ namespace LANSearch
         {
             RedisManager.ConfigStore(GetConfigDictionary());
         }
-        #endregion
+
+        #endregion Redis Storage
 
         #region De-/Serailazation
+
         public Dictionary<string, object> GetConfigDictionary()
         {
             var dict = new Dictionary<string, object>();
@@ -133,7 +139,7 @@ namespace LANSearch
                     if (pi.PropertyType == typeof(List<IpNet>))
                     {
                         var list = value as List<IpNet>;
-                        dict[pi.Name] = list == null  ? "" : list.Select(x => x.ToString()).Join(",");
+                        dict[pi.Name] = list == null ? "" : list.Select(x => x.ToString()).Join(",");
                     }
                     else if (pi.PropertyType == typeof(byte[]))
                     {
@@ -202,8 +208,9 @@ namespace LANSearch
                 }
             }
         }
-        #endregion
-        
+
+        #endregion De-/Serailazation
+
         #region Setup Variables (Blacklisted from configuration page)
 
         public static List<string> ConfigBlacklist = new List<string>
@@ -227,18 +234,18 @@ namespace LANSearch
 
         #endregion Setup Variables (Blacklisted from configuration page)
 
-        
         public bool AppMaintenance { get; set; }
 
         public string AppMaintenanceMessage { get; set; }
 
         public List<IpNet> AppBlockedIps { get; set; }
-        
+
         public bool AppAnnouncement { get; set; }
 
         public string AppAnnouncementMessage { get; set; }
 
         public string NancyDiagnosticsPassword { get; set; }
+
         public bool UserRequireMailActivation { get; set; }
 
         #region Search
@@ -248,19 +255,24 @@ namespace LANSearch
         public bool SearchDisabled { get; set; }
 
         public bool SearchAllowHideServer { get; set; }
+
         public bool SearchBoostOnlineServers { get; set; }
-        #endregion
+
+        #endregion Search
 
         #region Jobs
+
         public bool JobHourlyCrawling { get; set; }
 
         /// <summary>
         /// Crawler will set server offline after these tries.
         /// </summary>
         public int CrawlerOfflineLimit { get; set; }
-        #endregion
+
+        #endregion Jobs
 
         #region MailManager
+
         public string MailServer { get; set; }
 
         public int MailPort { get; set; }
@@ -276,10 +288,11 @@ namespace LANSearch
         public string MailFromName { get; set; }
 
         public bool MailCopyToSelf { get; set; }
-        #endregion
 
+        #endregion MailManager
 
         #region Notification
+
         public bool NotificationEnabled { get; set; }
 
         public bool NotificationFixedExpiration { get; set; }
@@ -289,13 +302,17 @@ namespace LANSearch
         public int NotificationLifetimeDays { get; set; }
 
         public int NotificationPerUser { get; set; }
-        #endregion
+
+        #endregion Notification
 
         #region Server
 
         public List<IpNet> ServerAllowedIps { get; set; }
+
         public int ServerLimitPerUser { get; set; }
+
         public bool ServerRestrictIpToOwner { get; set; }
-        #endregion
+
+        #endregion Server
     }
 }

@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using LANSearch.Data.Redis;
+﻿using LANSearch.Data.Redis;
 using Nancy;
 using Nancy.Authentication.Forms;
 using ServiceStack.Common;

@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using LANSearch.Data.User;
+﻿using LANSearch.Data.User;
 using Nancy;
 using Nancy.Security;
+using System.Linq;
 
 namespace LANSearch.Modules.BaseClasses
 {

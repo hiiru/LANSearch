@@ -2,8 +2,8 @@
 using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
-using System;
 using Nancy.Security;
+using System;
 
 namespace LANSearch.Modules
 {
