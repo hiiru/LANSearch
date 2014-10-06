@@ -31,7 +31,9 @@ namespace LANSearch.Data.Mail
                 using (
                     var client = new SmtpClient
                     {
+#if !__MonoCS__
                         UseDefaultCredentials = false,
+#endif
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                         Host = Ctx.Config.MailServer,
                         Port = Ctx.Config.MailPort,
