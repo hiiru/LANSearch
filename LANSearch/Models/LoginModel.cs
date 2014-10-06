@@ -21,5 +21,6 @@
         public string RegisterErrorEmail { get; set; }
 
         public string RegisterErrorPassword { get; set; }
+        public string WhyLoginMessage { get; set; }
     }
 }

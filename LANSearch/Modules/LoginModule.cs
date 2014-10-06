@@ -1,8 +1,10 @@
-﻿using LANSearch.Data.User;
+﻿using System.Diagnostics;
+using LANSearch.Data.User;
 using LANSearch.Models;
 using LANSearch.Modules.BaseClasses;
 using Nancy;
 using Nancy.Authentication.Forms;
+using Nancy.Helpers;
 using Nancy.Security;
 using System;
 
@@ -26,7 +28,8 @@ namespace LANSearch.Modules
                 return View["login.cshtml", new LoginModel
                 {
                     IsLoggedIn = false,
-                    ReturnUrl = Request.Query["returnUrl"]
+                    ReturnUrl = Request.Query["returnUrl"],
+                    WhyLoginMessage = GetMessage(Request.Query["returnUrl"]),
                 }];
             };
 
@@ -161,6 +164,34 @@ namespace LANSearch.Modules
                 }
                 return Response.AsRedirect("~/");
             };
+        }
+
+        private string GetMessage(string returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(returnUrl)) return null;
+            returnUrl = HttpUtility.UrlDecode(returnUrl);
+            int indexQuery = returnUrl.IndexOf('?');
+            string returnPath = indexQuery != -1 ?
+                returnUrl.Substring(0, indexQuery).ToLower() :
+                returnUrl.ToLower();
+            var pathSegements = returnPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            if (pathSegements[0] == "member")
+            {
+                if (pathSegements.Length == 1)
+                    return null;
+                switch (pathSegements[1])
+                {
+                    case "notification":
+                        return "Please login to create or manage a Search Notification.";
+                    case "server":
+                        return "Please login to create or manage a Server.";
+                    case "profile":
+                        return "Please login to update your Profile settings.";
+                }
+            }
+            else if (pathSegements[0] == "admin")
+                return "Authenticate as an Admin to access admin features";
+            return null;
         }
     }
 }

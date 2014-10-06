@@ -3,6 +3,7 @@ using LANSearch.Data.User;
 using LANSearch.Models;
 using Nancy;
 using Nancy.ErrorHandling;
+using Nancy.Responses;
 using Nancy.Security;
 using Nancy.ViewEngines;
 using System;
@@ -25,6 +26,7 @@ namespace LANSearch
                 case HttpStatusCode.NotFound:
                 case HttpStatusCode.InternalServerError:
                 case HttpStatusCode.NotImplemented:
+                case HttpStatusCode.Unauthorized:
                     return true;
 
                 default:
@@ -34,6 +36,12 @@ namespace LANSearch
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
+            if (statusCode == HttpStatusCode.Unauthorized)
+            {
+                HandleRedirect(context);
+                return;
+            }
+
             LogException(context);
             if (InitConfig.SetupIps.Contains(context.Request.UserHostAddress) || context.CurrentUser.HasClaim(UserRoles.ADMIN))
             {
@@ -60,6 +68,15 @@ namespace LANSearch
             var response = viewRenderer.RenderView(context, "Views/Error.cshtml", model);
             response.StatusCode = statusCode;
             context.Response = response;
+        }
+
+        private void HandleRedirect(NancyContext context)
+        {
+            //This is a workaround due to a bug in Nancy.Formsauthentication
+            //which doesn't add the ? before the returnUrl querystring, which leads to invalid redirection
+            var returnUrl = context.Request.Url.ToReturnUrl();
+            var path = string.Format("{0}{1}{2}", context.Request.Url.BasePath, "/Login", returnUrl);
+            context.Response = new RedirectResponse(path, RedirectResponse.RedirectType.SeeOther);
         }
 
         private void LogException(NancyContext context)

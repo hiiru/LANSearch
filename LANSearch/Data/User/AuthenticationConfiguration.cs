@@ -24,6 +24,7 @@ namespace LANSearch.Data.User
             {
                 RedirectUrl = "~/login",
                 CryptographyConfiguration = cryptographyConfiguration,
+                DisableRedirect = true,
             };
         }
 

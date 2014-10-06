@@ -7,7 +7,7 @@ namespace LANSearch
     {
         public static string ToReturnUrl(this Url url)
         {
-            return string.Concat("?returnUrl=", url.Path, "?", HttpUtility.UrlEncode(url.Query));
+            return string.Concat("?returnUrl=", url.Path, "%3f", HttpUtility.UrlEncode(url.Query));
         }
 
         public static bool ToBool(this string s)

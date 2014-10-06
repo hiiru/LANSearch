@@ -1,4 +1,5 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.LoginModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Login";
 }
@@ -14,6 +15,10 @@
     }
     else
     {
+        @if (Model.WhyLoginMessage != null)
+        {
+            <div class="alert alert-warning" role="alert">@Model.WhyLoginMessage</div>
+        }
         <div class="col-sm-5 content">
             <h2>Login</h2>
             <p>
@@ -23,7 +28,7 @@
                         <input name="user" type="text" class="form-control" maxlength="20" value="@Model.LoginUsername">
                         @if (!string.IsNullOrWhiteSpace(Model.LoginErrorUsername))
                         {
-                <p class="text-danger">@Model.LoginErrorUsername</p>
+                            <p class="help-block">@Model.LoginErrorUsername</p>
                         }
                     </div>
 
@@ -32,13 +37,13 @@
                         <input name="pass" type="password" class="form-control" maxlength="50">
                         @if (!string.IsNullOrWhiteSpace(Model.LoginErrorPassword))
                         {
-                            <p class="text-danger">@Model.LoginErrorPassword</p>
+                            <p class="help-block">@Model.LoginErrorPassword</p>
                         }
                     </div>
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-primary">Login</button>
-                    </form>
-                    </p>
+                </form>
+            </p>
                 </div>
                 <div class="col-sm-7 content">
                     <h2>Registration</h2>
@@ -49,16 +54,19 @@
                                 <input name="regUser" type="text" class="form-control" maxlength="20" value="@Model.RegisterUser">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorUser))
                                 {
-                        <p class="text-danger">@Model.RegisterErrorUser</p>
+                                    <p class="help-block">@Model.RegisterErrorUser</p>
                                 }
                             </div>
                             <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail) ? " has-error" : "")">
                                 <label class="control-label" for="regEmail">E-Mail</label>
-                                <div class="alert alert-info" role="alert">You will get an activation email to this address.</div>
                                 <input name="regEmail" type="text" class="form-control" maxlength="50" value="@Model.RegisterEmail">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail))
                                 {
-                                    <p class="text-danger">@Model.RegisterErrorEmail</p>
+                                    <p class="help-block">@Model.RegisterErrorEmail</p>
+                                }
+                                else
+                                {
+                                    <div class="help-block">You will get an activation email to this address.</div>
                                 }
                             </div>
                             <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
@@ -66,7 +74,7 @@
                                 <input name="regPass1" type="password" class="form-control" maxlength="20">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
                                 {
-                                    <p class="text-danger">@Model.RegisterErrorPassword</p>
+                                    <p class="help-block">@Model.RegisterErrorPassword</p>
                                 }
                             </div>
                             <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
@@ -74,7 +82,7 @@
                                 <input name="regPass2" type="password" class="form-control" maxlength="20">
                                 @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
                                 {
-                                    <p class="text-danger">@Model.RegisterErrorPassword</p>
+                                    <p class="help-block">@Model.RegisterErrorPassword</p>
                                 }
                             </div>
                             @Html.AntiForgeryToken()
