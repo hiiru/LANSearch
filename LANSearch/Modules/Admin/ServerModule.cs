@@ -73,7 +73,7 @@ namespace LANSearch.Modules.Admin
                 }
                 else if (Request.Form.rescan)
                 {
-                    BackgroundJob.Enqueue(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId, true));
+                    Ctx.JobManager.EnqueueJob(() => Ctx.JobManager.FtpCrawler.CrawlServer(serverId, true));
                 }
                 else if (Request.Form.delete)
                 {

@@ -1,4 +1,6 @@
-﻿using Hangfire;
+﻿using System;
+using System.Linq.Expressions;
+using Hangfire;
 using LANSearch.Data.Jobs.Ftp;
 using LANSearch.Data.Redis;
 
@@ -14,14 +16,17 @@ namespace LANSearch.Data.Jobs
             FtpCrawler = new FtpCrawler();
             NotificationJob = new NotificationJob();
 
-            //Setup hourly crawling
-            if (config.JobHourlyCrawling)
-                RecurringJob.AddOrUpdate(JOB_CRAWL_SERVERS, () => FtpCrawler.CrawlServers(), Cron.Hourly);
-            else
-                RecurringJob.RemoveIfExists(JOB_CRAWL_SERVERS);
+            InitRecurring(config);
         }
-
+        
         #region Background Jobs
+
+        public void EnqueueJob(Expression<Action> methodCall)
+        {
+            if (InitConfig.DisableHangfire)
+                return;
+            BackgroundJob.Enqueue(methodCall);
+        }
 
         public FtpCrawler FtpCrawler { get; protected set; }
 
@@ -32,6 +37,18 @@ namespace LANSearch.Data.Jobs
         #region Recurring Jobs
 
         protected const string JOB_CRAWL_SERVERS = "Ftp Crawler (All Servers)";
+
+        private void InitRecurring(AppConfig config)
+        {
+
+            if (!InitConfig.DisableHangfire)
+                return;
+            //Setup hourly crawling
+            if (config.JobHourlyCrawling)
+                RecuringAddCrawler();
+            else
+                RecurringRemoveCrawler();
+        }
 
         public void RecuringAddCrawler(string interval = null)
         {
@@ -44,12 +61,7 @@ namespace LANSearch.Data.Jobs
         {
             RecurringJob.RemoveIfExists(JOB_CRAWL_SERVERS);
         }
-
-        public void RecurringRemove(string id)
-        {
-            RecurringJob.RemoveIfExists(id);
-        }
-
+        
         #endregion Recurring Jobs
     }
 }

@@ -142,5 +142,6 @@ namespace LANSearch
         public static int RedisDbHangfire { get; private set; }
 
         public static string RedisPassword { get; private set; }
+        public static bool DisableHangfire { get; set; }
     }
 }

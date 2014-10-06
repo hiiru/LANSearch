@@ -81,7 +81,7 @@ namespace LANSearch.Data.Jobs.Ftp
                 return;
             }
             Task.WaitAll(servers.Select(CrawlServer).ToArray());
-            BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyAll());
+            Ctx.JobManager.EnqueueJob(() => Ctx.JobManager.NotificationJob.NotifyAll());
         }
 
         public void CrawlServer(int id, bool force)
@@ -110,7 +110,7 @@ namespace LANSearch.Data.Jobs.Ftp
             var task = CrawlServer(server);
             task.Wait();
             Ctx.RedisManager.FtpCrawlerServerUnlock(id);
-            BackgroundJob.Enqueue(() => Ctx.JobManager.NotificationJob.NotifyServer(id));
+            Ctx.JobManager.EnqueueJob(() => Ctx.JobManager.NotificationJob.NotifyServer(id));
         }
 
         private Task CrawlServer(Server.Server server)

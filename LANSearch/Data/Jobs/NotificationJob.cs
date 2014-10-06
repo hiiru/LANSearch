@@ -62,11 +62,11 @@ namespace LANSearch.Data.Jobs
 
             if (notification.Type.HasFlag(NotificationType.Mail))
             {
-                BackgroundJob.Enqueue(() => Ctx.MailManager.SendNotification(notEvent));
+                Ctx.JobManager.EnqueueJob(() => Ctx.MailManager.SendNotification(notEvent));
             }
             if (notification.Type.HasFlag(NotificationType.Html5))
             {
-                BackgroundJob.Enqueue(() => NotificationHub.SearchNotification(notEvent));
+                Ctx.JobManager.EnqueueJob(() => NotificationHub.SearchNotification(notEvent));
             }
         }
 

@@ -148,7 +148,7 @@ namespace LANSearch.Data.User
                 {
                     user.EmailValidationKey = GetUniqueKey(6);
                     RedisManager.UserSave(user);
-                    BackgroundJob.Enqueue(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
+                    Ctx.JobManager.EnqueueJob(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
                 }
                 else
                     RedisManager.UserSave(user);
@@ -373,7 +373,7 @@ namespace LANSearch.Data.User
 
             user.EmailValidationKey = GetUniqueKey(6);
             RedisManager.UserSave(user);
-            BackgroundJob.Enqueue(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
+            Ctx.JobManager.EnqueueJob(() => Ctx.MailManager.SendActivationMail(user, request.Url.HostName));
             return 0;
         }
     }

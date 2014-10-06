@@ -24,14 +24,22 @@ namespace LANSearch
             app.MapSignalR("/sr", new HubConfiguration { EnableJavaScriptProxies = false });
             logger.Debug("MapSignalR Done.");
 
-            app.UseHangfire(config =>
+            if (InitConfig.DisableHangfire)
             {
-                config.UseRedisStorage(string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort), InitConfig.RedisDbHangfire);
-                config.UseServer();
-                config.UseDashboardPath("/Admin/Hangfire");
-                config.UseAuthorizationFilters(new HangfireAuthorizationFilter());
-            });
-            logger.Debug("UseHangfire Done.");
+                logger.Debug("Skipping Hangfire, DisableHangfire is set.");
+            }
+            else
+            {
+                app.UseHangfire(config =>
+                    {
+                        config.UseRedisStorage(string.Format("{0}:{1}", InitConfig.RedisServer, InitConfig.RedisPort),
+                            InitConfig.RedisDbHangfire);
+                        config.UseServer();
+                        config.UseDashboardPath("/Admin/Hangfire");
+                        config.UseAuthorizationFilters(new HangfireAuthorizationFilter());
+                    });
+                logger.Debug("UseHangfire Done.");
+            }
 
             app.UseNancy(options =>
             {
