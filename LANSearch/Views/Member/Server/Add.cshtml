@@ -1,8 +1,8 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Member .:. Server .:. Add";
 }
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Server.ServerDetailModel>
 <div class="col-xs-12 page-server">
     @if (Model.LimitReached)
     {

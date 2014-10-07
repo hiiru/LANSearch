@@ -1,11 +1,11 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Admin.User.UserListModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Admin .:. User .:. List";
 }
-<div class="col-xs-12 content">
+<div class="col-xs-12">
+    <h2 class="media-heading">User List</h2>
     <a href="@Url.Content("~/Admin/User/Create")">Create new User</a>
-</div>
-<div class="col-xs-12 content">
     <table class="table">
         <thead>
             <tr>

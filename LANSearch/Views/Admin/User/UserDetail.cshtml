@@ -1,8 +1,10 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Admin.User.UserDetailModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Admin .:. User .:. Detail";
 }
-<div class="col-xs-12 content">
+<div class="col-xs-12">
+    <h2 class="media-heading">Edit User</h2>
     @if (!string.IsNullOrWhiteSpace(Model.Error))
     {
         <div class="alert alert-danger" role="alert">@Html.Raw(Model.Error)</div>
@@ -62,7 +64,7 @@
     <div class="container">
         <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading">Claims (@Model.User.Claims.Count)</div>
+                <div class="panel-heading">Claims (@Model.User.ClaimList.Count)</div>
                 <ul class="list-group">
                     @foreach (var claim in Model.User.Claims)
                     {

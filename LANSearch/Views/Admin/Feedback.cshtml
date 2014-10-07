@@ -1,8 +1,10 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Admin.FeedbackModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Admin .:. Feedback";
 }
-<div class="col-xs-12 content">
+<div class="col-xs-12">
+    <h2 class="media-heading">Feedback</h2>
     @foreach (var item in Model.Feedbacks)
     {
         <div class="panel panel-default">

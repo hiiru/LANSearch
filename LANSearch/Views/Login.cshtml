@@ -6,7 +6,7 @@
 <div class="row">
     @if (Model.IsLoggedIn)
     {
-        <div class="col-sm-12 content">
+        <div class="col-sm-12">
             You're currently logged in as  @Model.LoginUsername
             <form method="GET" action="@Url.Content("~/Logout")">
                 <button type="submit" class="btn btn-primary">Logout</button>
@@ -19,76 +19,72 @@
         {
             <div class="alert alert-warning" role="alert">@Model.WhyLoginMessage</div>
         }
-        <div class="col-sm-5 content">
-            <h2>Login</h2>
-            <p>
-                <form class="form login" method="post">
-                    <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorUsername) ? " has-error" : "")">
-                        <label class="control-label" for="user">Username</label>
-                        <input name="user" type="text" class="form-control" maxlength="20" value="@Model.LoginUsername">
-                        @if (!string.IsNullOrWhiteSpace(Model.LoginErrorUsername))
-                        {
-                            <p class="help-block">@Model.LoginErrorUsername</p>
-                        }
-                    </div>
-
-                    <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorPassword) ? " has-error" : "")">
-                        <label class="control-label" for="pass">Password</label>
-                        <input name="pass" type="password" class="form-control" maxlength="50">
-                        @if (!string.IsNullOrWhiteSpace(Model.LoginErrorPassword))
-                        {
-                            <p class="help-block">@Model.LoginErrorPassword</p>
-                        }
-                    </div>
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-            </p>
+        <div class="col-sm-5">
+            <h2 class="media-heading">Login</h2>
+            <form class="form" method="post">
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorUsername) ? " has-error" : "")">
+                    <label class="control-label" for="user">Username</label>
+                    <input name="user" type="text" class="form-control" maxlength="20" value="@Model.LoginUsername">
+                    @if (!string.IsNullOrWhiteSpace(Model.LoginErrorUsername))
+                    {
+                        <p class="help-block">@Model.LoginErrorUsername</p>
+                    }
                 </div>
-                <div class="col-sm-7 content">
-                    <h2>Registration</h2>
-                    <p>
-                        <form class="form feedback" method="POST" action="@Url.Content("~/Login/Register")@(!string.IsNullOrWhiteSpace(Model.ReturnUrl) ? "?returnUrl=" + Model.ReturnUrl : "")">
-                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorUser)?" has-error":"")">
-                                <label class="control-label" for="regUser">Username</label>
-                                <input name="regUser" type="text" class="form-control" maxlength="20" value="@Model.RegisterUser">
-                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorUser))
-                                {
-                                    <p class="help-block">@Model.RegisterErrorUser</p>
-                                }
-                            </div>
-                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail) ? " has-error" : "")">
-                                <label class="control-label" for="regEmail">E-Mail</label>
-                                <input name="regEmail" type="text" class="form-control" maxlength="50" value="@Model.RegisterEmail">
-                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail))
-                                {
-                                    <p class="help-block">@Model.RegisterErrorEmail</p>
-                                }
-                                else
-                                {
-                                    <div class="help-block">You will get an activation email to this address.</div>
-                                }
-                            </div>
-                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
-                                <label class="control-label" for="regPass1">Password</label>
-                                <input name="regPass1" type="password" class="form-control" maxlength="20">
-                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
-                                {
-                                    <p class="help-block">@Model.RegisterErrorPassword</p>
-                                }
-                            </div>
-                            <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
-                                <label class="control-label" for="regPass2">Re-enter Password</label>
-                                <input name="regPass2" type="password" class="form-control" maxlength="20">
-                                @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
-                                {
-                                    <p class="help-block">@Model.RegisterErrorPassword</p>
-                                }
-                            </div>
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-default">Register</button>
-                            </form>
-                            </p>
-                            </div>
-    }
-    </div>
+
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.LoginErrorPassword) ? " has-error" : "")">
+                    <label class="control-label" for="pass">Password</label>
+                    <input name="pass" type="password" class="form-control" maxlength="50">
+                    @if (!string.IsNullOrWhiteSpace(Model.LoginErrorPassword))
+                    {
+                        <p class="help-block">@Model.LoginErrorPassword</p>
+                    }
+                </div>
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+        <div class="col-sm-7">
+            <h2 class="media-heading">Registration</h2>
+            <form class="form feedback" method="POST" action="@Url.Content("~/Login/Register")@(!string.IsNullOrWhiteSpace(Model.ReturnUrl) ? "?returnUrl=" + Model.ReturnUrl : "")">
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorUser)?" has-error":"")">
+                    <label class="control-label" for="regUser">Username</label>
+                    <input name="regUser" type="text" class="form-control" maxlength="20" value="@Model.RegisterUser">
+                    @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorUser))
+                    {
+                        <p class="help-block">@Model.RegisterErrorUser</p>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail) ? " has-error" : "")">
+                    <label class="control-label" for="regEmail">E-Mail</label>
+                    <input name="regEmail" type="text" class="form-control" maxlength="50" value="@Model.RegisterEmail">
+                    @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorEmail))
+                    {
+                        <p class="help-block">@Model.RegisterErrorEmail</p>
+                    }
+                    else
+                    {
+                        <div class="help-block">You will get an activation email to this address.</div>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
+                    <label class="control-label" for="regPass1">Password</label>
+                    <input name="regPass1" type="password" class="form-control" maxlength="20">
+                    @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
+                    {
+                        <p class="help-block">@Model.RegisterErrorPassword</p>
+                    }
+                </div>
+                <div class="form-group@(!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword) ? " has-error" : "")">
+                    <label class="control-label" for="regPass2">Re-enter Password</label>
+                    <input name="regPass2" type="password" class="form-control" maxlength="20">
+                    @if (!string.IsNullOrWhiteSpace(Model.RegisterErrorPassword))
+                    {
+                        <p class="help-block">@Model.RegisterErrorPassword</p>
+                    }
+                </div>
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default">Register</button>
+            </form>
+        </div>
+}
+</div>

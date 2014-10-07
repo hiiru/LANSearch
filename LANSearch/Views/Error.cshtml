@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.ErrorModel>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -12,10 +13,12 @@
 </head>
 <body class="error">
     <div class="container">
-        <div class="panel panel-@Model.ErrorType">
-            <div class="panel-heading"><h3 class="panel-title">@Model.StatusCode - @Model.ErrorTitle</h3></div>
-            <div class="panel-body">@Html.Raw(Model.ErrorMessage)</div>
-            <div class="panel-footer">Visit the <a href="/">home page</a> to continue.</div>
+        <div class="col-xs-12">
+            <div class="panel panel-@Model.ErrorType">
+                <div class="panel-heading"><h3 class="panel-title">@Model.StatusCode - @Model.ErrorTitle</h3></div>
+                <div class="panel-body">@Html.Raw(Model.ErrorMessage)</div>
+                <div class="panel-footer">Visit the <a href="/">home page</a> to continue.</div>
+            </div>
         </div>
     </div>
 </body>

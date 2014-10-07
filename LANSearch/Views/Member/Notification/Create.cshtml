@@ -1,8 +1,8 @@
-﻿@{
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationDetailModel>
+@{
     Layout = "Master/Master";
     ViewBag.Title = "Member .:. Notification .:. Create";
 }
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationDetailModel>
 <div class="col-xs-12 page-notification">
     @if (Model.ActiveLimitReached)
     {

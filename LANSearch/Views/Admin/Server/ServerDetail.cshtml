@@ -4,9 +4,10 @@
     Layout = "Master/Master";
     ViewBag.Title = "Admin .:. Server .:. Detail";
 }
-@if (!Model.IsCreation)
-{
-    <div class="col-xs-12 content">
+<div class="col-xs-12">
+    <h2 class="media-heading">Edit Server</h2>
+    @if (!Model.IsCreation)
+    {
         <form method="POST" action="@Url.Content(string.Format("~/Admin/Server/Detail/{0}/Action",Model.Server.Id))">
             <div class="row">
                 <div class="col-md-1">ID: @Model.Server.Id</div>
@@ -25,9 +26,6 @@
         </form>
         <hr />
         @Html.Partial("Partials/Server/DetailSummary.cshtml", Model)
-    </div>
-    <hr />
-}
-<div class="col-xs-12 content">
+    }
     @Html.Partial("Partials/Server/DetailForm.cshtml", Model)
 </div>
