@@ -3,12 +3,13 @@
     Layout = "Master/Master";
     ViewBag.Title = "Member .:. Server .:. List";
 }
-<div class="col-xs-12 content">
+<div class="col-xs-12 page-server">
+    <h2 class="media-heading">Servers</h2>
     <a class="btn btn-primary" href="@Url.Content("~/Member/Server/Add")"><span class="glyphicon glyphicon-plus"></span> Add new Server</a>
 </div>
 @if (Model.Servers.Count > 0)
 {
-    <hr />
+    <hr/>
     <div class="col-xs-12 content">
         <table class="table">
             <thead>

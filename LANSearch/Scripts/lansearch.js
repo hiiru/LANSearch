@@ -1,29 +1,51 @@
 ﻿$(document).ready(function () {
-    $('[data-toggle=offcanvas]').click(function () {
-        if ($('.sidebar-offcanvas').css('background-color') == 'rgb(255, 255, 255)') {
-            $('.list-group-item').attr('tabindex', '-1');
-        } else {
-            $('.list-group-item').attr('tabindex', '');
-        }
-        $('.row-offcanvas').toggleClass('active');
-    });
+    //#region General
+    function htmlEncode(value) {
+        return $('<div />').text(value).html();
+    }
 
-    $(".server-login-toggle").on('change', function (e) {
-        var checkbox = $(e.target);
-        var serverlogin = checkbox.parents(".server-login");
-        serverlogin.find(".server-login-item").toggleClass("open", checkbox.is(':checked'));
+    $(".confirm-button").on('click', function () {
+        var msg = $(this).data("confirm");
+        if (msg.length)
+            return confirm(msg);
+        else
+            return confirm("Are you sure?");
     });
-    $(".delete-button").on('click', function() {
-        return confirm("Are you sure you want to delete this server?");
-    });
-    $(".result-list").children(".disabled").on('click', function () { return false; });
+    //#endregion
 
-    var notification=$(".page-notification");
-    if (notification.length) {
+    //#region Search Page
+    var pageSearch = $(".page-search");
+    if (pageSearch.length) {
+        $('[data-toggle=offcanvas]').click(function () {
+            if ($('.sidebar-offcanvas').css('background-color') == 'rgb(255, 255, 255)') {
+                $('.list-group-item').attr('tabindex', '-1');
+            } else {
+                $('.list-group-item').attr('tabindex', '');
+            }
+            $('.row-offcanvas').toggleClass('active');
+        });
+        pageSearch.children(".result-list").children(".disabled").on('click', function () { return false; });
+    }
+    //#endregion
+
+    //#region Server Page
+    var pageServer = $(".page-server");
+    if (pageServer.length) {
+        $(".server-login-toggle").on('change', function (e) {
+            var checkbox = $(e.target);
+            var serverlogin = checkbox.parents(".server-login");
+            serverlogin.find(".server-login-item").toggleClass("open", checkbox.is(':checked'));
+        });
+    }
+    //#endregion
+
+    //#region Notification Page
+    var pageNotification = $(".page-notification");
+    if (pageNotification.length) {
         var lblCheck = $("#lblCheck");
         var btnPermission = $("#btnPermission");
         var btnTest = $("#btnTest");
-        var UpdatePermissionLabel= function() {
+        function UpdatePermissionLabel() {
             if (!("Notification" in window)) {
                 lblCheck.text("Not Supported by Browser");
                 lblCheck.addClass("label-danger");
@@ -49,7 +71,7 @@
             }
         }
         UpdatePermissionLabel();
-       btnPermission.on('click', function() {
+        btnPermission.on('click', function () {
             if (!("Notification" in window)) {
                 BootstrapDialog.alert("Your Browser does not support HTML5 Notifications.");
                 return;
@@ -87,16 +109,20 @@
                 BootstrapDialog.alert("HTML5 Notifications aren't allowed yet, please click the \"Grant Permission\" Button, or if it's denied, reset it in your browser's configuration (often it's located behind the icon in your address bar, click on it and you should get a dialog to change the permissions)");
             }
         });
-
     }
-});
+    //#endregion
 
-$(function () {
-    var disNotMsgShown = false;
+    //#region SignalR Notification stuff
+
+    var disableNotification = false;
     function browserNotification(name, message, tag) {
+        if (disableNotification) {
+            return;
+        }
         if (!("Notification" in window)) {
+            disableNotification = true;
             if (console.log) {
-                console.log("This browser does not support desktop notification");
+                console.log("Notifications are not supported by this browser.");
             }
             return;
         }
@@ -120,20 +146,15 @@ $(function () {
                 });
             }
             return;
-        }
-        if (console.log) {
-            console.log("Notifications are not allowed.");
-        }
-        if (disNotMsgShown) {
-            BootstrapDialog.alert("The permission for Web Notification is denied by your browser, you will only get dialog messages until you enable them. Please visit your notifications page to enable them.");
-            disNotMsgShown = true;
+        } else {
+            disableNotification = true;
+            if (console.log) {
+                console.log("Notifications are not allowed.");
+            }
         }
     }
 
-    function htmlEncode(value) {
-        return $('<div />').text(value).html();
-    }
-
+    var connectionReady = false;
     var connection = $.hubConnection("/sr", { useDefaultPath: false });
     var notifyHub = connection.createHubProxy('notificationHub');
     notifyHub.on('notify', function (id, name, url, items) {
@@ -237,56 +258,71 @@ $(function () {
         });
         dialog.open();
     });
-    var connectionReady = false;
+    
+    //#region Admin methods
+    var pageAdminAnnouncement = $(".page-admin-announcement");
+    if (pageAdminAnnouncement.length) {
+        notifyHub.on('cmdConfirm', function (message) {
+            var dialog = new BootstrapDialog({
+                title: "Server Response",
+                message: message,
+                type: BootstrapDialog.TYPE_DEFAULT,
+                draggable: true
+            });
+            dialog.open();
+        });
+
+        var annTitle = $("#annTitle");
+        var annMsg = $("#annMsg");
+        var annType = $("#annType");
+        $("#annSend").on('click', function () {
+            if (!connectionReady) {
+                BootstrapDialog.alert("SignalR connection not ready yet, please wait a few seconds.");
+                return;
+            }
+            var title = annTitle.val();
+            var msg = annMsg.val();
+            var type = annType.val();
+
+            if (title.length == 0 || msg.length == 0 || type.length == 0) {
+                BootstrapDialog.alert("The data is incomplete, please fill out title, message and select a type.");
+                return;
+            }
+
+            if (notifyHub)
+                notifyHub.invoke("SendAnnouncementMessage", title, msg, type);
+            else
+                BootstrapDialog.alert("Error: SignalR connection not setup correctly, can't sent message!");
+        });
+
+        var msgUser = $("#msgUser");
+        var msgMsg = $("#msgMsg");
+        var msgType = $("#msgType");
+        $("#msgSend").on('click', function() {
+            if (!connectionReady) {
+                BootstrapDialog.alert("SignalR connection not ready yet, please wait a few seconds.");
+                return;
+            }
+            var user = msgUser.val();
+            var msg = msgMsg.val();
+            var type = msgType.val();
+
+            if (user.length == 0 || msg.length == 0 || type.length == 0) {
+                BootstrapDialog.alert("The data is incomplete, please fill out title, message and select a type.");
+                return;
+            }
+
+            if (notifyHub)
+                notifyHub.invoke("SendAdminMessage", user, msg, type);
+            else
+                BootstrapDialog.alert("Error: SignalR connection not setup correctly, can't sent message!");
+        });
+    }
+    //#endregion
+
     connection.start().done(function () {
         connectionReady = true;
     });
 
-    $("#annSend").on('click', function () {
-        if (!connectionReady) {
-            BootstrapDialog.alert("SignalR connection not ready yet, please wait a few seconds.");
-            return;
-        }
-        var title = $("#annTitle").val();
-        var msg = $("#annMsg").val();
-        var type = $("#annType").val();
-
-        if (title.length == 0 || msg.length == 0 || type.length == 0) {
-            BootstrapDialog.alert("The data is incomplete, please fill out title, message and select a type.");
-            return;
-        }
-
-        if (notifyHub)
-            notifyHub.invoke("SendAnnouncementMessage", title, msg, type);
-        else
-            BootstrapDialog.alert("Error: SignalR connection not setup correctly, can't sent message!");
-    });
-    $("#msgSend").on('click', function () {
-        if (!connectionReady) {
-            BootstrapDialog.alert("SignalR connection not ready yet, please wait a few seconds.");
-            return;
-        }
-        var user = $("#msgUser").val();
-        var msg = $("#msgMsg").val();
-        var type = $("#msgType").val();
-
-        if (user.length == 0 || msg.length == 0 || type.length == 0) {
-            BootstrapDialog.alert("The data is incomplete, please fill out title, message and select a type.");
-            return;
-        }
-
-        if (notifyHub)
-            notifyHub.invoke("SendAdminMessage", user, msg, type);
-        else
-            BootstrapDialog.alert("Error: SignalR connection not setup correctly, can't sent message!");
-    });
-    notifyHub.on('cmdConfirm', function (message) {
-        var dialog = new BootstrapDialog({
-            title: "Server Response",
-            message: message,
-            type: BootstrapDialog.TYPE_DEFAULT,
-            draggable: true
-        });
-        dialog.open();
-    });
+    //#endregion
 });
