@@ -28,7 +28,11 @@ namespace LANSearch.Modules.Admin
                 int id;
                 if (int.TryParse(Request.Form.delete, out id))
                 {
-                    Ctx.FeedbackManager.SetDeleted(id);
+                        Ctx.FeedbackManager.SetDeleted(id);
+                }
+                else if (int.TryParse(Request.Form.read, out id))
+                {
+                    Ctx.FeedbackManager.SetRead(id, true);
                 }
                 return Response.AsRedirect("/Admin/Feedback");
             };

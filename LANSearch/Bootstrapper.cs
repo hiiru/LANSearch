@@ -63,5 +63,14 @@ namespace LANSearch
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/Fonts", "Fonts"));
             base.ConfigureConventions(nancyConventions);
         }
+
+        protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
+        {
+            pipelines.AfterRequest += (ctx) =>
+            {
+                ctx.Response.Headers["Server"] = "LANSearch";
+            };
+            base.RequestStartup(container, pipelines, context);
+        }
     }
 }

@@ -16,6 +16,7 @@
                 <strong>Feedback from </strong>@item.Name
                 <div class="pull-right">
                     <form method="POST">
+                        <button name="read" value="@item.Id" type="submit" class="btn btn-xs btn-info">Mark as Read</button>
                         <button name="delete" value="@item.Id" type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
                         @Html.AntiForgeryToken()
                     </form>

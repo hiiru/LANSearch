@@ -23,11 +23,11 @@ namespace LANSearch.Data.Feedback
             var offset = page * pagesize;
             var objs = RedisManager.FeedbackGetAll();
             count = objs.Count;
-            var filtered = objs.OrderByDescending(x => x.Created).AsEnumerable();
+            var filtered = objs.OrderBy(x=>x.Read).ThenByDescending(x => x.Created).AsEnumerable();
             if (onlyNew)
-                filtered = filtered.Where(x => x.Read == false);
+                filtered = filtered.Where(x => !x.Read);
             if (!showDeleted)
-                filtered = filtered.Where(x => x.Deleted == false);
+                filtered = filtered.Where(x => !x.Deleted);
             return filtered.Skip(offset).Take(pagesize).ToList();
         }
 
@@ -39,7 +39,18 @@ namespace LANSearch.Data.Feedback
         public void SetDeleted(int id)
         {
             var obj = Get(id);
+            if (obj == null)
+                return;
             obj.Deleted = true;
+            Save(obj);
+        }
+
+        public void SetRead(int id, bool read)
+        {
+            var obj = Get(id);
+            if (obj == null)
+                return;
+            obj.Read = read;
             Save(obj);
         }
     }
