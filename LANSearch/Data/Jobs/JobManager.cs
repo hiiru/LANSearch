@@ -40,7 +40,7 @@ namespace LANSearch.Data.Jobs
 
         private void InitRecurring(AppConfig config)
         {
-            if (!InitConfig.DisableHangfire)
+            if (InitConfig.DisableHangfire)
                 return;
             //Setup hourly crawling
             if (config.JobHourlyCrawling)
