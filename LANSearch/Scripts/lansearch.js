@@ -16,7 +16,79 @@
     $(".delete-button").on('click', function() {
         return confirm("Are you sure you want to delete this server?");
     });
-    $(".result-list").children(".disabled").on('click', function() { return false; });
+    $(".result-list").children(".disabled").on('click', function () { return false; });
+
+    var notification=$(".page-notification");
+    if (notification.length) {
+        var lblCheck = $("#lblCheck");
+        var btnPermission = $("#btnPermission");
+        var btnTest = $("#btnTest");
+        var UpdatePermissionLabel= function() {
+            if (!("Notification" in window)) {
+                lblCheck.text("Not Supported by Browser");
+                lblCheck.addClass("label-danger");
+            } else {
+                lblCheck.removeClass("label-success label-danger label-warning");
+                switch (Notification.permission) {
+                    case "granted":
+                        lblCheck.text("Allowed");
+                        lblCheck.addClass("label-success");
+                        btnPermission.hide();
+                        btnTest.addClass("btn-primary");
+                        break;
+                    case "denied":
+                        lblCheck.text("Denied");
+                        lblCheck.addClass("label-danger");
+                        btnPermission.hide();
+                        break;
+                    default:
+                        lblCheck.text("Not Enabled");
+                        lblCheck.addClass("label-warning");
+                        break;
+                }
+            }
+        }
+        UpdatePermissionLabel();
+       btnPermission.on('click', function() {
+            if (!("Notification" in window)) {
+                BootstrapDialog.alert("Your Browser does not support HTML5 Notifications.");
+                return;
+            }
+            Notification.requestPermission(function (permission) {
+                if (!('permission' in Notification)) {
+                    Notification.permission = permission;
+                }
+                UpdatePermissionLabel();
+                if (permission === "granted") {
+                    var notification = new Notification("LANSearch: Notifications are enabled.",
+                    {
+                        dir: "ltr",
+                        lang: "en",
+                        body: "You can now receive HTML 5 Notifications from LANSearch.",
+                        tag: "notification-eanbled"
+                    });
+                }
+            });
+        });
+        btnTest.on('click', function () {
+            if (!("Notification" in window)) {
+                BootstrapDialog.alert("Your Browser does not support HTML5 Notifications, you will only get in-browser dialogs like this.");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                var notification = new Notification("LANSearch: Notifications are enabled.",
+                {
+                    dir: "ltr",
+                    lang: "en",
+                    body: "You can receive HTML 5 Notifications from LANSearch.",
+                    tag: "notification-eanbled"
+                });
+            } else {
+                BootstrapDialog.alert("HTML5 Notifications aren't allowed yet, please click the \"Grant Permission\" Button, or if it's denied, reset it in your browser's configuration (often it's located behind the icon in your address bar, click on it and you should get a dialog to change the permissions)");
+            }
+        });
+
+    }
 });
 
 $(function () {

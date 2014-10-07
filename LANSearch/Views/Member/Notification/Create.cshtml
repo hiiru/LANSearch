@@ -3,14 +3,14 @@
     ViewBag.Title = "Member .:. Notification .:. Create";
 }
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationDetailModel>
-<div class="col-xs-12 content">
+<div class="col-xs-12 page-notification">
     @if (Model.ActiveLimitReached)
     {
         <div class="alert alert-warning" role="alert">You reached the maximum allowed active notifications, if you want a new notification, please disable or delete an existing notification.</div>
     }
     else
     {
-        <h1>New Notification</h1>
+        <h2 class="media-heading">New Notification</h2>
         @Html.Partial("Partials/NotificationForm.cshtml", Model)
     }
 </div>

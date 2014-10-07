@@ -1,63 +1,73 @@
 ﻿@using System
-@using System.Text
 @using LANSearch.Data.Notification
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<LANSearch.Models.Notification.NotificationListModel>
 @{
     Layout = "Master/Master";
     ViewBag.Title = "Member .:. Notification .:. List";
 }
-@if (Model.Notifications.Count == 0)
-{
-    <div class="alert alert-info" role="alert">No Notification added yet, please perform a search and use the "Save as Notification" link.</div>
-}
-else
-{
-    <hr />
-    @if (Model.ActiveLimitReached)
-    {
-        <div class="alert alert-warning" role="alert">You reached the maximum allowed active notifications, if you want a new notification, please disable or delete an existing notification.</div>
-    }
-    <div class="col-xs-12 content">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="col-md-7">Name</th>
-                        <th class="col-md-2">Type</th>
-                        <th class="col-md-3">Last Execution</th>
-                        <th class="col-md-1">Enabled</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var notification in Model.Notifications)
-                {
-                        <tr>
-                            <td><a href="@Url.Content(string.Format("~/Member/Notification/Detail/{0}", notification.Id))">@notification.Name</a></td>
-                            <td>
-                                @foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
-                                {
-                                    if (type == NotificationType.Invalid)
-                                    {
-                                        continue;
-                                    }
-                                    if (notification.Type.HasFlag(type))
-                                    {
-                                        @(type.ToString("G")+" ")
-                                    }
-                                }
-                            </td>
 
-                            <td>@notification.LastExecution</td>
-                            @if (notification.Disabled)
+<div class="col-xs-12 content page-notification">
+    <h2 class="media-heading">Notifications</h2>
+    @if (Model.Notifications.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">No Notification added yet, please perform a search and use the "Save as Notification" link.</div>
+    }
+    else
+    {
+        @if (Model.ActiveLimitReached)
+        {
+            <div class="alert alert-warning" role="alert">You reached the maximum allowed active notifications, if you want a new notification, please disable or delete an existing notification.</div>
+        }
+        <span class="ns-hide">HTML5 Notification Status: <span id="lblCheck" class="label"></span>&nbsp;<button id="btnPermission" type="button" class="btn btn-primary btn-xs">Grant Permission</button>&nbsp;<button id="btnTest" type="button" class="btn btn-xs">Test</button></span>
+        <noscript>
+            <span>HTML5 Notifications require JavaScript, please enable it if you want to use HTML5 Notifications.</span>
+            <style type="text/css">
+                .ns-hide {
+                    display: none;
+                }
+            </style>
+        </noscript>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-7">Name</th>
+                    <th class="col-md-2">Type</th>
+                    <th class="col-md-3">Last Execution</th>
+                    <th class="col-md-1">Enabled</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var notification in Model.Notifications)
+                {
+                    <tr>
+                        <td><a href="@Url.Content(string.Format("~/Member/Notification/Detail/{0}", notification.Id))">@notification.Name</a></td>
+                        <td>
+                            @foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
+                            {
+                                if (type == NotificationType.Invalid)
+                                {
+                                    continue;
+                                }
+                                if (notification.Type.HasFlag(type))
+                                {
+                                    @(type.ToString("G") + " ")
+                                }
+                            }
+                        </td>
+
+                        <td>@notification.LastExecution</td>
+                        @if (notification.Disabled)
                         {
-                                <td class="danger">No</td>
+                            <td class="danger">No</td>
                         }
                         else
                         {
-                                <td class="success">Yes</td>
+                            <td class="success">Yes</td>
                         }
-                        </tr>
+                    </tr>
                 }
-                </tbody>
-            </table>
-        </div>
-        }
+            </tbody>
+        </table>
+    }
+</div>

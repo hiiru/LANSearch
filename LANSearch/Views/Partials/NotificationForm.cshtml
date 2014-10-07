@@ -21,7 +21,7 @@
         <div class="form-group col-md-12">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="notTypeMail" @(Model.Notification.Type.HasFlag(NotificationType.Mail)? " checked=\"checked\"" : "")> E-Mail
+                    <input type="checkbox" name="notTypeMail" @(Model.Notification.Type.HasFlag(NotificationType.Mail) ? " checked=\"checked\"" : "")> E-Mail
                 </label>
             </div>
         </div>
@@ -31,7 +31,19 @@
                     <input type="checkbox" name="notTypeHtml" @(Model.Notification.Type.HasFlag(NotificationType.Html5) ? " checked=\"checked\"" : "")> HTML5 Notification
                 </label>
             </div>
-            <p class="help-block">This only works if the browser is open, notifications are allowed and the page is loaded.</p>
+            <p class="help-block"> </p>
+            <span class="help-block ns-hide">
+                This only works if the browser is open, notifications are allowed and the page is loaded.<br />
+                HTML5 Notification Status: <span id="lblCheck" class="label"></span>&nbsp;<button id="btnPermission" type="button" class="btn btn-primary btn-xs">Grant Permission</button>&nbsp;<button id="btnTest" type="button" class="btn btn-xs">Test</button>
+            </span>
+            <noscript>
+                <span class="help-block">HTML5 Notifications require JavaScript, please enable it if you want to use HTML5 Notifications.</span>
+                <style type="text/css">
+                    .ns-hide {
+                        display: none;
+                    }
+                </style>
+            </noscript>
         </div>
     </fieldset>
     @Html.AntiForgeryToken()
