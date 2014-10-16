@@ -41,11 +41,7 @@ namespace LANSearch
                 logger.Debug("UseHangfire Done.");
             }
 
-            app.UseNancy(options =>
-            {
-                options.PerformPassThrough = context => context.Request.Url.Path.StartsWith("/Admin/Hangfire");
-            });
-
+            app.UseNancy();
             logger.Debug("UseNancy Done, completed startup configuration");
         }
     }
