@@ -52,7 +52,8 @@ namespace LANSearch.Data.Jobs
         public void RecuringAddCrawler(string interval = null)
         {
             if (interval == null)
-                interval = Cron.Hourly();
+                //interval = Cron.Hourly();
+                interval = "0 */2 * * *";
             RecurringJob.AddOrUpdate(JOB_CRAWL_SERVERS, () => FtpCrawler.CrawlServers(), interval);
         }
 

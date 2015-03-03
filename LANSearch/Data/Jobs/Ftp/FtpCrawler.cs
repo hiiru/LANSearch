@@ -1,4 +1,6 @@
-﻿using Common.Logging;
+﻿using System.Security.Policy;
+using Common.Logging;
+using Hangfire;
 using Mizore.CommunicationHandler.RequestHandler;
 using Mizore.CommunicationHandler.ResponseHandler;
 using System;
@@ -66,6 +68,7 @@ namespace LANSearch.Data.Jobs.Ftp
             return status;
         }
 
+        [AutomaticRetry(Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public void CrawlServers()
         {
             if (!Ctx.SearchManager.SolrServer.IsOnline)
@@ -83,6 +86,7 @@ namespace LANSearch.Data.Jobs.Ftp
             Ctx.JobManager.EnqueueJob(() => Ctx.JobManager.NotificationJob.NotifyAll());
         }
 
+        [AutomaticRetry(Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public void CrawlServer(int id, bool force)
         {
             if (!Ctx.SearchManager.SolrServer.IsOnline)
